@@ -1,0 +1,64 @@
+export const ALL_PERMISSIONS = {
+    AMENITY: {
+        CREATE: { method: "POST", apiPath: "/api/v1/amenities", module: "AMENITY" },
+        GET_BY_ID: { method: "GET", apiPath: "/api/v1/amenities/{id}", module: "AMENITY" },
+        GET_ALL: { method: "GET", apiPath: "/api/v1/amenities", module: "AMENITY" },
+        DELETE: { method: "DELETE", apiPath: "/api/v1/amenities/{id}", module: "AMENITY" },
+    },
+    BOOKING: {
+        CREATE: { method: "POST", apiPath: "/api/v1/bookings", module: "BOOKING" },
+        GET_BY_ID: { method: "GET", apiPath: "/api/v1/bookings/{id}", module: "BOOKING" },
+        GET_HISTORY_BY_USER: { method: "GET", apiPath: "/api/v1/bookings/history/{userId}", module: "BOOKING" },
+        GET_STATUS_BY_ID: { method: "GET", apiPath: "/api/v1/bookings/{id}/status", module: "BOOKING" },
+        GET_ALL: { method: "GET", apiPath: "/api/v1/bookings", module: "BOOKING" },
+        UPDATE: { method: "PATCH", apiPath: "/api/v1/bookings/{id}", module: "BOOKING" },
+    },
+    HOMESTAY: {
+        CREATE: { method: "POST", apiPath: "/api/v1/homestays", module: "HOMESTAY" },
+        GET_BY_ID: { method: "GET", apiPath: "/api/v1/homestays/{id}", module: "HOMESTAY" },
+        SEARCH: { method: "GET", apiPath: "/api/v1/homestays/search", module: "HOMESTAY" },
+        GET_ALL: { method: "GET", apiPath: "/api/v1/homestays", module: "HOMESTAY" },
+        ADD_AMENITIES: { method: "POST", apiPath: "/api/v1/homestays/{homestayId}/amenities", module: "HOMESTAY" },
+        UPDATE: { method: "PATCH", apiPath: "/api/v1/homestays/{id}", module: "HOMESTAY" },
+        DELETE: { method: "DELETE", apiPath: "/api/v1/homestays/{id}", module: "HOMESTAY" },
+    },
+    HOMESTAY_IMAGE: {
+        UPLOAD: { method: "POST", apiPath: "/api/v1/homestay/{homestayId}/images", module: "HOMESTAY_IMAGE" },
+        GET_BY_HOMESTAY: { method: "GET", apiPath: "/api/v1/homestay/{homestayId}/images", module: "HOMESTAY_IMAGE" },
+        DELETE: { method: "DELETE", apiPath: "/api/v1/homestay-images/{id}", module: "HOMESTAY_IMAGE" },
+    },
+    AVAILABILITY: {
+        CREATE: { method: "POST", apiPath: "/api/v1/availabilities", module: "AVAILABILITY" },
+    },
+    PERMISSION: {
+        CREATE: { method: "POST", apiPath: "/api/v1/permissions", module: "PERMISSION" },
+        GET_BY_ID: { method: "GET", apiPath: "/api/v1/permissions/{id}", module: "PERMISSION" },
+        GET_ALL: { method: "GET", apiPath: "/api/v1/permissions", module: "PERMISSION" },
+        UPDATE: { method: "PATCH", apiPath: "/api/v1/permissions/{id}", module: "PERMISSION" },
+        DELETE: { method: "DELETE", apiPath: "/api/v1/permissions/{id}", module: "PERMISSION" },
+    },
+    ROLE: {
+        CREATE: { method: "POST", apiPath: "/api/v1/roles", module: "ROLE" },
+        ADD_PERMISSIONS: { method: "POST", apiPath: "/api/v1/roles/{id}/permissions", module: "ROLE" },
+        GET_BY_ID: { method: "GET", apiPath: "/api/v1/roles/{id}", module: "ROLE" },
+        GET_ALL: { method: "GET", apiPath: "/api/v1/roles", module: "ROLE" },
+        UPDATE: { method: "PATCH", apiPath: "/api/v1/roles/{id}", module: "ROLE" },
+        DELETE_PERMISSION: { method: "DELETE", apiPath: "/api/v1/roles/{id}/permissions", module: "ROLE" },
+        DELETE: { method: "DELETE", apiPath: "/api/v1/roles/{id}", module: "ROLE" },
+    },
+    USER: {
+        CREATE: { method: "POST", apiPath: "/api/v1/users", module: "USER" },
+        GET_BY_ID: { method: "GET", apiPath: "/api/v1/users/{id}", module: "USER" },
+        GET_ALL: { method: "GET", apiPath: "/api/v1/users", module: "USER" },
+        UPDATE: { method: "PATCH", apiPath: "/api/v1/users/{id}", module: "USER" },
+        DELETE: { method: "DELETE", apiPath: "/api/v1/users/{id}", module: "USER" },
+    },
+    PAYMENT: {
+        GET_BY_ID: { method: "GET", apiPath: "/api/v1/payments/{id}", module: "PAYMENT" },
+        GET_ALL: { method: "GET", apiPath: "/api/v1/payments", module: "PAYMENT" },
+    },
+    REVIEW: {
+        CREATE: { method: "POST", apiPath: "/api/v1/reviews", module: "REVIEW" },
+        GET_BY_HOMESTAY: { method: "GET", apiPath: "/api/v1/reviews/homestay/{homestayId}", module: "REVIEW" },
+    },
+};

@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/config/api.ts","./src/config/axios-customize.ts","./src/config/permissions.ts","./src/pages/auth/login.tsx","./src/pages/auth/register.tsx","./src/redux/hooks.ts","./src/redux/store.ts","./src/redux/slice/accountslide.ts","./src/types/backend.d.ts","./src/types/file.d.ts"],"errors":true,"version":"5.9.2"}
