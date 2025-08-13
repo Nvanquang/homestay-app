@@ -221,7 +221,14 @@ export interface IPaymentTransaction {
 // Homestay Availability
 export interface IHomestayAvailability {
     homestayId: number | string;
-    date: Date | null;
+    date: string | null;
+    price: number;
+    status: string;
+}
+
+export interface IAvailabilityRequest {
+    homestayId: string;
+    dates: Date[] | null;
     price: number;
     status: string;
 }

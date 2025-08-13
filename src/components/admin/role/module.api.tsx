@@ -7,9 +7,6 @@ import 'styles/reset.scss';
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { useEffect } from 'react';
 import type { CollapseProps } from 'antd';
-import { Console } from 'node:console';
-
-const { Panel } = Collapse;
 
 interface IProps {
   onChange?: (data: any[]) => void;

@@ -90,7 +90,7 @@ const RolePage = () => {
             dataIndex: 'active',
             render(dom, entity, index, action, schema) {
                 return <>
-                    <Tag color={entity.active ? "lime" : "red"} >
+                    <Tag color={entity.active ? "blue" : "red"} >
                         {entity.active ? "ACTIVE" : "INACTIVE"}
                     </Tag>
                 </>

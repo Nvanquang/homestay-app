@@ -19,9 +19,9 @@ import RolePage from './pages/admin/role';
 import UserPage from './pages/admin/user';
 import { fetchAccount } from './redux/slice/accountSlide';
 import LayoutApp from './components/share/layout.app';
-import HomestayPage from './pages/admin/homestay';
 import BookingPage from './pages/admin/booking';
 import TransactionPage from './pages/admin/transaction';
+import HomestayTabs from './pages/admin/homestay/homestay.tabs';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -86,7 +86,7 @@ export default function App() {
           path: "homestay",
           element:
             <ProtectedRoute>
-              <HomestayPage />
+              <HomestayTabs />
             </ProtectedRoute>
         },
         {

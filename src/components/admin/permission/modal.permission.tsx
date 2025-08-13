@@ -141,7 +141,7 @@ const ModalPermission = (props: IProps) => {
                                 HOMESTAY_IMAGE: 'HOMESTAY_IMAGE',
                                 ROLE: 'ROLE',
                                 USER: 'USER',
-                                AVAILABILITY: 'SUBSCRIBERS',
+                                AVAILABILITY: 'AVAILABILITY',
                                 PAYMENT: 'PAYMENT',
                                 REVIEW: 'REVIEW'
                             }}

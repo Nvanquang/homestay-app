@@ -10,6 +10,7 @@ import roleReducer from './slice/roleSlide';
 import homestayReducer from './slice/homestaySlide';
 import bookingReducer from './slice/bookingSlide';
 import transactionReducer from './slice/transactionSlide';
+import availabilityReducer from './slice/availabilitySlide';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     role: roleReducer,
     homestay: homestayReducer,
     transaction: transactionReducer,
+    availability: availabilityReducer,
   },
 });
 

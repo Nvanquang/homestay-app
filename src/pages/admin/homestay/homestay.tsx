@@ -2,7 +2,7 @@ import DataTable from "@/components/client/data-table";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchHomestay } from "@/redux/slice/homestaySlide";
 import { IBackendError, IHomestay } from "@/types/backend";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { CalendarOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, Tag, message, notification } from "antd";
 import { useState, useRef } from 'react';
@@ -14,7 +14,14 @@ import { sfLike } from "spring-filter-query-builder";
 import { isSuccessResponse } from "@/config/utils";
 import ModalHomestay from "@/components/admin/homestay/modal.homestay";
 
-const HomestayPage = () => {
+interface HomestayPageProps {
+  setActiveKey: (key: string) => void;
+  setOpenViewAvailabity: (value: boolean) => void;
+  setInitHomestayId: (id: string | null) => void;
+  setHomestayName: (name: string) => void;
+}
+
+const HomestayPage = ({ setActiveKey, setOpenViewAvailabity, setInitHomestayId, setHomestayName }: HomestayPageProps) => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [dataInit, setDataInit] = useState<IHomestay | null>(null);
 
@@ -73,13 +80,13 @@ const HomestayPage = () => {
             title: 'Trạng thái',
             dataIndex: 'status',
             render(dom, entity, index, action, schema) {
-                return <>
+                return (
                     <Tag
                         color={
                             entity.status === "ACTIVE"
-                                ? "lime"
+                                ? "blue"
                                 : entity.status === "INACTIVE"
-                                    ? "blue"
+                                    ? "lime"
                                     : entity.status === "CLOSED"
                                         ? "red"
                                         : "default"
@@ -87,7 +94,7 @@ const HomestayPage = () => {
                     >
                         {entity.status}
                     </Tag>
-                </>
+                )
             },
             hideInSearch: true,
         },
@@ -96,13 +103,26 @@ const HomestayPage = () => {
             dataIndex: 'guests'
         },
         {
-
             title: 'Actions',
             hideInSearch: true,
             width: 100,
             render: (_value, entity, _index, _action) => (
                 <Space>
-                    < Access
+                    <Access permission={ALL_PERMISSIONS.AVAILABILITY.CREATE} hideChildren>
+                        <CalendarOutlined
+                            style={{ fontSize: 20, color: '#1890ff' }}
+                            onClick={() => {
+                                setOpenViewAvailabity(true);
+                                setInitHomestayId(String(entity.id));
+                                setActiveKey('2'); // Chuyển sang tab AvailabilityPage
+                                setHomestayName(entity.name);
+                                message.success(`Mở lịch sẵn có cho homestay ${entity.name}`);
+                            }}
+                            onPointerEnterCapture={undefined}
+                            onPointerLeaveCapture={undefined}
+                        />
+                    </Access>
+                    <Access
                         permission={ALL_PERMISSIONS.HOMESTAY.UPDATE}
                         hideChildren
                     >
@@ -111,12 +131,14 @@ const HomestayPage = () => {
                                 fontSize: 20,
                                 color: '#ffa500',
                             }}
-                            type=""
                             onClick={() => {
                                 setOpenModal(true);
                                 setDataInit(entity);
-                            }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
-                    </Access >
+                            }}
+                            onPointerEnterCapture={undefined}
+                            onPointerLeaveCapture={undefined}
+                        />
+                    </Access>
                     <Access
                         permission={ALL_PERMISSIONS.HOMESTAY.DELETE}
                         hideChildren
@@ -124,7 +146,7 @@ const HomestayPage = () => {
                         <Popconfirm
                             placement="leftTop"
                             title={"Xác nhận xóa homestay"}
-                            description={"Bạn có chắc chắn muốn xóa company này ?"}
+                            description={"Bạn có chắc chắn muốn xóa homestay này ?"}
                             onConfirm={() => handleDeleteHomestay(entity.id)}
                             okText="Xác nhận"
                             cancelText="Hủy"
@@ -134,13 +156,15 @@ const HomestayPage = () => {
                                     style={{
                                         fontSize: 20,
                                         color: '#ff4d4f',
-                                    }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                                    }}
+                                    onPointerEnterCapture={undefined}
+                                    onPointerLeaveCapture={undefined}
+                                />
                             </span>
                         </Popconfirm>
                     </Access>
-                </Space >
+                </Space>
             ),
-
         },
     ];
 
@@ -154,8 +178,8 @@ const HomestayPage = () => {
 
         if (clone.name) q.filter = `${sfLike("name", clone.name)}`;
         if (clone.address) {
-            q.filter = clone.name ?
-                q.filter + " and " + `${sfLike("address", clone.address)}`
+            q.filter = clone.name
+                ? q.filter + " and " + `${sfLike("address", clone.address)}`
                 : `${sfLike("address", clone.address)}`;
         }
 
@@ -171,8 +195,8 @@ const HomestayPage = () => {
             sortBy = sort.address === 'ascend' ? "sort=address,asc" : "sort=address,desc";
         }
 
-        //mặc định sort theo updatedAt
-        if (Object.keys(sortBy).length === 0) {
+        // Mặc định sort theo updatedAt
+        if (!sortBy) {
             temp = `${temp}&sort=updatedAt,desc`;
         } else {
             temp = `${temp}&${sortBy}`;
@@ -183,9 +207,7 @@ const HomestayPage = () => {
 
     return (
         <div>
-            <Access
-                permission={ALL_PERMISSIONS.HOMESTAY.GET_ALL}
-            >
+            <Access permission={ALL_PERMISSIONS.HOMESTAY.GET_ALL}>
                 <DataTable<IHomestay>
                     actionRef={tableRef}
                     headerTitle="Danh sách Homestay"
@@ -195,25 +217,27 @@ const HomestayPage = () => {
                     dataSource={homestays}
                     request={async (params, sort, filter): Promise<any> => {
                         const query = buildQuery(params, sort, filter);
-                        dispatch(fetchHomestay({ query }))
+                        const result = await dispatch(fetchHomestay({ query })).unwrap();
+                        return {
+                            data: result.data,
+                            success: true,
+                            total: result.data?.meta.total,
+                        };
                     }}
                     scroll={{ x: true }}
-                    pagination={
-                        {
-                            current: meta.page,
-                            pageSize: meta.pageSize,
-                            showSizeChanger: true,
-                            total: meta.total,
-                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
-                        }
-                    }
+                    pagination={{
+                        current: meta.page,
+                        pageSize: meta.pageSize,
+                        showSizeChanger: true,
+                        total: meta.total,
+                        showTotal: (total, range) => {
+                            return <div>{range[0]}-{range[1]} trên {total} rows</div>;
+                        },
+                    }}
                     rowSelection={false}
                     toolBarRender={(_action, _rows): any => {
                         return (
-                            <Access
-                                permission={ALL_PERMISSIONS.HOMESTAY.CREATE}
-                                hideChildren
-                            >
+                            <Access permission={ALL_PERMISSIONS.HOMESTAY.CREATE} hideChildren>
                                 <Button
                                     icon={<PlusOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
                                     type="primary"
@@ -233,8 +257,8 @@ const HomestayPage = () => {
                 dataInit={dataInit}
                 setDataInit={setDataInit}
             />
-        </div >
-    )
+        </div>
+    );
 }
 
 export default HomestayPage;

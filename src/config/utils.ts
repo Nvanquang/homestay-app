@@ -75,19 +75,19 @@ export function colorMethod(method: "POST" | "PATCH" | "GET" | "DELETE" | string
 export function colorBookingStatus(status: string) {
     switch (status) {
         case 'DRAFT':
-            return grey[6]; 
+            return "grey"; 
         case 'BOOKED':
-            return blue[6];
+            return "blue";
         case 'COMPLETED':
-            return green[6]; 
+            return "green"; 
         case 'CANCELLED':
-            return red[6]; 
+            return "red"; 
         case 'PAYMENT_PROCESSING':
-            return orange[6]; 
+            return "orange"; 
         case 'PAYMENT_FAILED':
-            return volcano[6]; 
+            return "volcano"; 
         default:
-            return grey[10]; 
+            return "grey"; 
     }
 }
 

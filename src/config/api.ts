@@ -1,4 +1,4 @@
-import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction } from '@/types/backend';
+import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability } from '@/types/backend';
 import axios from './axios-customize';
 
 /**
@@ -342,4 +342,22 @@ export const callGetTransactionById = async (id: string): Promise<IBackendRes<IP
 
 export const callGetTransactions = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IPaymentTransaction>>>(`/api/v1/payments?${query}`);
+};
+
+
+// HOMESTAY AVAILABILITY
+export const callCreateAvailability = async (data: IAvailabilityRequest): Promise<IBackendRes<IAvailabilityRequest> | IBackendError> => {
+    return axios.post<IBackendRes<IAvailabilityRequest>>('/api/v1/availabilities', data)
+        .then((res) => res)
+        .catch((error) => error.response.data);
+};
+
+export const callUpdateAvailability = async (data: IHomestayAvailability): Promise<IBackendRes<IHomestayAvailability> | IBackendError> => {
+    return axios.patch<IBackendRes<IHomestayAvailability>>('/api/v1/availabilities', data)
+        .then((res) => res)
+        .catch((error) => error.response.data);
+};
+
+export const callGetAvailabilities = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IHomestayAvailability>>>(`/api/v1/availabilities?${query}`);
 };
