@@ -126,6 +126,16 @@ export interface IHomestay {
     updatedBy?: string;
 }
 
+export interface ISearchHomestayRequest {
+    longitude?: number;
+    latitude?: number;
+    radius?: number;
+    checkinDate?: string;
+    checkoutDate?: string;
+    guests?: number;
+    status?: string;
+}
+
 export interface ISearchHomestayResponse {
     id?: string;
     name: string;

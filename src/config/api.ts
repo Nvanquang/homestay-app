@@ -9,6 +9,10 @@ export const callRegister = async (userName: string, password: string, confirmPa
     return axios.post<IBackendRes<IUser>>('/api/v1/auth/register', { userName, password, confirmPassword, email, phoneNumber, fullName, gender })
 }
 
+export const callVeriryOtp = async (email: string, otp: string): Promise<IBackendRes<IUser> | IBackendError> => {
+    return axios.post<IBackendRes<IUser>>('/api/v1/auth/verify-otp', { email, otp })
+}
+
 export const callLogin = async (userName: string, password: string): Promise<IBackendRes<IAccount> | IBackendError> => {
     return axios.post<IBackendRes<IAccount>>('/api/v1/auth/login', { userName, password })
         .then((res) => res)

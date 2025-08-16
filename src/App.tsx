@@ -22,6 +22,8 @@ import LayoutApp from './components/share/layout.app';
 import BookingPage from './pages/admin/booking';
 import TransactionPage from './pages/admin/transaction';
 import HomestayTabs from './pages/admin/homestay/homestay.tabs';
+import HomePage from './pages/home';
+import VerifyOtpPage from './pages/auth/verify.otp';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -61,7 +63,11 @@ export default function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <LayoutClient />,
+      element: <LayoutApp><LayoutClient /></LayoutApp>,
+      errorElement: <NotFound />,
+      children: [
+        { index: true, element: <HomePage /> }
+      ],
     },
 
     {
@@ -128,6 +134,11 @@ export default function App() {
     {
       path: "/register",
       element: <RegisterPage />,
+    },
+
+    {
+      path: "/verify-otp",
+      element: <VerifyOtpPage />,
     },
   ]);
 

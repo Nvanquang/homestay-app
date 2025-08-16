@@ -17,9 +17,10 @@ const RegisterPage = () => {
         setIsSubmit(true);
         const res = await callRegister(userName, password as string, confirmPassword as string, email, phoneNumber, fullName, gender);
         setIsSubmit(false);
-        if (isSuccessResponse(res) &&  res?.data?.id) {
+        if (isSuccessResponse(res) &&  res?.status === 200) {
             message.success('Đăng ký tài khoản thành công!');
-            navigate('/login')
+            localStorage.setItem("verifyEmail", email);
+            navigate('/verify-otp')
         } else {
             const errRes = res as IBackendError;
             notification.error({
@@ -37,67 +38,42 @@ const RegisterPage = () => {
 
             <main className={styles.main} >
                 <div className={styles.container} >
-                    <section className={styles.wrapper} >
+                    <section className={styles.wrapper} style={{ maxWidth: 700, margin: '0 auto' }}>
                         <div className={styles.heading} >
                             <h2 className={`${styles.text} ${styles["text-large"]}`}> Đăng Ký Tài Khoản </h2>
                             < Divider />
                         </div>
 
-                        < Form<IUser>
+                        <Form<IUser>
                             name="basic"
-                            // style={{ maxWidth: 600, margin: '0 auto' }}
                             onFinish={onFinish}
                             autoComplete="off"
                         >
-                            
-                            <Form.Item
-                                labelCol={{ span: 24 }} //whole column
-                                label="User name"
-                                name="userName"
-                                rules={[{ required: true, message: 'UserName không được để trống!' }]}
-                            >
-                                <Input />
-                            </Form.Item>
+                            <Row gutter={16}>
+                                <Col span={12}>
+                                    <Form.Item
+                                        labelCol={{ span: 24 }}
+                                        label="User name"
+                                        name="userName"
+                                        rules={[{ required: true, message: 'UserName không được để trống!' }]}
+                                    >
+                                        <Input />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={12}>
+                                    <Form.Item
+                                        labelCol={{ span: 24 }}
+                                        label="Số điện thoại"
+                                        name="phoneNumber"
+                                        rules={[{ required: true, message: 'Số điện thoại không được để trống!' }]}
+                                    >
+                                        <Input type='phoneNumber' />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
 
                             <Form.Item
-                                labelCol={{ span: 24 }} //whole column
-                                label="Số điện thoại"
-                                name="phoneNumber"
-                                rules={[{ required: true, message: 'Số điện thoại không được để trống!' }]}
-                            >
-                                <Input type='phoneNumber' />
-                            </Form.Item>
-
-                            <Form.Item
-                                labelCol={{ span: 24 }
-                                } //whole column
-                                label="Email"
-                                name="email"
-                                rules={[{ required: true, message: 'Email không được để trống!' }]}
-                            >
-                                <Input type='email' />
-                            </Form.Item>
-
-                            <Form.Item
-                                labelCol={{ span: 24 }} //whole column
-                                label="Mật khẩu"
-                                name="password"
-                                rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
-                            >
-                                <Input.Password />
-                            </Form.Item>
-
-                            <Form.Item
-                                labelCol={{ span: 24 }} //whole column
-                                label="Nhập lại mật khẩu"
-                                name="confirmPassword"
-                                rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
-                            >
-                                <Input.Password />
-                            </Form.Item>
-
-                            <Form.Item
-                                labelCol={{ span: 24 }} //whole column
+                                labelCol={{ span: 24 }}
                                 label="Họ và tên"
                                 name="fullName"
                                 rules={[{ required: true, message: 'Họ và tên không được để trống!' }]}
@@ -105,26 +81,56 @@ const RegisterPage = () => {
                                 <Input />
                             </Form.Item>
 
-
-                            <Form.Item
-                                labelCol={{ span: 24 }} //whole column
-                                name="gender"
-                                label="Giới tính"
-                                rules={[{ required: true, message: 'Giới tính không được để trống!' }]}
-                            >
-                                <Select
-                                    // placeholder="Select a option and change input text above"
-                                    // onChange={onGenderChange}
-                                    allowClear
-                                >
-                                    <Option value="MALE">Nam</Option>
-                                    <Option value="FEMALE">Nữ</Option>
-                                    <Option value="OTHER">Khác</Option>
-                                </Select>
-                            </Form.Item>
+                            <Row gutter={16}>
+                                <Col span={12}>
+                                    <Form.Item
+                                        labelCol={{ span: 24 }}
+                                        label="Email"
+                                        name="email"
+                                        rules={[{ required: true, message: 'Email không được để trống!' }]}
+                                    >
+                                        <Input type='email' />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={12}>
+                                    <Form.Item
+                                        labelCol={{ span: 24 }}
+                                        label="Giới tính"
+                                        name="gender"
+                                        rules={[{ required: true, message: 'Giới tính không được để trống!' }]}
+                                    >
+                                        <Select allowClear>
+                                            <Option value="MALE">Nam</Option>
+                                            <Option value="FEMALE">Nữ</Option>
+                                            <Option value="OTHER">Khác</Option>
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Row gutter={16}>
+                                <Col span={12}>
+                                    <Form.Item
+                                        labelCol={{ span: 24 }}
+                                        label="Mật khẩu"
+                                        name="password"
+                                        rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
+                                    >
+                                        <Input.Password />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={12}>
+                                    <Form.Item
+                                        labelCol={{ span: 24 }}
+                                        label="Nhập lại mật khẩu"
+                                        name="confirmPassword"
+                                        rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
+                                    >
+                                        <Input.Password />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
 
                             < Form.Item
-                            // wrapperCol={{ offset: 6, span: 16 }}
                             >
                                 <Button type="primary" htmlType="submit" loading={isSubmit} >
                                     Đăng ký
