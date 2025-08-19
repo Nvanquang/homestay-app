@@ -181,7 +181,12 @@ const AvailabilityPage = (props: IProps) => {
       <p>{selectedDates.length} ngày đã chọn</p>
       <Form form={form} onFinish={onCreate} layout="vertical">
         <Form.Item name="price" label="Giá" rules={[{ type: 'number', min: 0 }]}>
-          <InputNumber style={{ width: '100%' }} />
+          <InputNumber
+            addonAfter=" đ"
+            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            parser={value => +(value || '').replace(/\$\s?|(,*)/g, '')}
+            style={{ width: '100%' }} 
+            />
         </Form.Item>
         <Form.Item name="status" label="Trạng thái" rules={[{ required: true }]}>
           <Select style={{ width: '100%' }}>
@@ -220,7 +225,13 @@ const AvailabilityPage = (props: IProps) => {
               </p>
               <Form form={form} onFinish={onUpdate} layout="vertical">
                 <Form.Item name="price" label="Giá" rules={[{ type: 'number', min: 0 }]}>
-                  <InputNumber style={{ width: '100%' }} disabled={!selectedDate} />
+                  <InputNumber
+                    style={{ width: '100%' }}
+                    disabled={!selectedDate}
+                    addonAfter=" đ"
+                    formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    parser={value => +(value || '').replace(/\$\s?|(,*)/g, '')}
+                  />
                 </Form.Item>
                 <Form.Item name="status" label="Trạng thái" rules={[{ required: true }]}>
                   <Select style={{ width: '100%' }} disabled={!selectedDate}>

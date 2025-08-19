@@ -6,19 +6,19 @@ import Footer from '@/components/client/footer.client';
 
 const HomePage = () => {
  
-  const handleSearch = (searchData: ISearchHomestayRequest) => {
-    console.log('Search data:', searchData);
-    // Có thể dispatch fetchHomestay({ query }) ở đây nếu muốn search
-  };
+  // const handleSearch = (searchData: ISearchHomestayRequest) => {
+  //   console.log('Search data:', searchData);
+  //   // Có thể dispatch fetchHomestay({ query }) ở đây nếu muốn search
+  // };
 
   return (
     <div className={styles.homePage}>
-      <Header onSearch={handleSearch} />
+      {/* <Header onSearch={handleSearch} /> */}
 
       {/* Main content */}
       <MainContent showPagination={true}/>
 
-      <Footer />
+      {/* <Footer /> */}
       
     </div>
   );

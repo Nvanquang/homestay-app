@@ -117,7 +117,7 @@ export interface IHomestay {
     address?: string;
     longitude?: number; 
     latitude?: number;  
-    images?: string[] | null;
+    images?: string[];
     deletedImages?: string[] | null; 
     amenities?: IAmenity[] | number[]; 
     createdAt?: Date | null;
@@ -210,10 +210,15 @@ export interface IReview {
     hostReply?: string;
     homestayId?: string;
     user: {
-        id: number;
+        id: string;
         name: string;
         avatarUrl?: string;
     }
+}
+
+export interface IReviewTotal {
+    totalReviews: number;
+    averageRating: number;
 }
 
 // Payment

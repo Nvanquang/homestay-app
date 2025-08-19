@@ -1,4 +1,4 @@
-import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability } from '@/types/backend';
+import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal } from '@/types/backend';
 import axios from './axios-customize';
 
 /**
@@ -116,7 +116,7 @@ export const callCreateHomestay = async (
         .catch((error) => error.response.data);
 };
 
-export const callGetHomestayById = async (id: string): Promise<IBackendRes<IPermission> | IBackendError> => {
+export const callGetHomestayById = async (id: string): Promise<IBackendRes<IHomestay> | IBackendError> => {
     return axios.get<IBackendRes<IHomestay>>(`/api/v1/homestays/${id}`)
         .then((res) => res)
         .catch((error) => error.response.data);
@@ -332,8 +332,14 @@ export const callCreateReview = (data: IReview) => {
     return axios.post<IBackendRes<IReview>>('/api/v1/reviews', data);
 };
 
-export const callGetReviewsByHomestay = (homestayId: number, query?: string) => {
-    return axios.get<IModelPaginate<IReview>>(`/api/v1/reviews/homestay/${homestayId}${query ? `?${query}` : ''}`);
+export const callGetReviewsByHomestay = (homestayId: string, query?: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IReview>>>(`/api/v1/reviews/homestay/${homestayId}?${query}`);
+};
+
+export const callGetReviewTotal = async (homestayId: string): Promise<IBackendRes<IReviewTotal> | IBackendError> => {
+    return axios.get<IBackendRes<IReviewTotal>>(`/api/v1/reviews/homestay/${homestayId}/total`)
+        .then((res) => res)
+        .catch((error) => error.response.data);
 };
 
 

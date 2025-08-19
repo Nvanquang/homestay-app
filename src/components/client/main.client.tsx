@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/client.module.scss';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { fetchHomestay } from '@/redux/slice/homestaySlide';
 import { IHomestay } from '@/types/backend';
 import { useNavigate } from 'react-router-dom';
 import { callGetHomestays } from '@/config/api';
-import { Empty, Pagination, Row } from 'antd';
+import { Card, Empty, Pagination, Row } from 'antd';
+import { convertSlug } from '@/config/utils';
 
 interface IProps {
     showPagination?: boolean;
@@ -56,7 +55,12 @@ const MainContent = (props: IProps) => {
         }
     }
 
-
+     const handleViewDetailHomestay = (item: IHomestay) => {
+        if (item.name) {
+            const slug = convertSlug(item.name);
+            navigate(`/homestay/${slug}?id=${item.id}`)
+        }
+    }
 
     return (
         <section className={styles.featuredSection}>
@@ -64,14 +68,17 @@ const MainContent = (props: IProps) => {
                 <h2 className={styles.sectionTitle}>Điểm đến nổi bật</h2>
                 <div className={styles.destinationGrid}>
                     {displayHomestay?.map((destination, index) => (
-                        <div key={index} className={styles.destinationCard}>
+                        <Card
+                            key={index}
+                            className={styles.destinationCard}
+                            onClick={() => handleViewDetailHomestay(destination)}>
                             <div className={styles.destinationImage}>
                                 <img src={destination.images?.[0]} alt={destination.name} />
                             </div>
                             <div className={styles.destinationInfo}>
                                 <h3>{destination.name}</h3>
                             </div>
-                        </div>
+                        </Card>
                     ))}
 
                     {(!displayHomestay || displayHomestay && displayHomestay.length === 0)

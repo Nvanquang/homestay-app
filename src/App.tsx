@@ -24,6 +24,10 @@ import TransactionPage from './pages/admin/transaction';
 import HomestayTabs from './pages/admin/homestay/homestay.tabs';
 import HomePage from './pages/home';
 import VerifyOtpPage from './pages/auth/verify.otp';
+import ClientHomestayDetailPage from './pages/homestay/detail';
+import Header from './components/client/header.client';
+import Footer from './components/client/footer.client';
+import { ISearchHomestayRequest } from './types/backend';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,11 +41,18 @@ const LayoutClient = () => {
 
   }, [location]);
 
+  const handleSearch = (searchData: ISearchHomestayRequest) => {
+      console.log('Search data:', searchData);
+      // Có thể dispatch fetchHomestay({ query }) ở đây nếu muốn search
+    };
+
   return (
     <div className='layout-app' ref={rootRef}>
+      <Header onSearch={handleSearch}/>
       <div className={styles['content-app']}>
         <Outlet context={[searchTerm, setSearchTerm]} />
       </div>
+      <Footer/>
     </div>
   )
 }
@@ -66,7 +77,8 @@ export default function App() {
       element: <LayoutApp><LayoutClient /></LayoutApp>,
       errorElement: <NotFound />,
       children: [
-        { index: true, element: <HomePage /> }
+        { index: true, element: <HomePage /> },
+        { path: "homestay/:id", element: <ClientHomestayDetailPage /> }
       ],
     },
 
