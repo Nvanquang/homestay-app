@@ -47,7 +47,7 @@ instance.interceptors.response.use(
     (res) => res.data,
     async (error) => {
         if (error.config && error.response
-            && +error.response.status === 401
+            && +error.response.status === 404
             && error.config.url !== '/api/v1/auth/login'
             && !error.config.headers[NO_RETRY_HEADER]
         ) {
@@ -66,15 +66,15 @@ instance.interceptors.response.use(
             && error.config.url === '/api/v1/auth/refresh'
             && location.pathname.startsWith("/admin")
         ) {
-            const message = error?.response?.data?.error ?? "Có lỗi xảy ra, vui lòng login.";
+            const message = error?.response?.data?.detail ?? "Có lỗi xảy ra, vui lòng login.";
             //dispatch redux action
             store.dispatch(setRefreshTokenAction({ status: true, message }));
         }
 
         if (+error.response.status === 403) {
             notification.error({
-                message: error?.response?.data?.message ?? "",
-                description: error?.response?.data?.error ?? ""
+                message: error?.response?.data?.detail ?? "",
+                description: error?.response?.data?.message ?? ""
             })
         }
 

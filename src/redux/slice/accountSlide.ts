@@ -1,13 +1,22 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { callFetchAccount } from '@/config/api';
+import { isSuccessResponse } from '@/config/utils';
+import { IGetAccount } from '@/types/backend';
 
 // First, create the thunk
 export const fetchAccount = createAsyncThunk(
     'account/fetchAccount',
-    async () => {
+    async (_, { rejectWithValue }) => {
         const response = await callFetchAccount();
-        return response.data;
+        console.log("fetchAccount response", response);
+        if (isSuccessResponse<IGetAccount>(response)) {
+            return response.data; // Trả về dữ liệu nếu thành công
+        } else {
+            return rejectWithValue(response); // Trả về lỗi nếu thất bại
+        }
+        // debugger;
     }
+
 )
 
 interface IState {
@@ -85,6 +94,7 @@ export const accountSlide = createSlice({
 
             if (!action?.payload?.user?.role) state.user.role = {};
             state.user.role.permissions = action?.payload?.role?.permissions ?? [];
+            // debugger;
         },
         setLogoutAction: (state, action) => {
             localStorage.removeItem('access_token');
@@ -109,6 +119,7 @@ export const accountSlide = createSlice({
         setRefreshTokenAction: (state, action) => {
             state.isRefreshToken = action.payload?.status ?? false;
             state.errorRefreshToken = action.payload?.message ?? "";
+            console.log("setRefreshTokenAction", action.payload);
         }
 
     },

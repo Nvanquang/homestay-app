@@ -46,12 +46,6 @@ export interface IAccount {
                 apiPath?: string;
                 method?: string;
                 module?: string;
-                // description: string;
-                // active: boolean;
-                // createdAt?: Date | null;
-                // createdBy?: string;
-                // updatedAt?: Date | null;
-                // updatedBy?: string;
             }[]
         }
     }
@@ -182,19 +176,19 @@ export interface IBooking {
     };
 }
 
-// export interface IBooking {
-//     bookingId: number | string;
-//     userId: number | string;
-//     homestayId: number | string;
-//     status: string;
-// }
+    export interface IBookingStatus {
+        bookingId: string;
+        userId: string;
+        homestayId: string;
+        status: string;
+    }
 
-// export interface IVnpayBookingResponse {
-//     booking: IBookingResponse;
-//     payment: {
-//         vnpUrl: string;
-//     }
-// }
+export interface IVnpayBookingResponse {
+    booking: IBooking;
+    payment: {
+        vnpUrl: string;
+    }
+}
 
 // Amenity
 export interface IAmenity {

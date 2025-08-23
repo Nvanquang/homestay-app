@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { IHomestay, IReview } from '@/types/backend';
+import { IHomestay } from '@/types/backend';
 import {
-  Row, Col, Typography, Card, Avatar, Tag, List, Alert, Button, DatePicker, Select, Rate, Spin
+  Row, Col, Typography, Card, Avatar, Tag, List, Button, DatePicker, Select, Rate, Spin,
+  message
 } from 'antd';
 import StickyBox from 'react-sticky-box';
 import {
@@ -14,10 +15,12 @@ import {
   CheckCircleFilled
 } from '@ant-design/icons';
 import styles from '@/styles/homestaydetail.module.scss';
-import { useLocation } from 'react-router-dom';
-import { callGetAvailabilities, callGetReviewTotal } from '@/config/api';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { callGetAvailabilities } from '@/config/api';
 import { isSuccessResponse } from '@/config/utils';
 import queryString from 'query-string';
+import Access from '@/components/share/access';
+import { ALL_PERMISSIONS } from '@/config/permissions';
 const { Title, Paragraph, Text } = Typography;
 const { RangePicker } = DatePicker;
 
@@ -43,6 +46,7 @@ const HomestayMainContent = (props: IProps) => {
   const id = params?.get("id"); // homestay id
 
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [dateWarning, setDateWarning] = useState<string | null>(null);
   const [guests, setGuests] = useState(2);
   const [dates, setDates] = useState<any>(null);
   const [startDate, setStartDate] = useState<string | null>(null);
@@ -51,6 +55,8 @@ const HomestayMainContent = (props: IProps) => {
 
   const [costTotal, setCostTotal] = useState<number>(0);
   const [datebetween, setDateBetween] = useState<number>(0);
+  const [availabilities, setAvailabilities] = useState<any[]>([]);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -80,18 +86,35 @@ const HomestayMainContent = (props: IProps) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    // Tính chênh lệch thời gian (tính bằng milliseconds)
     const diffInMs = end.getTime() - start.getTime();
-
-    // Chuyển sang ngày (1 ngày = 1000 * 60 * 60 * 24 milliseconds)
     const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
 
     return diffInDays;
   };
 
   const handleBooking = () => {
+    if (!startDate || !endDate) {
+      message.error('Vui lòng chọn ngày nhận phòng và trả phòng!');
+      return;
+    }
+    setDateWarning(null);
     setBookingLoading(true);
     setTimeout(() => setBookingLoading(false), 2000);
+    navigate(`/book/checkout/$homestayId=${id}?checkin=${startDate}&checkout=${endDate}&guests=${guests}`, {
+      state: {
+        homestayId: id,
+        homestayName: homestayDetail?.name,
+        userId: '1',
+        costTotal: costTotal,
+        checkin: startDate,
+        checkout: endDate,
+        guests: guests,
+        datebetween: datebetween,
+        hoemstayImage: homestayDetail?.images?.[0],
+        averageRating: averageRating,
+        availabilities: availabilities
+      }
+    });
   };
 
   const calculateBookingCost = async (start: any, end: any) => {
@@ -115,6 +138,7 @@ const HomestayMainContent = (props: IProps) => {
         const itemDate = new Date(item.date);
         return itemDate >= startDateObj && itemDate < endDateObj;
       });
+      setAvailabilities(res.data.result);
       // Tính tổng tiền
       const total = availList.reduce((sum: number, item: any) => sum + (item.price || 0), 0);
       setCostTotal(total);
@@ -159,35 +183,48 @@ const HomestayMainContent = (props: IProps) => {
               )}
             />
           </div>
-          {/* <Alert
-            type="info"
-            showIcon
-            icon={<CalendarOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
-            message={<Paragraph>Hủy miễn phí trước 7 ngày 9</Paragraph>}
-            style={{ margin: '24px 0 0 0' }}
-          /> */}
+
         </Col>
         {/* Booking Sidebar Column */}
         <Col xs={24} md={8}>
           <StickyBox offsetTop={24} offsetBottom={24} className={styles.bookingAffix}>
-            <Card className={styles.bookingCard} bordered={false}>
+            <Card
+              className={styles.bookingCard}
+              bordered={false}>
               {(startDate && endDate) && (
-                  <Title level={4} style={{ marginBottom: 0 }}>
-                    {costTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ <Text type="secondary">cho {datebetween} đêm</Text>
-                  </Title>
-                )}
+                <Title level={4} style={{ marginBottom: 0 }}>
+                  {costTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ <Text type="secondary">cho {datebetween} đêm</Text>
+                </Title>
+              )}
               <div style={{ margin: '16px 0' }}>
                 <RangePicker
                   style={{ width: '100%' }}
                   value={dates as any}
                   format="DD/MM/YYYY"
                   onChange={(values) => {
-                    setDates(values);
-                    if (values && values[0] && values[1]) {
-                      setStartDate(values[0].format('YYYY-MM-DD'));
-                      setEndDate(values[1].format('YYYY-MM-DD'));
-                      calculateBookingCost(values[0].format('YYYY-MM-DD'), values[1].format('YYYY-MM-DD'));
+                    if (
+                      values &&
+                      values[0] &&
+                      values[1] &&
+                      values.length === 2
+                    ) {
+                      const start = values[0];
+                      const end = values[1];
+                      // Không cho chọn cùng ngày hoặc end <= start
+                      if (end.isSame(start, 'day') || end.isBefore(start, 'day')) {
+                        setDates(null);
+                        setStartDate(null);
+                        setEndDate(null);
+                        message.error('Ngày trả phòng phải lớn hơn ngày nhận phòng!');
+                        return;
+                      }
+                      setDates(values);
+                      setStartDate(start.format('YYYY-MM-DD'));
+                      setEndDate(end.format('YYYY-MM-DD'));
+                      setDateWarning(null);
+                      calculateBookingCost(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
                     } else {
+                      setDates(values);
                       setStartDate(null);
                       setEndDate(null);
                     }
@@ -221,17 +258,27 @@ const HomestayMainContent = (props: IProps) => {
                   ))}
                 </Select>
               </div>
-              <Button
-                type="primary"
-                shape="round"
-                size="large"
-                loading={bookingLoading}
-                className={styles.bookingBtn}
-                onClick={handleBooking}
-                block
+              {dateWarning && (
+                <div style={{ color: 'red', marginBottom: 8 }}>{dateWarning}</div>
+              )}
+              < Access
+                permission={ALL_PERMISSIONS.BOOKING.CREATE}
+                hideChildren
               >
-                {bookingLoading ? <Spin size="small" /> : 'Đặt phòng'}
-              </Button> 
+                <Button
+                  type="primary"
+                  shape="round"
+                  size="large"
+                  loading={bookingLoading}
+                  className={styles.bookingBtn}
+                  onClick={handleBooking}
+                  block
+                  disabled={!startDate || !endDate}
+                >
+                  {bookingLoading ? <Spin size="small" /> : 'Đặt phòng'}
+                </Button>
+              </Access>
+
               <div className={styles.reportFlag}>
                 <FlagOutlined style={{ marginRight: 6 }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
                 <Text type="secondary">Báo cáo nhà/phòng cho thuê này</Text>

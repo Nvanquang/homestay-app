@@ -1,7 +1,7 @@
 import { callGetHomestayById, callGetReviewTotal } from "@/config/api";
 import { isSuccessResponse } from "@/config/utils";
 import { IHomestay } from "@/types/backend";
-import { Button, Card, Col, Image, Row } from "antd";
+import { Card, Col, Image, Row } from "antd";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import styles from '@/styles/homestaydetail.module.scss';

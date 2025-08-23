@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import NotFound from 'components/share/not.found';
-import Loading from 'components/share/loading';
 import LoginPage from 'pages/auth/login';
 import RegisterPage from 'pages/auth/register';
 import LayoutAdmin from 'components/admin/layout.admin';
@@ -28,6 +27,8 @@ import ClientHomestayDetailPage from './pages/homestay/detail';
 import Header from './components/client/header.client';
 import Footer from './components/client/footer.client';
 import { ISearchHomestayRequest } from './types/backend';
+import CheckoutSection from './pages/booking/checkout';
+import PaymentSuccessPage from './pages/booking/payment.success.page';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -78,7 +79,9 @@ export default function App() {
       errorElement: <NotFound />,
       children: [
         { index: true, element: <HomePage /> },
-        { path: "homestay/:id", element: <ClientHomestayDetailPage /> }
+        { path: "homestay/:id", element: <ClientHomestayDetailPage /> },
+        { path: "book/checkout/:homestayId", element: <CheckoutSection /> },
+        { path: "/payments/payment-callback", element: <PaymentSuccessPage /> }
       ],
     },
 

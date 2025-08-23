@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Result } from "antd";
 import { useAppSelector } from '@/redux/hooks';
 import { FaSlidersH } from 'react-icons/fa';
+import { debug } from 'console';
 
 interface IProps {
     hideChildren?: boolean;
@@ -41,6 +42,9 @@ const Access = (props: IProps) => {
                 setAllow(true)
             } else
                 setAllow(false);
+        }
+        else {
+            setAllow(false);
         }
     }, [permissions])
 

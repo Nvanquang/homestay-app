@@ -1,4 +1,4 @@
-import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal } from '@/types/backend';
+import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal, IVnpayBookingResponse, IBookingStatus } from '@/types/backend';
 import axios from './axios-customize';
 
 /**
@@ -19,8 +19,10 @@ export const callLogin = async (userName: string, password: string): Promise<IBa
         .catch((error) => error.response.data);
 }
 
-export const callFetchAccount = () => {
-    return axios.get<IBackendRes<IGetAccount>>('/api/v1/auth/account');
+export const callFetchAccount = async (): Promise<IBackendRes<IGetAccount> | IBackendError> => {
+    return axios.get<IBackendRes<IGetAccount>>('/api/v1/auth/account')
+        .then((res) => res)
+        .catch((error) => error.response.data);
 }
 
 export const callRefreshToken = async (): Promise<IBackendRes<IAccount> | IBackendError> => {
@@ -40,14 +42,14 @@ export const callLogout = async (): Promise<IBackendRes<string> | IBackendError>
 // AMENITY
 export const callCreateAmenity = async (name: string): Promise<IBackendRes<IBooking> | IBackendError> => {
     return axios.post<IBackendRes<IAmenity>>('/api/v1/amenities', { name })
-    .then((res) => res)
-    .catch((error) => error.response.data);
+        .then((res) => res)
+        .catch((error) => error.response.data);
 };
 
 export const callGetAmenityById = async (id: string): Promise<IBackendRes<IBooking> | IBackendError> => {
     return axios.get<IBackendRes<IAmenity>>(`/api/v1/amenities/${id}`)
-    .then((res) => res)
-    .catch((error) => error.response.data);
+        .then((res) => res)
+        .catch((error) => error.response.data);
 };
 
 export const callGetAmenities = (query: string) => {
@@ -56,29 +58,35 @@ export const callGetAmenities = (query: string) => {
 
 export const callDeleteAmenity = async (id: string): Promise<IBackendRes<IBooking> | IBackendError> => {
     return axios.delete<IBackendRes<IAmenity>>(`/api/v1/amenities/${id}`)
-    .then((res) => res)
-    .catch((error) => error.response.data);
+        .then((res) => res)
+        .catch((error) => error.response.data);
 };
 
 
 
 // BOOKING
+export const callCreateBooking = async (userId: string, homestayId: string, checkinDate: string, checkoutDate: string, guests: string, note: string): Promise<IBackendRes<IVnpayBookingResponse> | IBackendError> => {
+    return axios.post<IBackendRes<IVnpayBookingResponse>>('/api/v1/bookings', { userId, homestayId, checkinDate, checkoutDate, guests, note })
+        .then((res) => res)
+        .catch((error) => error.response.data);
+};
+
 export const callGetBookingById = async (id: string): Promise<IBackendRes<IBooking> | IBackendError> => {
     return axios.get<IBackendRes<IBooking>>(`/api/v1/bookings/${id}`)
-    .then((res) => res)
-    .catch((error) => error.response.data);
+        .then((res) => res)
+        .catch((error) => error.response.data);
 };
 
 export const callGetBookingHistory = async (userId: number): Promise<IBackendRes<IBooking> | IBackendError> => {
     return axios.get<IModelPaginate<IBooking>>(`/api/v1/bookings/history/${userId}`)
-    .then((res) => res)
-    .catch((error) => error.response.data);
+        .then((res) => res)
+        .catch((error) => error.response.data);
 };
 
-export const callGetBookingStatus = async (id: string): Promise<IBackendRes<IBooking> | IBackendError> => {
-    return axios.get<IBackendRes<IBooking>>(`/api/v1/bookings/${id}/status`)
-    .then((res) => res)
-    .catch((error) => error.response.data);
+export const callGetBookingStatus = async (bookingId: string): Promise<IBackendRes<IBookingStatus> | IBackendError> => {
+    return axios.get<IBackendRes<IBookingStatus>>(`/api/v1/bookings/${bookingId}/status`)
+        .then((res) => res)
+        .catch((error) => error.response.data);
 };
 
 export const callGetBookings = (query: string) => {
@@ -145,7 +153,7 @@ export const callAddAmenitiesToHomestay = (homestayId: string, amenities: string
 };
 
 export const callUpdateHomestay = async (
-    id: string, 
+    id: string,
     homestay: IHomestay,
     files: File[],
     folder: string = "homestay"

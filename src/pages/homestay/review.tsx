@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react';
 import { callGetReviewsByHomestay } from '@/config/api';
 import { isSuccessResponse } from '@/config/utils';
 import { IReview } from '@/types/backend';
-import queryString from 'query-string';
 import dayjs from 'dayjs';
 
 const { Title, Paragraph, Text } = Typography;
@@ -30,28 +29,6 @@ const ReviewSection = (props: IProps) => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(6);
   const [total, setTotal] = useState(0);
-
-  // useEffect(() => {
-
-  //   const init = async () => {
-  //     if (homestayId !== null && homestayId !== undefined) {
-  //       console.log('homestayId', homestayId);
-  //       setIsLoading(true)
-  //       const q: any = {
-  //         page: 1,
-  //         size: 6,
-  //         filter: '',
-  //       };
-  //       if (!q.filter) delete q.filter;
-  //       const res = await callGetReviewsByHomestay(homestayId, queryString.stringify(q));
-  //       if (isSuccessResponse(res) && res?.data) {
-  //         setReviews(res.data.result);
-  //       }
-  //       setIsLoading(false)
-  //     }
-  //   }
-  //   init();
-  // }, [homestayId]);
 
   useEffect(() => {
     fetchReviews();
