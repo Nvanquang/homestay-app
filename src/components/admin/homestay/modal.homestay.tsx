@@ -6,7 +6,7 @@ import {
     ProFormTextArea
 } from "@ant-design/pro-components";
 import { Col, Form, Row, Upload, message, notification, Modal } from "antd";
-import { PlusOutlined, EyeOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import { isMobile } from "react-device-detect";
 import { useEffect, useState } from "react";
 import { callCreateHomestay, callGetAmenities, callUpdateHomestay } from "@/config/api";
@@ -153,11 +153,11 @@ const ModalHomestay = (props: IProps) => {
             return Upload.LIST_IGNORE;
         }
 
-        const isUnderLimit = fileList.length < 6;
+        const isUnderLimit = fileList.length < 5;
         if (!isUnderLimit) {
             notification.error({
                 message: 'Lỗi upload',
-                description: 'Chỉ được upload tối đa 6 ảnh!'
+                description: 'Chỉ được upload tối đa 5 ảnh!'
             });
             return Upload.LIST_IGNORE;
         }
@@ -198,109 +198,111 @@ const ModalHomestay = (props: IProps) => {
     };
 
     const submitHomestay = async (values: any) => {
-    const {
-        name,
-        address,
-        status,
-        guests,
-        phoneNumber,
-        description,
-        longitude,
-        latitude,
-        amenities: selectedAmenities
-    } = values;
-
-    // Chuyển amenities thành danh sách ID kiểu number và sắp xếp
-    const currentAmenities = selectedAmenities?.map((item: any) =>
-        typeof item === "object" ? +item.value : +item
-    ).sort((a: number, b: number) => a - b) || [];
-
-    // Lấy danh sách URL ảnh hiện có từ fileList và sắp xếp
-    const currentImages = fileList
-        .filter(file => file.url && file.status === 'done')
-        .map(file => file.url)
-        .sort();
-
-    // Tính danh sách ảnh bị xóa
-    const deletedImages = initialImages.filter(url => !currentImages.includes(url));
-
-    // Extract actual File objects (only for new uploads)
-    const actualFiles = fileList
-        .filter(file => file.originFileObj && file.status !== 'error')
-        .map(file => file.originFileObj);
-
-    // If no files and no existing images, handle it
-    if (actualFiles.length === 0 && currentImages.length === 0) {
-        notification.error({
-            message: "Có lỗi xảy ra",
-            description: "Vui lòng upload ít nhất một ảnh homestay."
-        });
-        return;
-    }
-
-    let homestay: IHomestay;
-    let apiCall;
-
-    if (dataInit?.id) {
-        // Update mode
-        const amenitiesChanged = JSON.stringify(currentAmenities) !== JSON.stringify(initialAmenities);
-        const amenitiesToSend = amenitiesChanged ? currentAmenities : null;
-
-        const imagesChanged = JSON.stringify(currentImages) !== JSON.stringify(initialImages) || actualFiles.length > 0;
-        const imagesToSend = imagesChanged ? currentImages : null;
-        const deletedImagesToSend = imagesChanged ? deletedImages : null;
-
-        homestay = {
-            id: dataInit.id,
+        const {
             name,
-            description,
-            status,
-            guests,
-            amenities: amenitiesToSend,
-            deletedImages: deletedImagesToSend
-        };
-
-        apiCall = callUpdateHomestay(dataInit.id.toString(), homestay, actualFiles, "homestay");
-    } else {
-        // Create mode
-        homestay = {
-            name,
-            description,
+            address,
             status,
             guests,
             phoneNumber,
-            address,
-            longitude: longitude ? +longitude : undefined,
-            latitude: latitude ? +latitude : undefined,
-            amenities: currentAmenities,
-            images: currentImages
-        };
+            description,
+            longitude,
+            latitude,
+            amenities: selectedAmenities
+        } = values;
 
-        apiCall = callCreateHomestay(homestay, actualFiles, "homestay");
-    }
+        // Chuyển amenities thành danh sách ID kiểu number và sắp xếp
+        const currentAmenities = selectedAmenities?.map((item: any) =>
+            typeof item === "object" ? +item.value : +item
+        ).sort((a: number, b: number) => a - b) || [];
 
-    try {
-        const res = await apiCall;
+        // Lấy danh sách URL ảnh hiện có từ fileList và sắp xếp
+        const currentImages = fileList
+            .filter(file => file.url && file.status === 'done')
+            .map(file => file.url)
+            .sort();
 
-        if (isSuccessResponse(res) && res.data) {
-            message.success(dataInit?.id ? "Cập nhật homestay thành công" : "Thêm mới homestay thành công");
-            handleReset();
-            reloadTable();
-        } else {
-            const errRes = res as IBackendError;
+        // Tính danh sách ảnh bị xóa
+        const deletedImages = initialImages.filter(url => !currentImages.includes(url));
+
+        // Extract actual File objects (only for new uploads)
+        const actualFiles = fileList
+            .filter(file => file.originFileObj && file.status !== 'error')
+            .map(file => file.originFileObj);
+
+        // If no files and no existing images, handle it
+        if (actualFiles.length === 0 && currentImages.length === 0) {
             notification.error({
                 message: "Có lỗi xảy ra",
-                description: errRes.detail || "Không thể lưu homestay."
+                description: "Vui lòng upload ít nhất một ảnh homestay."
+            });
+            return;
+        }
+
+        let homestay: IHomestay;
+        let apiCall;
+
+        if (dataInit?.id) {
+            // Update mode
+            const amenitiesChanged = JSON.stringify(currentAmenities) !== JSON.stringify(initialAmenities);
+            const amenitiesToSend = amenitiesChanged ? currentAmenities : null;
+
+            const imagesChanged = JSON.stringify(currentImages) !== JSON.stringify(initialImages) || actualFiles.length > 0;
+            const imagesToSend = imagesChanged ? currentImages : null;
+            const deletedImagesToSend = imagesChanged ? deletedImages : null;
+
+            homestay = {
+                id: dataInit.id,
+                name,
+                description,
+                status,
+                guests,
+                amenities: amenitiesToSend,
+                deletedImages: deletedImagesToSend
+            };
+
+            apiCall = callUpdateHomestay(dataInit.id.toString(), homestay, actualFiles, "homestay");
+        } else {
+            // Create mode
+            homestay = {
+                name,
+                description,
+                status,
+                guests,
+                phoneNumber,
+                address,
+                longitude: longitude ? +longitude : undefined,
+                latitude: latitude ? +latitude : undefined,
+                amenities: currentAmenities,
+                images: currentImages
+            };
+
+            apiCall = callCreateHomestay(homestay, actualFiles, "homestay");
+        }
+
+        try {
+            const res = await apiCall;
+
+            if (isSuccessResponse(res) && res.data) {
+                message.success(dataInit?.id ? "Cập nhật homestay thành công" : "Thêm mới homestay thành công");
+                handleReset();
+                setTimeout(() => {
+                    reloadTable();
+                }, 6000); // Delay to allow backend processing handle save images with async
+            } else {
+                const errRes = res as IBackendError;
+                notification.error({
+                    message: "Có lỗi xảy ra",
+                    description: errRes.detail || "Không thể lưu homestay."
+                });
+            }
+        } catch (error) {
+            console.error("Error submitting homestay:", error);
+            notification.error({
+                message: "Có lỗi xảy ra",
+                description: "Không thể lưu homestay. Vui lòng thử lại."
             });
         }
-    } catch (error) {
-        console.error("Error submitting homestay:", error);
-        notification.error({
-            message: "Có lỗi xảy ra",
-            description: "Không thể lưu homestay. Vui lòng thử lại."
-        });
-    }
-};
+    };
 
     return (
         <>

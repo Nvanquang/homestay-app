@@ -3,7 +3,7 @@ import styles from '@/styles/client.module.scss';
 import { IHomestay } from '@/types/backend';
 import { useNavigate } from 'react-router-dom';
 import { callGetHomestays } from '@/config/api';
-import { Card, Empty, Pagination, Row } from 'antd';
+import { Card, Empty, Pagination, Rate, Row, Typography } from 'antd';
 import { convertSlug } from '@/config/utils';
 
 interface IProps {
@@ -55,7 +55,7 @@ const MainContent = (props: IProps) => {
         }
     }
 
-     const handleViewDetailHomestay = (item: IHomestay) => {
+    const handleViewDetailHomestay = (item: IHomestay) => {
         if (item.name) {
             const slug = convertSlug(item.name);
             navigate(`/homestay/${slug}?id=${item.id}`)
@@ -71,12 +71,19 @@ const MainContent = (props: IProps) => {
                         <Card
                             key={index}
                             className={styles.destinationCard}
+                            bodyStyle={{ padding: 0 }}
                             onClick={() => handleViewDetailHomestay(destination)}>
                             <div className={styles.destinationImage}>
                                 <img src={destination.images?.[0]} alt={destination.name} />
                             </div>
                             <div className={styles.destinationInfo}>
-                                <h3>{destination.name}</h3>
+                                <h4>{destination.name}</h4>
+                                <div style={{marginTop: 10}}>
+                                    <Rate disabled value={Number(destination.averageRating)} allowHalf style={{ fontSize: 14 }} />
+                                <Typography.Text style={{ marginLeft: 8, fontSize: 13 }} >
+                                    {destination.averageRating} ({destination.totalReviews} đánh giá)
+                                </Typography.Text>
+                                </div>
                             </div>
                         </Card>
                     ))}

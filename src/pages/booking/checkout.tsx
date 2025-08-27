@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { Row, Col, Card, Typography, InputNumber, Button, Select, Image, Rate, Descriptions, Tag, DatePicker, message, notification, Spin, Input } from 'antd';
+import { useState } from 'react';
+import { Row, Col, Card, Typography, InputNumber, Button, Select, Image, Rate, Descriptions, DatePicker, notification, Spin, Input } from 'antd';
 import styles from '@/styles/checkout.module.scss';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import dayjs from 'dayjs'
 import { callCreateBooking } from '@/config/api';
 import { isSuccessResponse } from '@/config/utils';
 import { IBackendError } from '@/types/backend';
+import Access from '@/components/share/access';
+import { ALL_PERMISSIONS } from '@/config/permissions';
 
 const { Title, Paragraph, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -19,10 +21,9 @@ const CheckoutSection = () => {
     const [bookingLoading, setBookingLoading] = useState(false);
 
     const [paymentMethod, setPaymentMethod] = useState<string>('vnpay');
-    const [dates, setDates] = useState<any>(bookedMainForm[0] && bookedMainForm[1] ? [dayjs(bookedMainForm[0]), dayjs(bookedMainForm[1])] : null);
     const [startDate, setStartDate] = useState<string | null>(bookedMainForm[0] ? dayjs(bookedMainForm[0]).format('YYYY-MM-DD') : null);
     const [endDate, setEndDate] = useState<string | null>(bookedMainForm[1] ? dayjs(bookedMainForm[1]).format('YYYY-MM-DD') : null);
-    const [bookedDates, setBookedDates] = useState<string[]>([]);
+
 
     const handlePaymentMethodChange = (value: string) => {
         setPaymentMethod(value);
@@ -76,13 +77,6 @@ const CheckoutSection = () => {
                 </Col>
                 <Col span={12}>
                     <Card>
-                        <Image
-                            src={hoemstayImage}
-                            alt="Room Image"
-                            style={{ width: '50%', marginBottom: '10px' }}
-                        />
-                        <Text>{homestayName}</Text>
-                        <Rate value={averageRating} disabled style={{ marginLeft: '10px' }} />
                         <Descriptions title="Chi tiết giá" column={1} bordered style={{ marginTop: '20px' }}>
                             <Descriptions.Item label="Ngày nhận phòng">
                                 <Text>{startDate ? dayjs(startDate).format('DD/MM/YYYY') : '-'}</Text>
@@ -108,18 +102,24 @@ const CheckoutSection = () => {
                                 <Text strong>{costTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ</Text>
                             </Descriptions.Item>
                         </Descriptions>
-                        <Button
-                            type="primary"
-                            shape="round"
-                            size="large"
-                            loading={bookingLoading}
-                            className={styles.bookingBtn}
-                            onClick={handlePayment}
-                            block
-                            disabled={!startDate || !endDate}
+                        < Access
+                            permission={ALL_PERMISSIONS.BOOKING.CREATE}
+                            hideChildren
                         >
-                            {bookingLoading ? <Spin size="small" /> : 'Thanh toán'}
-                        </Button>
+                            <Button
+                                type="primary"
+                                shape="round"
+                                size="large"
+                                loading={bookingLoading}
+                                className={styles.bookingBtn}
+                                onClick={handlePayment}
+                                block
+                                disabled={!startDate || !endDate}
+                            >
+                                {bookingLoading ? <Spin size="small" /> : 'Thanh toán'}
+                            </Button>
+                        </Access>
+
                     </Card>
                 </Col>
             </Row>

@@ -105,15 +105,20 @@ export interface IHomestay {
     id?: string;
     name: string;
     description: string;
-    status: string; 
+    status: string;
     guests: number;
     phoneNumber?: string;
     address?: string;
-    longitude?: number; 
-    latitude?: number;  
+    longitude?: number;
+    latitude?: number;
     images?: string[];
-    deletedImages?: string[] | null; 
-    amenities?: IAmenity[] | number[]; 
+    deletedImages?: string[] | null;
+    amenities?: IAmenity[] | number[];
+    nightAmount?: number;
+    totalAmount?: number;
+    totalReviews?: number | null;
+    averageRating?: number | null;
+    host?: IHostInfo;
     createdAt?: Date | null;
     createdBy?: string;
     updatedAt?: Date | null;
@@ -131,19 +136,34 @@ export interface ISearchHomestayRequest {
 }
 
 export interface ISearchHomestayResponse {
-    id?: string;
+    id?: string | number;
     name: string;
     description: string;
-    guests: number;
+    guests: number | string;
     status: string;
     phoneNumber: string;
-    nightAmount: number;
-    totalAmount: number;
+    nightAmount: number | string;
+    totalAmount: number | string;
     address: string;
-    longitude: number;
-    latitude: number;
-    images: string[];
-    amenities: number[];
+    longitude: number | string;
+    latitude: number | string;
+    images: (string | null)[];
+    amenities: (number | null)[];
+}
+
+export interface IHostInfo {
+    id: string;
+    name: string;
+}
+
+export interface ISearchHomestayRequest {
+    longitude?: number | string;
+    latitude?: number | string;
+    radius?: number | string;
+    checkinDate?: string;
+    checkoutDate?: string;
+    guests?: number | string;
+    status?: string;
 }
 
 // Homestay Image
@@ -176,12 +196,12 @@ export interface IBooking {
     };
 }
 
-    export interface IBookingStatus {
-        bookingId: string;
-        userId: string;
-        homestayId: string;
-        status: string;
-    }
+export interface IBookingStatus {
+    bookingId: string;
+    userId: string;
+    homestayId: string;
+    status: string;
+}
 
 export interface IVnpayBookingResponse {
     booking: IBooking;

@@ -2,7 +2,7 @@ import DataTable from "@/components/client/data-table";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IBooking } from "@/types/backend";
 import { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Tag } from "antd";
+import { Spin, Tag } from "antd";
 import { useRef } from 'react';
 import queryString from 'query-string';
 import Access from "@/components/share/access";
@@ -11,6 +11,7 @@ import { sfLike } from "spring-filter-query-builder";
 import { fetchBooking } from "@/redux/slice/bookingSlide";
 import { colorBookingStatus } from "@/config/utils";
 import dayjs from "dayjs";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const BookingPage = () => {
 
@@ -66,7 +67,11 @@ const BookingPage = () => {
             render(dom, entity, index, action, schema) {
                 return <>
                     <Tag color={colorBookingStatus(entity.status)} >
-                        {entity.status}
+                        {entity.status !== 'BOOKED' 
+                        ? <Spin indicator={<LoadingOutlined spin onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} size="small" /> 
+                        : null}
+
+                        {" " + entity.status}
                     </Tag>
                 </>
             },

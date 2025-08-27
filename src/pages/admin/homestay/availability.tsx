@@ -8,6 +8,8 @@ import dayjs from 'dayjs';
 import { IHomestayAvailability, IAvailabilityRequest } from '@/types/backend';
 import { callUpdateAvailability, callCreateAvailability } from '@/config/api';
 import { isSuccessResponse } from '@/config/utils';
+import Access from '@/components/share/access';
+import { ALL_PERMISSIONS } from '@/config/permissions';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -161,7 +163,6 @@ const AvailabilityPage = (props: IProps) => {
       status: values.status,
     };
     try {
-      console.log('Creating availability with data:', createData);
       const result = await callCreateAvailability(createData);
       if (result.status === 201 && isSuccessResponse(result)) {
         message.success('Tạo thành công');
@@ -185,8 +186,8 @@ const AvailabilityPage = (props: IProps) => {
             addonAfter=" đ"
             formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             parser={value => +(value || '').replace(/\$\s?|(,*)/g, '')}
-            style={{ width: '100%' }} 
-            />
+            style={{ width: '100%' }}
+          />
         </Form.Item>
         <Form.Item name="status" label="Trạng thái" rules={[{ required: true }]}>
           <Select style={{ width: '100%' }}>
@@ -194,9 +195,15 @@ const AvailabilityPage = (props: IProps) => {
             <Option value="BOOKED">Booked</Option>
           </Select>
         </Form.Item>
-        <Button type="primary" htmlType="submit">
+        <Access
+          permission={ALL_PERMISSIONS.PERMISSION.UPDATE}
+          hideChildren
+        >
+          <Button type="primary" htmlType="submit">
           Apply
         </Button>
+        </Access>
+        
       </Form>
     </div>
   ) : (

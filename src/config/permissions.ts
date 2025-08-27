@@ -29,6 +29,8 @@ export const ALL_PERMISSIONS = {
     },
     AVAILABILITY: {
         CREATE: { method: "POST", apiPath: "/api/v1/availabilities", module: "AVAILABILITY" },
+        UPDATE: { method: "PATCH", apiPath: "/api/v1/availabilities", module: "AVAILABILITY" },
+        GET_ALL: { method: "GET", apiPath: "/api/v1/availabilities", module: "AVAILABILITY" },
     },
     PERMISSION: {
         CREATE: { method: "POST", apiPath: "/api/v1/permissions", module: "PERMISSION" },
@@ -59,6 +61,7 @@ export const ALL_PERMISSIONS = {
     },
     REVIEW: {
         CREATE: { method: "POST", apiPath: "/api/v1/reviews", module: "REVIEW" },
+        GET_TOTAL_RATING: { method: "GET", apiPath: "/api/v1/reviews/homestay/{homestayId}/total", module: "REVIEW" },
         GET_BY_HOMESTAY: { method: "GET", apiPath: "/api/v1/reviews/homestay/{homestayId}", module: "REVIEW" },
     },
 };

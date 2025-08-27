@@ -5,9 +5,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import styles from '@/styles/paymentSuccess.module.scss';
 import { callGetBookingStatus } from '@/config/api';
 import { isSuccessResponse } from '@/config/utils';
-import { set } from 'lodash';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Paragraph } = Typography;
 
 const PaymentSuccessPage = () => {
   const navigate = useNavigate();

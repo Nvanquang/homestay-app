@@ -14,7 +14,7 @@ interface IState {
 }
 // First, create the thunk
 export const fetchHomestay = createAsyncThunk(
-    'company/fetchHomestay',
+    'homestay/fetchHomestay',
     async ({ query }: { query: string }) => {
         const response = await callGetHomestays(query);
         return response;

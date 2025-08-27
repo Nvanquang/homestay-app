@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, Dropdown, theme } from 'antd';
+import { Calendar, theme, Input } from 'antd';
 import type { CalendarProps } from 'antd';
 import dayjs from 'dayjs';
+import { SearchOutlined, StarOutlined } from '@ant-design/icons';
 import styles from '@/styles/client.module.scss';
 import { ISearchHomestayRequest } from '@/types/backend';
+import { POPULAR_LOCATIONS, PopularLocation } from '@/config/utils';
+import { useNavigate } from 'react-router-dom';
 
 type Dayjs = ReturnType<typeof dayjs>;
 
@@ -18,9 +21,7 @@ interface SearchProps {
 const Search: React.FC<SearchProps> = ({ 
   isScrolled = false, 
   searchData = {
-    longitude: 105.8342,
-    latitude: 21.0278,
-    radius: 1000,
+    radius: 1000000,
     status: 'AVAILABLE'
   },
   onSearch, 
@@ -32,6 +33,7 @@ const Search: React.FC<SearchProps> = ({
   const [activeDateType, setActiveDateType] = useState<'checkin' | 'checkout' | null>(null);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const { token } = theme.useToken();
 
   useEffect(() => {
@@ -55,6 +57,23 @@ const Search: React.FC<SearchProps> = ({
   const handleSearchClick = () => {
     if (onSearch) {
       onSearch(searchData);
+      navigate(`/homestay-search?${new URLSearchParams({
+        latitude: searchData.latitude?.toString() || '',
+        longitude: searchData.longitude?.toString() || '',
+        radius: searchData.radius?.toString() || '',
+        checkin: searchData.checkinDate || '',
+        checkout: searchData.checkoutDate || '',
+        guests: searchData.guests?.toString() || '',
+        available: searchData.status || ''
+      })}`, {state: {
+        latitude: searchData.latitude,
+        longitude: searchData.longitude,
+        radius: searchData.radius,
+        checkin: searchData.checkinDate,
+        checkout: searchData.checkoutDate,
+        guests: searchData.guests,
+        available: searchData.status
+      }});
     }
   };
 
@@ -106,8 +125,13 @@ const Search: React.FC<SearchProps> = ({
         setActiveDateType('checkout');
       } else if (activeDateType === 'checkout') {
         onSearchDataChange({ checkoutDate: dateString });
-        setActiveDropdown('guests'); // Mở dropdown khách
-        setActiveDateType(null);
+        
+        // Tự động chuyển sang dropdown guests sau khi chọn checkout date
+        setTimeout(() => {
+          setActiveDropdown('guests');
+          setActiveDateType(null);
+          setSlideDirection('left');
+        }, 300);
       }
     }
   };
@@ -116,14 +140,30 @@ const Search: React.FC<SearchProps> = ({
     if (onSearchDataChange) {
       onSearchDataChange({ guests });
     }
-    setActiveDropdown(null);
+    
+    // Đóng dropdown sau khi chọn số khách
+    setTimeout(() => {
+      setActiveDropdown(null);
+    }, 200);
   };
 
-  const handleLocationSelect = (address: string) => {
+  // Xử lý chọn location với tọa độ
+  const handleLocationSelect = (location: PopularLocation) => {
     if (onSearchDataChange) {
-      onSearchDataChange({ address });
+      onSearchDataChange({ 
+        address: location.displayName,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        // radius: location.radius * 1000 // Chuyển km sang mét
+      });
     }
-    setActiveDropdown(null);
+    
+    // Tự động chuyển sang dropdown dates sau khi chọn location
+    setTimeout(() => {
+      setActiveDropdown('dates');
+      setActiveDateType('checkin');
+      setSlideDirection('left');
+    }, 300);
   };
 
   const getSearchValue = (type: string) => {
@@ -162,25 +202,37 @@ const Search: React.FC<SearchProps> = ({
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
   };
 
+  // Kiểm tra xem có section nào đang active không
+  const hasActiveSection = activeDropdown !== null;
+
   if (isScrolled) {
     return (
       <div ref={searchRef} className={styles.searchWrapper}>
-        <div 
-          className={styles.searchContainer}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <div className={activeDropdown === 'location' ? `${styles.searchSection} ${styles.active}` : styles.searchSection} onClick={() => handleSectionClick('location')}>
+              <div 
+        className={`${styles.searchContainer} ${hasActiveSection ? styles.hasActiveSection : ''}`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+          <div 
+            className={`${styles.searchSection} ${activeDropdown === 'location' ? styles.active : ''} ${activeDropdown === 'location' ? styles.transitioning : ''}`} 
+            onClick={() => handleSectionClick('location')}
+          >
             <span className={styles.searchValue}>
               {getScrolledSearchValue('location')}
             </span>
           </div>
-          <div className={activeDropdown === 'dates' && (activeDateType === 'checkin' || !activeDateType) ? `${styles.searchSection} ${styles.active}` : styles.searchSection} onClick={() => handleSectionClick('checkin')}>
+          <div 
+            className={`${styles.searchSection} ${activeDropdown === 'dates' && (activeDateType === 'checkin' || !activeDateType) ? styles.active : ''} ${activeDropdown === 'dates' ? styles.transitioning : ''}`} 
+            onClick={() => handleSectionClick('checkin')}
+          >
             <span className={styles.searchValue}>
               {getScrolledSearchValue('dates')}
             </span>
           </div>
-          <div className={activeDropdown === 'guests' ? `${styles.searchSection} ${styles.active}` : styles.searchSection} onClick={() => handleSectionClick('guests')}>
+          <div 
+            className={`${styles.searchSection} ${activeDropdown === 'guests' ? styles.active : ''} ${activeDropdown === 'guests' ? styles.transitioning : ''}`} 
+            onClick={() => handleSectionClick('guests')}
+          >
             <span className={styles.searchValue}>
               {getScrolledSearchValue('guests')}
             </span>
@@ -201,8 +253,7 @@ const Search: React.FC<SearchProps> = ({
 
         {activeDropdown === 'location' && (
           <div 
-            className={`${styles.dropdown} ${slideDirection ? styles[`slide${slideDirection.charAt(0).toUpperCase() + slideDirection.slice(1)}`] : ''}`}
-            style={{ animation: slideDirection ? `dropdownSlide${slideDirection.charAt(0).toUpperCase() + slideDirection.slice(1)} 0.3s cubic-bezier(0.4, 0, 0.2, 1)` : undefined }}
+            className={`${styles.dropdown} ${slideDirection === 'left' ? styles.slideLeft : slideDirection === 'right' ? styles.slideRight : styles.fadeIn}`}
           >
             <LocationDropdown 
               onSelect={handleLocationSelect}
@@ -213,8 +264,7 @@ const Search: React.FC<SearchProps> = ({
         )}
         {activeDropdown === 'dates' && (
           <div 
-            className={`${styles.dropdown} ${slideDirection ? styles[`slide${slideDirection.charAt(0).toUpperCase() + slideDirection.slice(1)}`] : ''}`}
-            style={{ animation: slideDirection ? `dropdownSlide${slideDirection.charAt(0).toUpperCase() + slideDirection.slice(1)} 0.3s cubic-bezier(0.4, 0, 0.2, 1)` : undefined }}
+            className={`${styles.dropdown} ${slideDirection === 'left' ? styles.slideLeft : slideDirection === 'right' ? styles.slideRight : styles.fadeIn}`}
           >
             <DateDropdown 
               onSelect={handleDateSelect}
@@ -231,8 +281,7 @@ const Search: React.FC<SearchProps> = ({
         )}
         {activeDropdown === 'guests' && (
           <div 
-            className={`${styles.dropdown} ${slideDirection ? styles[`slide${slideDirection.charAt(0).toUpperCase() + slideDirection.slice(1)}`] : ''}`}
-            style={{ animation: slideDirection ? `dropdownSlide${slideDirection.charAt(0).toUpperCase() + slideDirection.slice(1)} 0.3s cubic-bezier(0.4, 0, 0.2, 1)` : undefined }}
+            className={`${styles.dropdown} ${slideDirection === 'left' ? styles.slideLeft : slideDirection === 'right' ? styles.slideRight : styles.fadeIn}`}
           >
             <GuestDropdown 
               onSelect={handleGuestChange}
@@ -248,11 +297,14 @@ const Search: React.FC<SearchProps> = ({
   return (
     <div ref={searchRef} className={styles.searchWrapper}>
       <div 
-        className={styles.searchContainer}
+        className={`${styles.searchContainer} ${hasActiveSection ? styles.hasActiveSection : ''}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className={activeDropdown === 'location' ? `${styles.searchSection} ${styles.active}` : styles.searchSection} onClick={() => handleSectionClick('location')}>
+        <div 
+          className={`${styles.searchSection} ${activeDropdown === 'location' ? styles.active : ''} ${activeDropdown === 'location' ? styles.transitioning : ''}`} 
+          onClick={() => handleSectionClick('location')}
+        >
           <div className={styles.dateSection}>
             <span className={styles.searchLabel}>Địa điểm</span>
             {searchData.address && (
@@ -270,7 +322,10 @@ const Search: React.FC<SearchProps> = ({
             </span>
           </div>
         </div>
-        <div className={activeDropdown === 'dates' && activeDateType === 'checkin' ? `${styles.searchSection} ${styles.active}` : styles.searchSection} onClick={() => handleSectionClick('checkin')}>
+        <div 
+          className={`${styles.searchSection} ${activeDropdown === 'dates' && activeDateType === 'checkin' ? styles.active : ''} ${activeDropdown === 'dates' ? styles.transitioning : ''}`} 
+          onClick={() => handleSectionClick('checkin')}
+        >
           <div className={styles.dateSection}>
             <span className={styles.searchLabel}>Nhận phòng</span>
             {searchData.checkinDate && (
@@ -290,7 +345,10 @@ const Search: React.FC<SearchProps> = ({
             </span>
           </div>
         </div>
-        <div className={activeDropdown === 'dates' && activeDateType === 'checkout' ? `${styles.searchSection} ${styles.active}` : styles.searchSection} onClick={() => handleSectionClick('checkout')}>
+        <div 
+          className={`${styles.searchSection} ${activeDropdown === 'dates' && activeDateType === 'checkout' ? styles.active : ''} ${activeDropdown === 'dates' ? styles.transitioning : ''}`} 
+          onClick={() => handleSectionClick('checkout')}
+        >
           <div className={styles.dateSection}>
             <span className={styles.searchLabel}>Trả phòng</span>
             {searchData.checkoutDate && (
@@ -310,7 +368,10 @@ const Search: React.FC<SearchProps> = ({
             </span>
           </div>
         </div>
-        <div className={activeDropdown === 'guests' ? `${styles.searchSection} ${styles.active}` : styles.searchSection} onClick={() => handleSectionClick('guests')}>
+        <div 
+          className={`${styles.searchSection} ${activeDropdown === 'guests' ? styles.active : ''} ${activeDropdown === 'guests' ? styles.transitioning : ''}`} 
+          onClick={() => handleSectionClick('guests')}
+        >
           <div className={styles.dateSection}>
             <span className={styles.searchLabel}>Khách</span>
             {searchData.guests && (
@@ -390,42 +451,80 @@ const Search: React.FC<SearchProps> = ({
 
 // Dropdown Components
 interface LocationDropdownProps {
-  onSelect: (location: string) => void;
+  onSelect: (location: PopularLocation) => void;
   currentLocation?: string;
   onClose: () => void;
 }
 
 const LocationDropdown: React.FC<LocationDropdownProps> = ({ onSelect, currentLocation, onClose }) => {
-  const [searchTerm, setSearchTerm] = useState(currentLocation || '');
-  
-  const popularLocations = [
-    'Hà Nội, Việt Nam',
-    'Hồ Chí Minh, Việt Nam',
-    'Đà Nẵng, Việt Nam',
-    'Hội An, Việt Nam',
-    'Nha Trang, Việt Nam',
-    'Phú Quốc, Việt Nam'
-  ];
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredLocations, setFilteredLocations] = useState<PopularLocation[]>(POPULAR_LOCATIONS);
+
+  // Lọc locations theo search term
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredLocations(POPULAR_LOCATIONS);
+    } else {
+      const filtered = POPULAR_LOCATIONS.filter(location =>
+        location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        location.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        location.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredLocations(filtered);
+    }
+  }, [searchTerm]);
 
   return (
     <div className={styles.dropdownContent}>
-      <input
-        type="text"
-        placeholder="Tìm kiếm địa điểm..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className={styles.searchInput}
-      />
+      <div className={styles.locationSearchHeader}>
+        <Input
+          placeholder="Tìm kiếm địa điểm..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          prefix={<SearchOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+          size="large"
+          className={styles.locationSearchInput}
+        />
+      </div>
+      
       <div className={styles.locationList}>
-        {popularLocations.map((location) => (
-          <div
-            key={location}
-            className={styles.locationItem}
-            onClick={() => onSelect(location)}
-          >
-            {location}
+        <div className={styles.locationSection}>
+                     <h4 className={styles.locationSectionTitle}>
+             <StarOutlined style={{ marginRight: 8, color: '#faad14' }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+             Địa điểm phổ biến
+           </h4>
+          
+          {filteredLocations.map((location) => (
+            <div
+              key={location.id}
+              className={`${styles.locationItem} ${currentLocation === location.displayName ? styles.selectedLocation : ''}`}
+              onClick={() => onSelect(location)}
+            >
+              <div className={styles.locationItemContent}>
+                <div className={styles.locationItemImage}>
+                  <img 
+                    src={location.image || 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=60&h=40&fit=crop'} 
+                    alt={location.name}
+                    className={styles.locationImage}
+                  />
+                </div>
+                <div className={styles.locationItemInfo}>
+                  <div className={styles.locationName}>{location.displayName}</div>
+                  <div className={styles.locationDescription}>{location.description}</div>
+                                     <div className={styles.locationRadius}>
+                   </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {filteredLocations.length === 0 && (
+          <div className={styles.noResults}>
+            <p>Không tìm thấy địa điểm phù hợp</p>
+            <p>Hãy thử tìm kiếm với từ khóa khác</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

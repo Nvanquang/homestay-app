@@ -2,14 +2,6 @@ import { IBackendError, IBackendRes, IModelPaginate, IPermission } from '@/types
 import { grey, green, blue, red, orange, volcano } from '@ant-design/colors';
 import { groupBy, map } from 'lodash';
 
-export const LOCATION_LIST =
-    [
-        { label: "Hà Nội", value: "HANOI" },
-        { label: "Hồ Chí Minh", value: "HOCHIMINH" },
-        { label: "Đà Nẵng", value: "DANANG" },
-        { label: "Others", value: "OTHER" },
-    ];
-
 export const nonAccentVietnamese = (str: string) => {
     str = str.replace(/A|Á|À|Ã|Ạ|Â|Ấ|Ầ|Ẫ|Ậ|Ă|Ắ|Ằ|Ẵ|Ặ/g, "A");
     str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
@@ -49,12 +41,6 @@ export const convertSlug = (str: string) => {
         .replace(/-+/g, '-'); // collapse dashes
 
     return str;
-}
-
-export const getLocationName = (value: string) => {
-    const locationFilter = LOCATION_LIST.filter(item => item.value === value);
-    if (locationFilter.length) return locationFilter[0].label;
-    return 'unknown'
 }
 
 export function colorMethod(method: "POST" | "PATCH" | "GET" | "DELETE" | string) {
@@ -101,3 +87,88 @@ export const groupByPermission = (data: any[]): { module: string; permissions: I
         return { module: key, permissions: value as IPermission[] };
     });
 };
+
+export interface PopularLocation {
+  id: string;
+  name: string;
+  displayName: string;
+  latitude: number;
+  longitude: number;
+  description?: string;
+  image?: string;
+}
+
+export const POPULAR_LOCATIONS: PopularLocation[] = [
+  {
+    id: 'hanoi',
+    name: 'Hà Nội',
+    displayName: 'Hà Nội, Việt Nam',
+    latitude: 21.0278,
+    longitude: 105.8342,
+    description: 'Thủ đô nghìn năm văn hiến',
+    image: 'https://cellphones.com.vn/sforum/wp-content/uploads/2024/01/dia-diem-du-lich-o-ha-noi-1.jpg'
+  },
+  {
+    id: 'hcm',
+    name: 'Hồ Chí Minh',
+    displayName: 'Hồ Chí Minh, Việt Nam',
+    latitude: 10.8231,
+    longitude: 106.6297,
+    description: 'Thành phố không ngủ',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/f/f4/Ho_Chi_Minh_City_panorama_2019_%28cropped2%29.jpg'
+  },
+  {
+    id: 'danang',
+    name: 'Đà Nẵng',
+    displayName: 'Đà Nẵng, Việt Nam',
+    latitude: 16.0544,
+    longitude: 108.2022,
+    description: 'Thành phố đáng sống nhất Việt Nam',
+    image: 'https://images.vietnamtourism.gov.vn/vn/images/2017/DaNangvedem.jpg'
+  },
+  {
+    id: 'hoian',
+    name: 'Hội An',
+    displayName: 'Hội An, Quảng Nam',
+    latitude: 15.8801,
+    longitude: 108.3383,
+    description: 'Phố cổ di sản thế giới',
+    image: 'https://dntt.mediacdn.vn/197608888129458176/2021/9/17/hoi-an-ve-dem-1-1582879781297957162122-1582943278401-15829432784021542260068-16318723727751114737054.gif'
+  },
+  {
+    id: 'nhatrang',
+    name: 'Nha Trang',
+    displayName: 'Nha Trang, Khánh Hòa',
+    latitude: 12.2388,
+    longitude: 109.1967,
+    description: 'Vịnh biển đẹp nhất thế giới',
+    image: 'https://cdnen.thesaigontimes.vn/wp-content/uploads/2023/04/An-aerial-view-of-the-glittering-coastal-city-of-Nha-Trang.jpg'
+  },
+  {
+    id: 'phuquoc',
+    name: 'Phú Quốc',
+    displayName: 'Phú Quốc, Kiên Giang',
+    latitude: 10.3460,
+    longitude: 103.9195,
+    description: 'Đảo ngọc Việt Nam',
+    image: 'https://hanoivoyage.com/uploads//Blogs/Vietnam/EN-image-cover/phu-quoc-2-3-days-01.webp'
+  },
+  {
+    id: 'sapa',
+    name: 'Sapa',
+    displayName: 'Sapa, Lào Cai',
+    latitude: 22.3364,
+    longitude: 103.8440,
+    description: 'Thành phố trong sương mù',
+    image: 'https://vietlandtravel.vn/upload/img/products/05032025/sapavietnam.jpg'
+  },
+  {
+    id: 'dalat',
+    name: 'Đà Lạt',
+    displayName: 'Đà Lạt, Lâm Đồng',
+    latitude: 11.9404,
+    longitude: 108.4583,
+    description: 'Thành phố ngàn hoa',
+    image: 'https://www.dalattrip.com/media/2012/10/Dalat-Vietnam-Dalat-central-lake.jpg'
+  }
+];

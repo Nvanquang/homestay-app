@@ -1,4 +1,4 @@
-import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal, IVnpayBookingResponse, IBookingStatus } from '@/types/backend';
+import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal, IVnpayBookingResponse, IBookingStatus, ISearchHomestayRequest, ISearchHomestayResponse } from '@/types/backend';
 import axios from './axios-customize';
 
 /**
@@ -130,18 +130,10 @@ export const callGetHomestayById = async (id: string): Promise<IBackendRes<IHome
         .catch((error) => error.response.data);
 };
 
-export const callSearchHomestays = async (params: {
-    longitude?: number;
-    latitude?: number;
-    radius?: number;
-    checkinDate?: string;
-    checkoutDate?: string;
-    guests?: number;
-    status?: string;
-}): Promise<IBackendRes<IPermission> | IBackendError> => {
-    return axios.get<IBackendRes<IModelPaginate<IHomestay>>>('/api/v1/homestays/search', { params })
-        .then((res) => res)
-        .catch((error) => error.response.data);
+export const callSearchHomestays =  (longitude: string | number, latitude: string | number, radius: string | number, checkinDate?: string, checkoutDate?: string, guests?: string | number, status?: string) => {
+    return axios.get<IBackendRes<ISearchHomestayResponse>>('/api/v1/homestays/search', {
+        params: { longitude, latitude, radius, checkinDate, checkoutDate, guests, status }
+    });
 };
 
 export const callGetHomestays = (query: string) => {

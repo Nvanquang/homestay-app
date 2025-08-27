@@ -12,6 +12,7 @@ import {
     HomeOutlined,
     BarChartOutlined,
     BookOutlined,
+    LogoutOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Space, message, Avatar, Button } from 'antd';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -136,6 +137,7 @@ const LayoutAdmin = () => {
         {
             label: <Link to={'/'}>Trang chủ</Link>,
             key: 'home',
+            icon: <HomeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
         },
         {
             label: <label
@@ -143,6 +145,7 @@ const LayoutAdmin = () => {
                 onClick={() => handleLogout()}
             >Đăng xuất</label>,
             key: 'logout',
+            icon: <LogoutOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
         },
     ];
 
@@ -204,7 +207,7 @@ const LayoutAdmin = () => {
                         <Outlet />
                     </Content>
                     <Footer style={{ padding: 10, textAlign: 'center' }}>
-                        React Typescript quang - Made with <HeartTwoTone onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                        Dashboad ADMIN with quang - Made with <HeartTwoTone onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
                     </Footer>
                 </Layout>
             </Layout>

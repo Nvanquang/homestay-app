@@ -7,7 +7,7 @@ const RoleBaseRoute = (props: any) => {
     const user = useAppSelector(state => state.account.user);
     const userRole = user.role.name;
 
-    if (userRole !== 'NORMAL_USER') {
+    if (userRole !== 'USER') {
         return (<>{props.children}</>)
     } else {
         return (<NotPermitted />)
@@ -24,7 +24,7 @@ const ProtectedRoute = (props: any) => {
                 <Loading />
                 :
                 <>
-                    {isAuthenticated === true ?
+                    {isAuthenticated === true?
                         <>
                             <RoleBaseRoute>
                                 {props.children}

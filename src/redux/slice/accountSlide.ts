@@ -8,7 +8,6 @@ export const fetchAccount = createAsyncThunk(
     'account/fetchAccount',
     async (_, { rejectWithValue }) => {
         const response = await callFetchAccount();
-        console.log("fetchAccount response", response);
         if (isSuccessResponse<IGetAccount>(response)) {
             return response.data; // Trả về dữ liệu nếu thành công
         } else {
@@ -119,7 +118,6 @@ export const accountSlide = createSlice({
         setRefreshTokenAction: (state, action) => {
             state.isRefreshToken = action.payload?.status ?? false;
             state.errorRefreshToken = action.payload?.message ?? "";
-            console.log("setRefreshTokenAction", action.payload);
         }
 
     },

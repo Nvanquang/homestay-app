@@ -37,22 +37,14 @@ const ClientHomestayDetailPage = () => {
                 if (isSuccessResponse(res) && res?.data) {
                     setHomestayDetail(res.data)
                     setPosition([Number(res.data.latitude), Number(res.data.longitude)]);
+                    setTotalReviews(res.data.totalReviews || 0);
+                    setAverageRating(res.data.averageRating || 0);
                 }
                 setIsLoading(false)
             }
         }
         init();
-        fetchReviewTotal();
     }, [id]);
-
-    const fetchReviewTotal = async () => {
-        const res = await callGetReviewTotal(String(id));
-        if (isSuccessResponse(res) && res.data) {
-          setTotalReviews(res.data.totalReviews);
-          setAverageRating(res.data.averageRating);
-        }
-    
-      }
 
     return (
         <div className={styles.container} style={{ marginTop: 210 }}>
@@ -63,41 +55,53 @@ const ClientHomestayDetailPage = () => {
                     <Col span={12}>
                         <Image
                             src={homestayDetail?.images?.[0]}
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            style={{
+                                width: "566px",
+                                height: "380px",
+                                objectFit: "cover",
+                                borderRadius: "8px"
+                            }}
                         />
                     </Col>
 
                     {/* 4 ảnh nhỏ bên phải */}
                     <Col span={12}>
-                        <Row gutter={[8, 8]}>
-                            <Col span={12}>
-                                <Image src={homestayDetail?.images?.[1]} style={{ width: "100%" }} />
-                            </Col>
-                            <Col span={12}>
-                                <Image src={homestayDetail?.images?.[2]} style={{ width: "100%" }} />
-                            </Col>
-                            <Col span={12}>
-                                <Image src={homestayDetail?.images?.[3]} style={{ width: "100%" }} />
-                            </Col>
-                            <Col span={12}>
-                                <Image src={homestayDetail?.images?.[3]} style={{ width: "100%" }} />
-                            </Col>
+                        <Row gutter={[8, 8]} style={{ height: "380px" }}>
+
+                            {(() => {
+                                const elements = [];
+                                for (let i = 1; i <= 4; i++) {
+                                    elements.push(
+                                        <Col span={12} key={i}>
+                                            <Image
+                                                src={homestayDetail?.images?.[i] || homestayDetail?.images?.[0]}
+                                                style={{
+                                                    width: "280px",
+                                                    height: "187px",
+                                                    objectFit: "cover",
+                                                    borderRadius: "8px"
+                                                }}
+                                            />
+                                        </Col>
+                                    );
+                                }
+                                return elements;
+                            })()}
+
                         </Row>
                     </Col>
                 </Row>
             </div>
-            <HomestayMainContent 
+            <HomestayMainContent
                 homestayDetail={homestayDetail}
-                totalReviews={totalReviews}
-                averageRating={averageRating} 
             />
-            <ReviewSection 
-                homestayId={id}
-                averageRating={averageRating}
+            <ReviewSection
+                homestayDetail={homestayDetail}
                 showPagination={true}
             />
             <Card className={styles['booking-card']} style={{ marginTop: 24 }}>
                 <Title level={3} className={styles['booking-title']}>Nơi mà bạn sẽ đến</Title>
+                <h3 style={{paddingBottom: 10}}>Địa chỉ: {homestayDetail?.address}</h3>
                 {position[0] !== 0 && position[1] !== 0 && (
                     <MapContainer center={position} zoom={13} style={{ height: '400px', width: '100%' }}>
                         <TileLayer

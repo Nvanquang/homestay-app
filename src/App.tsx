@@ -29,6 +29,7 @@ import Footer from './components/client/footer.client';
 import { ISearchHomestayRequest } from './types/backend';
 import CheckoutSection from './pages/booking/checkout';
 import PaymentSuccessPage from './pages/booking/payment.success.page';
+import HomestayListPage from './pages/homestay/homestay.list';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -43,17 +44,16 @@ const LayoutClient = () => {
   }, [location]);
 
   const handleSearch = (searchData: ISearchHomestayRequest) => {
-      console.log('Search data:', searchData);
-      // Có thể dispatch fetchHomestay({ query }) ở đây nếu muốn search
-    };
+
+  };
 
   return (
     <div className='layout-app' ref={rootRef}>
-      <Header onSearch={handleSearch}/>
+      <Header onSearch={handleSearch} />
       <div className={styles['content-app']}>
         <Outlet context={[searchTerm, setSearchTerm]} />
       </div>
-      <Footer/>
+      <Footer />
     </div>
   )
 }
@@ -76,12 +76,13 @@ export default function App() {
     {
       path: "/",
       element: <LayoutApp><LayoutClient /></LayoutApp>,
-      errorElement: <NotFound />,
+      // errorElement: <NotFound />,
       children: [
         { index: true, element: <HomePage /> },
         { path: "homestay/:id", element: <ClientHomestayDetailPage /> },
         { path: "book/checkout/:homestayId", element: <CheckoutSection /> },
-        { path: "/payments/payment-callback", element: <PaymentSuccessPage /> }
+        { path: "/payments/payment-callback", element: <PaymentSuccessPage /> },
+        { path: "/homestay-search", element: <HomestayListPage /> }
       ],
     },
 

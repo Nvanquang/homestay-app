@@ -34,12 +34,10 @@ const amenities = [
 
 interface IProps {
   homestayDetail?: IHomestay | null;
-  totalReviews?: number;
-  averageRating?: number;
 }
 
 const HomestayMainContent = (props: IProps) => {
-  const { homestayDetail, totalReviews, averageRating } = props;
+  const { homestayDetail } = props;
 
   let location = useLocation();
   let params = new URLSearchParams(location.search);
@@ -111,7 +109,7 @@ const HomestayMainContent = (props: IProps) => {
         guests: guests,
         datebetween: datebetween,
         hoemstayImage: homestayDetail?.images?.[0],
-        averageRating: averageRating,
+        averageRating: homestayDetail?.averageRating || 0,
         availabilities: availabilities
       }
     });
@@ -150,138 +148,226 @@ const HomestayMainContent = (props: IProps) => {
 
 
   return (
-    <div className={styles[`main-content`]}>
-      <Row gutter={16}>
+    <div className={styles[`main-content`]} style={{paddingLeft: 20}}>
+      <Row gutter={[32, 24]}>
         {/* Main Description Column */}
         <Col xs={24} md={16}>
-          <Title level={2}>Phòng tại {homestayDetail?.address}</Title>
-          <Paragraph type="secondary">Phòng tắm khép kín</Paragraph>
-          <div className={styles.ratingRow}>
-            <CheckCircleFilled style={{ color: '#52c41a', marginRight: 8 }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
-            <Text strong>Được khách yêu thích</Text>
-            <Rate allowHalf disabled value={Number(averageRating)} style={{ margin: '0 8px' }} />
-            <Text strong>{averageRating}</Text>
-            <Text type="secondary" style={{ marginLeft: 8 }}>({totalReviews} đánh giá)</Text>
-          </div>
-          <Card className={styles.hostCard} bordered={false}>
-            <Card.Meta
-              avatar={<Avatar style={{ backgroundColor: '#000000ff' }} icon={<UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} />}
-              title={<span>Host: Viên <Tag color="blue">Superhost</Tag></span>}
-              description={<span>11 tháng kinh nghiệm đón tiếp khách</span>}
-            />
-          </Card>
-          <div className={styles.amenitiesSection}>
-            <Title level={4} style={{ marginBottom: 12 }}>Tiện nghi nổi bật</Title>
-            <List
-              grid={{ gutter: 12, column: 3 }}
-              dataSource={amenities}
-              renderItem={item => (
-                <List.Item className={styles.amenityItem}>
-                  {item.icon}
-                  <span style={{ marginLeft: 8 }}>{item.text}</span>
-                </List.Item>
-              )}
-            />
+          <div className={styles.contentHeader}>
+            <Title level={2} className={styles.homestayTitle}>
+              Phòng tại {homestayDetail?.address}
+            </Title>
+            <Paragraph type="secondary" className={styles.homestaySubtitle}>
+              Phòng tắm khép kín • {homestayDetail?.guests || 2} khách • {homestayDetail?.nightAmount ? `${homestayDetail.nightAmount.toLocaleString('vi-VN')}đ/đêm` : 'Liên hệ'}
+            </Paragraph>
           </div>
 
+          <div className={styles.ratingSection}>
+            <div className={styles.ratingRow}>
+              <CheckCircleFilled className={styles.ratingIcon} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+              <Text strong className={styles.ratingText}>Được khách yêu thích</Text>
+              <Rate 
+                allowHalf 
+                disabled 
+                value={Number(homestayDetail?.averageRating)} 
+                className={styles.ratingStars}
+              />
+              <Text strong className={styles.ratingScore}>{homestayDetail?.averageRating}</Text>
+              <Text type="secondary" className={styles.ratingCount}>
+                ({homestayDetail?.totalReviews} đánh giá)
+              </Text>
+            </div>
+          </div>
+
+          <Card className={styles.hostCard} bordered={false}>
+            <Card.Meta
+              avatar={
+                <Avatar 
+                  size={64}
+                  className={styles.hostAvatar}
+                  icon={<UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} 
+                />
+              }
+              title={
+                <div className={styles.hostInfo}>
+                  <span className={styles.hostName}>Host: {homestayDetail?.host?.name || 'Chủ nhà'}</span>
+                  <Tag color="blue" className={styles.superhostTag}>Superhost</Tag>
+                </div>
+              }
+              description={
+                <div className={styles.hostDescription}>
+                  <span>11 tháng kinh nghiệm đón tiếp khách</span>
+                  <div className={styles.hostStats}>
+                    <Text type="secondary">Phản hồi trong 1 giờ</Text>
+                    <Text type="secondary">•</Text>
+                    <Text type="secondary">Tỷ lệ hủy 0%</Text>
+                  </div>
+                </div>
+              }
+            />
+          </Card>
+
+          <div className={styles.amenitiesSection}>
+            <Title level={4} className={styles.sectionTitle}>
+              Tiện nghi nổi bật
+            </Title>
+            <div className={styles.amenitiesGrid}>
+              {amenities.map((item, index) => (
+                <div key={index} className={styles.amenityItem}>
+                  <div className={styles.amenityIcon}>
+                    {item.icon}
+                  </div>
+                  <span className={styles.amenityText}>{item.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.descriptionSection}>
+            <Title level={4} className={styles.sectionTitle}>
+              Mô tả
+            </Title>
+            <Paragraph className={styles.descriptionText}>
+              {homestayDetail?.description || 'Chưa có mô tả chi tiết cho homestay này.'}
+            </Paragraph>
+          </div>
         </Col>
+
         {/* Booking Sidebar Column */}
         <Col xs={24} md={8}>
           <StickyBox offsetTop={24} offsetBottom={24} className={styles.bookingAffix}>
-            <Card
-              className={styles.bookingCard}
-              bordered={false}>
-              {(startDate && endDate) && (
-                <Title level={4} style={{ marginBottom: 0 }}>
-                  {costTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ <Text type="secondary">cho {datebetween} đêm</Text>
-                </Title>
-              )}
-              <div style={{ margin: '16px 0' }}>
-                <RangePicker
-                  style={{ width: '100%' }}
-                  value={dates as any}
-                  format="DD/MM/YYYY"
-                  onChange={(values) => {
-                    if (
-                      values &&
-                      values[0] &&
-                      values[1] &&
-                      values.length === 2
-                    ) {
-                      const start = values[0];
-                      const end = values[1];
-                      // Không cho chọn cùng ngày hoặc end <= start
-                      if (end.isSame(start, 'day') || end.isBefore(start, 'day')) {
-                        setDates(null);
+            <Card className={styles.bookingCard} bordered={false}>
+              <div className={styles.bookingHeader}>
+                <div className={styles.priceInfo}>
+                  <Text className={styles.priceLabel}>Giá mỗi đêm</Text>
+                  <Title level={3} className={styles.priceAmount}>
+                    {homestayDetail?.nightAmount ? `${homestayDetail.nightAmount.toLocaleString('vi-VN')}đ` : 'Liên hệ'}
+                  </Title>
+                </div>
+                {(startDate && endDate) && (
+                  <div className={styles.totalInfo}>
+                    <Title level={4} className={styles.totalAmount}>
+                      {costTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ
+                    </Title>
+                    <Text type="secondary" className={styles.totalNights}>
+                      cho {datebetween} đêm
+                    </Text>
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.bookingForm}>
+                <div className={styles.dateSection}>
+                  <Text strong className={styles.formLabel}>Chọn ngày</Text>
+                  <RangePicker
+                    className={styles.datePicker}
+                    value={dates as any}
+                    format="DD/MM/YYYY"
+                    placeholder={['Nhận phòng', 'Trả phòng']}
+                    onChange={(values) => {
+                      if (
+                        values &&
+                        values[0] &&
+                        values[1] &&
+                        values.length === 2
+                      ) {
+                        const start = values[0];
+                        const end = values[1];
+                        // Không cho chọn cùng ngày hoặc end <= start
+                        if (end.isSame(start, 'day') || end.isBefore(start, 'day')) {
+                          setDates(null);
+                          setStartDate(null);
+                          setEndDate(null);
+                          message.error('Ngày trả phòng phải lớn hơn ngày nhận phòng!');
+                          return;
+                        }
+                        setDates(values);
+                        setStartDate(start.format('YYYY-MM-DD'));
+                        setEndDate(end.format('YYYY-MM-DD'));
+                        setDateWarning(null);
+                        calculateBookingCost(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+                      } else {
+                        setDates(values);
                         setStartDate(null);
                         setEndDate(null);
-                        message.error('Ngày trả phòng phải lớn hơn ngày nhận phòng!');
-                        return;
                       }
-                      setDates(values);
-                      setStartDate(start.format('YYYY-MM-DD'));
-                      setEndDate(end.format('YYYY-MM-DD'));
-                      setDateWarning(null);
-                      calculateBookingCost(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
-                    } else {
-                      setDates(values);
-                      setStartDate(null);
-                      setEndDate(null);
-                    }
-                  }}
-                  disabledDate={current =>
-                    bookedDates.includes(current.format('YYYY-MM-DD'))
-                  }
-                  dateRender={current => {
-                    const isBooked = bookedDates.includes(current.format('YYYY-MM-DD'));
-                    return (
-                      <div style={{
-                        opacity: isBooked ? 0.4 : 1,
-                        textDecoration: isBooked ? 'line-through' : undefined,
-                        pointerEvents: isBooked ? 'none' : undefined,
-                        color: isBooked ? '#888' : undefined
-                      }}>
-                        {current.date()}
-                      </div>
-                    );
-                  }}
-                />
-                <Select
-                  style={{ width: '100%', marginTop: 12 }}
-                  value={guests}
-                  onChange={value => setGuests(value)}
+                    }}
+                    disabledDate={current => {
+                      // Không cho chọn ngày trong quá khứ
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const currentDate = current.toDate();
+                      currentDate.setHours(0, 0, 0, 0);
+                      
+                      // Disable ngày trong quá khứ hoặc ngày đã được đặt
+                      return currentDate < today || bookedDates.includes(current.format('YYYY-MM-DD'));
+                    }}
+                    dateRender={current => {
+                      const isBooked = bookedDates.includes(current.format('YYYY-MM-DD'));
+                      const isPast = current.toDate() < new Date(new Date().setHours(0, 0, 0, 0));
+                      
+                      return (
+                        <div style={{
+                          opacity: (isBooked || isPast) ? 0.4 : 1,
+                          textDecoration: isBooked ? 'line-through' : undefined,
+                          pointerEvents: (isBooked || isPast) ? 'none' : undefined,
+                          color: (isBooked || isPast) ? '#888' : undefined
+                        }}>
+                          {current.date()}
+                        </div>
+                      );
+                    }}
+                  />
+                </div>
+
+                <div className={styles.guestsSection}>
+                  <Text strong className={styles.formLabel}>Số khách</Text>
+                  <Select
+                    className={styles.guestsSelect}
+                    value={guests}
+                    onChange={value => setGuests(value)}
+                    placeholder="Chọn số khách"
+                  >
+                    {[...Array(10)].map((_, i) => (
+                      <Select.Option key={i + 1} value={i + 1}>
+                        {i + 1} khách
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                {dateWarning && (
+                  <div className={styles.dateWarning}>{dateWarning}</div>
+                )}
+
+                <Access
+                  permission={ALL_PERMISSIONS.BOOKING.CREATE}
+                  hideChildren
                 >
-                  {[...Array(10)].map((_, i) => (
-                    <Select.Option key={i + 1} value={i + 1}>
-                      {i + 1} khách
-                    </Select.Option>
-                  ))}
-                </Select>
+                  <Button
+                    type="primary"
+                    size="large"
+                    loading={bookingLoading}
+                    className={styles.bookingBtn}
+                    onClick={handleBooking}
+                    block
+                    disabled={!startDate || !endDate}
+                  >
+                    {bookingLoading ? <Spin size="small" /> : 'Đặt phòng'}
+                  </Button>
+                </Access>
+
+                <div className={styles.bookingFooter}>
+                  <Text type="secondary" className={styles.bookingNote}>
+                    Bạn sẽ không bị tính phí ngay
+                  </Text>
+                </div>
               </div>
-              {dateWarning && (
-                <div style={{ color: 'red', marginBottom: 8 }}>{dateWarning}</div>
-              )}
-              < Access
-                permission={ALL_PERMISSIONS.BOOKING.CREATE}
-                hideChildren
-              >
-                <Button
-                  type="primary"
-                  shape="round"
-                  size="large"
-                  loading={bookingLoading}
-                  className={styles.bookingBtn}
-                  onClick={handleBooking}
-                  block
-                  disabled={!startDate || !endDate}
-                >
-                  {bookingLoading ? <Spin size="small" /> : 'Đặt phòng'}
-                </Button>
-              </Access>
 
               <div className={styles.reportFlag}>
-                <FlagOutlined style={{ marginRight: 6 }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
-                <Text type="secondary">Báo cáo nhà/phòng cho thuê này</Text>
+                <FlagOutlined className={styles.reportIcon} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                <Text type="secondary" className={styles.reportText}>
+                  Báo cáo nhà/phòng cho thuê này
+                </Text>
               </div>
             </Card>
           </StickyBox>

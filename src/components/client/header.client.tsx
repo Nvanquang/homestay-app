@@ -7,7 +7,7 @@ import { callLogout } from '@/config/api';
 import { Avatar, Dropdown, message, Space } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
-import { HomeOutlined, LoginOutlined, LogoutOutlined, MessageOutlined, QqOutlined, UserOutlined } from '@ant-design/icons';
+import { HomeOutlined, LoginOutlined, LogoutOutlined, MessageOutlined, QqOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 
 interface HeaderProps {
   onSearch?: (searchData: ISearchHomestayRequest) => void;
@@ -19,6 +19,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
 
   const user = useAppSelector(state => state.account.user);
   const isAuthenticated = useAppSelector(state => state.account.isAuthenticated)
+  const roleName = useAppSelector(state => state.account.user.role.name);
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -26,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
   const [searchData, setSearchData] = useState<ISearchHomestayRequest & { address?: string }>({
     longitude: 105.8342,
     latitude: 21.0278,
-    radius: 1000,
+    radius: 100000,
     status: 'AVAILABLE'
   });
 
@@ -81,6 +82,13 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
       key: 'home',
       icon: <HomeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
     },
+    ...(roleName === 'SUPER_ADMIN' || roleName === 'HOST'
+      ? [{
+          label: <Link to={'/admin'}>Quản trị hệ thống</Link>,
+          key: 'admin',
+          icon: <SettingOutlined  onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+        }]
+      : []),
     {
       label: <Link to={'/'}>Tin nhắn</Link>,
       key: 'messages',
@@ -120,14 +128,14 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
       <div className={styles.headerContainer}>
         <div className={styles.headerTop}>
           {/* Logo */}
-          <a href="/" className={styles.logo}>
+          <Link to="/" className={styles.logo}>
             <svg viewBox="0 0 32 32" fill="currentColor">
               <path d="M16 0C7.163 0 0 7.163 0 16s7.163 16 16 16 16-7.163 16-16S24.837 0 16 0zm0 30C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z" />
               <path d="M16 4C9.373 4 4 9.373 4 16s5.373 12 12 12 12-5.373 12-12S22.627 4 16 4zm0 22C10.486 26 6 21.514 6 16S10.486 6 16 6s10 4.486 10 10-4.486 10-10 10z" />
               <path d="M16 8c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zm0 14c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z" />
             </svg>
             Airbnb
-          </a>
+          </Link>
 
           {/* Navigation - Hidden when scrolled, shown when expanded */}
           {(!isScrolled || isExpanded) && (

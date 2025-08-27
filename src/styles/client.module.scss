@@ -240,7 +240,7 @@
   display: flex;
   align-items: center;
   padding: 0 8px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   border: 1px solid rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden;
@@ -254,7 +254,16 @@
     bottom: 0;
     background: linear-gradient(135deg, rgba(255, 56, 92, 0.02), rgba(227, 28, 95, 0.02));
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
+  }
+
+  // Hiệu ứng glow khi có section active
+  &.hasActiveSection {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.1);
+    
+    &::before {
+      opacity: 1;
+    }
   }
 }
 
@@ -289,9 +298,23 @@
   padding: 12px 16px;
   cursor: pointer;
   border-radius: 32px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
   overflow: hidden;
+  min-width: 0; /* allow flex item to shrink for ellipsis */
+
+  /* Prevent wrapping and enable ellipsis for labels/values */
+  .searchLabel,
+  .searchValue,
+  .dateSection,
+  .dateSection .searchLabel,
+  .dateSection .searchValue {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+  }
 
   &::before {
     content: '';
@@ -303,13 +326,29 @@
     background: rgba(0, 0, 0, 0.04);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.2s ease;
-    z-index: 1; // thêm dòng này
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 1;
+  }
+
+  // Hiệu ứng ripple khi click
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+    z-index: 0;
   }
 
   &:hover {
     background: rgba(0, 0, 0, 0.04);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     &::before {
       transform: scaleX(1);
@@ -317,11 +356,22 @@
   }
 
   &.active, &.active:hover {
-    background: rgba(0, 0, 0, 0.04);
-    transform: translateY(-1px);
+    background: rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    
     &::before {
       transform: scaleX(1);
     }
+
+    // Hiệu ứng pulse cho active section
+    animation: activePulse 2s infinite;
+  }
+
+  // Hiệu ứng khi chuyển từ section này sang section khác
+  &.transitioning {
+    transform: translateY(-1px);
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   &:not(:last-child)::after {
@@ -368,10 +418,19 @@
   font-size: 14px;
   color: #717171;
   display: block;
-  transition: color 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  white-space: nowrap; /* ensure no wrap */
+  overflow: hidden;    /* hide overflow */
+  text-overflow: ellipsis; /* show ... */
 
   .scrolled & {
     font-size: 12px;
+  }
+
+  // Hiệu ứng khi giá trị thay đổi
+  &.valueChanged {
+    animation: valueChange 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 }
 
@@ -510,10 +569,18 @@
 
   .searchSection {
     padding: 8px 12px;
+    min-width: 0; /* keep ellipsis working on mobile */
 
     .scrolled & {
       padding: 6px 8px;
     }
+  }
+
+  .searchLabel,
+  .searchValue {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .searchLabel {
@@ -712,6 +779,7 @@
   }
 }
 
+
 .destinationImage {
   height: 200px;
   overflow: hidden;
@@ -868,10 +936,25 @@ html {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   margin-top: 8px;
-  animation: dropdownSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: dropdownSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   border: 1px solid rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: top center;
+
+  // Hiệu ứng slide mượt mà
+  &.slideLeft {
+    animation: dropdownSlideLeft 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  &.slideRight {
+    animation: dropdownSlideRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  // Hiệu ứng fade khi chuyển đổi
+  &.fadeIn {
+    animation: dropdownFadeIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
 }
 
 // Calendar Container for dual month display
@@ -980,15 +1063,115 @@ html {
 }
 
 .locationItem {
-  padding: 12px 16px;
+  padding: 16px;
   cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-  font-size: 16px;
-  color: #222;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+  border: 1px solid transparent;
 
   &:hover {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.selectedLocation {
     background: rgba(0, 0, 0, 0.05);
+    border-color: #000000;
+  }
+}
+
+.locationItemContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.locationItemImage {
+  width: 60px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.locationImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.locationItemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.locationName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.locationDescription {
+  font-size: 14px;
+  color: #717171;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.locationRadius {
+  font-size: 12px;
+  color: #717171;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.locationSearchHeader {
+  padding: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.locationSearchInput {
+  border-radius: 8px;
+  
+  .ant-input {
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    
+    &:focus {
+      border-color: #000000;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+.locationSection {
+  padding: 0 16px 16px;
+}
+
+.locationSectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin: 16px 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.noResults {
+  text-align: center;
+  padding: 40px 16px;
+  color: #717171;
+  
+  p {
+    margin: 4px 0;
+    font-size: 14px;
   }
 }
 
@@ -1124,11 +1307,11 @@ html {
 @keyframes dropdownSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-20px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -1136,22 +1319,59 @@ html {
 @keyframes dropdownSlideLeft {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(30px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
   }
 }
 
 @keyframes dropdownSlideRight {
   from {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateX(-30px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
+  }
+}
+
+// Fade in animation
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Active pulse animation for search sections
+@keyframes activePulse {
+  0% {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(0, 0, 0, 0.1);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Smooth transition for search value changes
+@keyframes valueChange {
+  from {
+    opacity: 0.7;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
