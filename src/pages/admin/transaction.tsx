@@ -10,6 +10,7 @@ import { ALL_PERMISSIONS } from "@/config/permissions";
 import { sfLike } from "spring-filter-query-builder";
 import dayjs from "dayjs";
 import { fetchTransaction } from "@/redux/slice/transactionSlide";
+import { CheckCircleOutlined } from "@ant-design/icons";
 
 const TransactionPage = () => {
 
@@ -44,7 +45,10 @@ const TransactionPage = () => {
             render(dom, entity, index, action, schema) {
                 return <>
                     <Tag color={entity.status === "00" ? 'blue' : 'red'} >
-                        {entity.status === "00" ? 'SUCCESS' : 'FAILD'}
+                        {entity.status === '00' 
+                        ? <CheckCircleOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> 
+                        : null}
+                        {entity.status === "00" ? ' SUCCESS' : ' FAILD'}
                     </Tag>
                 </>
             },

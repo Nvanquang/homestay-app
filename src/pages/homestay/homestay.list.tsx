@@ -9,7 +9,6 @@ import {
   Breadcrumb,
   Empty,
   Input,
-  Carousel,
   Rate
 } from 'antd';
 import { HeartOutlined, HeartFilled, HomeOutlined, SearchOutlined } from '@ant-design/icons';
@@ -147,7 +146,7 @@ const HomestayListPage = () => {
             {
               title: (
                 <Link to="/">
-                  <HomeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                  Home
                 </Link>
               ),
             },

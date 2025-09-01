@@ -2,7 +2,7 @@ export interface IBackendRes<T> {
     status: number | string;
     message: string;
     data?: T;
-    timestamp: date;
+    timestamp: Date;
 }
 
 export interface IBackendError {
@@ -22,6 +22,12 @@ export interface IModelPaginate<T> {
         total: number;
     },
     result: T[]
+}
+
+export interface ICursorPageResponse<T> {
+    items: T[];
+    nextCursor: Date;
+    hasMore: boolean;
 }
 
 // Auth & User
@@ -123,16 +129,6 @@ export interface IHomestay {
     createdBy?: string;
     updatedAt?: Date | null;
     updatedBy?: string;
-}
-
-export interface ISearchHomestayRequest {
-    longitude?: number;
-    latitude?: number;
-    radius?: number;
-    checkinDate?: string;
-    checkoutDate?: string;
-    guests?: number;
-    status?: string;
 }
 
 export interface ISearchHomestayResponse {
@@ -260,4 +256,73 @@ export interface IAvailabilityRequest {
     dates: Date[] | null;
     price: number;
     status: string;
+}
+
+export interface IMessage {
+    id?: string;
+    conversationId?: string;
+    senderId?: string;
+    content?: string;
+    type?: string;
+    mediaUrl?: string;
+    status?: string;
+    readAt?: Date;
+    createdAt?: Date;
+}
+
+export interface IConversation {
+    id?: string;
+    userId?: string;
+    hostId?: string;
+    homestayId?: string;
+    messages?: IMessage[];
+    unreadCount?: number;
+    lastMessage?: string;
+    createdAt?: Date | string;
+    lastMessageAt?: Date | string;
+}
+
+// Chat Response Interfaces for Backend API
+export interface IChatUserInfo {
+    id: number;
+    userName: string;
+    fullName: string;
+    avatar: string;
+}
+
+export interface IChatMessageResponse {
+    id: number;
+    conversationId: number;
+    sender: IChatUserInfo;
+    content: string;
+    type: string;
+    mediaUrl?: string;
+    timestamp: string;
+    isRead: boolean;
+    readAt?: string;
+}
+
+export interface IChatConversationResponse {
+    id?: number;
+    user?: IChatUserInfo;
+    host?: IChatUserInfo;
+    homestayId?: number;
+    unreadCount?: boolean;
+    lastMessage?: string;
+    createdAt?: string;
+    lastMessageAt?: Date | string;
+    messages?: IChatMessageResponse[];
+}
+
+export interface ICreateConversationResponse {
+    id: number;
+    message: string;
+}
+
+export interface ISendMessageResponse {
+    id: number;
+    conversationId: number;
+    senderId: number;
+    message: string;
+    createdAt: string;
 }

@@ -287,7 +287,7 @@ const ModalHomestay = (props: IProps) => {
                 handleReset();
                 setTimeout(() => {
                     reloadTable();
-                }, 6000); // Delay to allow backend processing handle save images with async
+                }, 9000); // Delay to allow backend processing handle save images with async
             } else {
                 const errRes = res as IBackendError;
                 notification.error({

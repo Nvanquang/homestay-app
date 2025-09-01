@@ -2,7 +2,7 @@ import DataTable from "@/components/client/data-table";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchHomestay } from "@/redux/slice/homestaySlide";
 import { IBackendError, IHomestay } from "@/types/backend";
-import { CalendarOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { CalendarOutlined, CheckCircleOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, Tag, message, notification } from "antd";
 import { useState, useRef } from 'react';
@@ -92,7 +92,10 @@ const HomestayPage = ({ setActiveKey, setOpenViewAvailabity, setInitHomestayId, 
                                         : "default"
                         }
                     >
-                        {entity.status}
+                        {entity.status === 'ACTIVE' 
+                        ? <CheckCircleOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> 
+                        : null}
+                        {" " + entity.status}
                     </Tag>
                 )
             },

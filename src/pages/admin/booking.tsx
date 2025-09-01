@@ -11,7 +11,7 @@ import { sfLike } from "spring-filter-query-builder";
 import { fetchBooking } from "@/redux/slice/bookingSlide";
 import { colorBookingStatus } from "@/config/utils";
 import dayjs from "dayjs";
-import { LoadingOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, LoadingOutlined, SyncOutlined } from "@ant-design/icons";
 
 const BookingPage = () => {
 
@@ -67,10 +67,15 @@ const BookingPage = () => {
             render(dom, entity, index, action, schema) {
                 return <>
                     <Tag color={colorBookingStatus(entity.status)} >
-                        {entity.status !== 'BOOKED' 
-                        ? <Spin indicator={<LoadingOutlined spin onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} size="small" /> 
-                        : null}
-
+                        {
+                            (() => {
+                                if (entity.status === 'PAYMENT_PROCESSING') {
+                                    return <SyncOutlined spin onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                                } else if (entity.status === 'BOOKED') {
+                                    return <CheckCircleOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                                }
+                            })()
+                        }
                         {" " + entity.status}
                     </Tag>
                 </>

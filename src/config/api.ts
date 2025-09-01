@@ -1,4 +1,4 @@
-import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal, IVnpayBookingResponse, IBookingStatus, ISearchHomestayRequest, ISearchHomestayResponse } from '@/types/backend';
+import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal, IVnpayBookingResponse, IBookingStatus, ISearchHomestayRequest, ISearchHomestayResponse, IConversation, IMessage, IChatConversationResponse, IChatMessageResponse, ICreateConversationResponse, ISendMessageResponse, ICursorPageResponse } from '@/types/backend';
 import axios from './axios-customize';
 
 /**
@@ -190,19 +190,21 @@ export const callUploadHomestayImages = async (
         formData.append("files", file);
     });
     formData.append("folder", folder);
-    return axios.post<IBackendRes<IHomestayImage>>(`/api/v1/homestay/${homestayId}/images`, formData, {
+    return axios.post<IBackendRes<IHomestayImage>>(`/api/v1/files/homestay/${homestayId}/images`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     })
         .then((res) => res)
         .catch((error) => error.response.data);
 };
 
+// TODO: upload single file
+
 export const callGetHomestayImages = (homestayId: number) => {
-    return axios.get<IBackendRes<IBackendRes<IHomestayImage>>>(`/api/v1/homestay/${homestayId}/images`);
+    return axios.get<IBackendRes<IBackendRes<IHomestayImage>>>(`/api/v1/files/homestay/${homestayId}/images`);
 };
 
 export const callDeleteHomestayImage = (id: string) => {
-    return axios.delete<IBackendRes<IHomestayImage>>(`/api/v1/homestay-images/${id}`);
+    return axios.delete<IBackendRes<IHomestayImage>>(`/api/v1/files/homestay-images/${id}`);
 };
 
 
@@ -336,12 +338,6 @@ export const callGetReviewsByHomestay = (homestayId: string, query?: string) => 
     return axios.get<IBackendRes<IModelPaginate<IReview>>>(`/api/v1/reviews/homestay/${homestayId}?${query}`);
 };
 
-export const callGetReviewTotal = async (homestayId: string): Promise<IBackendRes<IReviewTotal> | IBackendError> => {
-    return axios.get<IBackendRes<IReviewTotal>>(`/api/v1/reviews/homestay/${homestayId}/total`)
-        .then((res) => res)
-        .catch((error) => error.response.data);
-};
-
 
 // TRANSACTIONAL
 export const callGetTransactionById = async (id: string): Promise<IBackendRes<IPaymentTransaction> | IBackendError> => {
@@ -370,4 +366,71 @@ export const callUpdateAvailability = async (data: IHomestayAvailability): Promi
 
 export const callGetAvailabilities = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IHomestayAvailability>>>(`/api/v1/availabilities?${query}`);
+};
+
+
+// CONVERSATION
+export const callCreateConversation = async (data: {
+    userId: string;
+    hostId: string;
+    homestayId: string;
+}): Promise<IBackendRes<ICreateConversationResponse> | IBackendError> => {
+    return axios.post<IBackendRes<ICreateConversationResponse>>('/api/v1/conversations', data)
+        .then((res) => res)
+        .catch((error) => error.response.data);
+};
+
+export const callGetConversationsByUser = async (userId: string): Promise<IBackendRes<IChatConversationResponse[]> | IBackendError> => {
+    return axios.get<IBackendRes<IChatConversationResponse[]>>(`/api/v1/conversations/user/${userId}`)
+        .then((res) => res)
+        .catch((error) => error.response.data);
+};
+
+export const callGetConversationById = async (id: string): Promise<IBackendRes<IChatConversationResponse> | IBackendError> => {
+    return axios.get<IBackendRes<IChatConversationResponse>>(`/api/v1/conversations/${id}`)
+        .then((res) => res)
+        .catch((error) => error.response.data);
+};
+
+export const callUpdateConversationUnreadStatus = async (id: string, data: {
+    unread: boolean;
+}): Promise<IBackendRes<void> | IBackendError> => {
+    return axios.patch<IBackendRes<void>>(`/api/v1/conversations/${id}/unread`, data)
+        .then((res) => res)
+        .catch((error) => error.response.data);
+};
+
+export const callDeleteConversation = async (id: string, data: {
+    userId: string;
+}): Promise<IBackendRes<void> | IBackendError> => {
+    return axios.delete<IBackendRes<void>>(`/api/v1/conversations/${id}`, { data })
+        .then((res) => res)
+        .catch((error) => error.response.data);
+};
+
+// MESSAGE
+export const callSendMessage = async (data: {
+    conversationId: string;
+    senderId: string;
+    content: string;
+    type: string;
+    mediaUrl?: string;
+}): Promise<IBackendRes<ISendMessageResponse> | IBackendError> => {
+    return axios.post<IBackendRes<ISendMessageResponse>>('/api/v1/messages', data)
+        .then((res) => res)
+        .catch((error) => error.response.data);
+};
+
+export const callMarkMessageAsRead = async (id: string, data: {
+    userId: string;
+}): Promise<IBackendRes<void> | IBackendError> => {
+    return axios.patch<IBackendRes<void>>(`/api/v1/messages/${id}/read`, data)
+        .then((res) => res)
+        .catch((error) => error.response.data);
+};
+
+export const callGetMessages = async (conversationId: string, cursor: Date, page: number = 0, size: number = 20): Promise<IBackendRes<ICursorPageResponse<IChatMessageResponse>> | IBackendError> => {
+    return axios.get<IBackendRes<ICursorPageResponse<IChatMessageResponse>>>(`/api/v1/conversations/${conversationId}/messages?page=${page}&size=${size}`)
+        .then((res) => res)
+        .catch((error) => error.response.data);
 };

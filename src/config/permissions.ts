@@ -64,4 +64,17 @@ export const ALL_PERMISSIONS = {
         GET_TOTAL_RATING: { method: "GET", apiPath: "/api/v1/reviews/homestay/{homestayId}/total", module: "REVIEW" },
         GET_BY_HOMESTAY: { method: "GET", apiPath: "/api/v1/reviews/homestay/{homestayId}", module: "REVIEW" },
     },
+    CONVERSATION: {
+        CREATE: { method: "POST", apiPath: "/api/v1/conversations", module: "CONVERSATION" },
+        GET_BY_USER: { method: "GET", apiPath: "/api/v1/conversations/user/{userId}", module: "CONVERSATION" },
+        GET_BY_ID: { method: "GET", apiPath: "/api/v1/conversations/{id}", module: "CONVERSATION" },
+        UPDATE_UNREAD: { method: "PATCH", apiPath: "/api/v1/conversations/{id}/unread", module: "CONVERSATION" },
+        DELETE: { method: "DELETE", apiPath: "/api/v1/conversations/{id}", module: "CONVERSATION" },
+    },
+    MESSAGE: {
+        SEND: { method: "POST", apiPath: "/api/v1/messages", module: "MESSAGE" },
+        MARK_AS_READ: { method: "PATCH", apiPath: "/api/v1/messages/{id}/read", module: "MESSAGE" },
+        GET_BY_CONVERSATION: { method: "GET", apiPath: "/api/v1/conversations/{conversationId}/messages", module: "MESSAGE" },
+    },
+
 };

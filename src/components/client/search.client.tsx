@@ -285,7 +285,7 @@ const Search: React.FC<SearchProps> = ({
           >
             <GuestDropdown 
               onSelect={handleGuestChange}
-              currentGuests={searchData.guests}
+              currentGuests={Number(searchData.guests)}
               onClose={() => setActiveDropdown(null)}
             />
           </div>
@@ -440,7 +440,7 @@ const Search: React.FC<SearchProps> = ({
         >
           <GuestDropdown 
             onSelect={handleGuestChange}
-            currentGuests={searchData.guests}
+            currentGuests={Number(searchData.guests)}
             onClose={() => setActiveDropdown(null)}
           />
         </div>

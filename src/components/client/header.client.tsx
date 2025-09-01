@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Search from '@/components/client/search.client';
 import styles from '@/styles/client.module.scss';
 import { ISearchHomestayRequest } from '@/types/backend';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { callLogout } from '@/config/api';
 import { Avatar, Dropdown, message, Space } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
@@ -15,6 +15,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onSearch }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
 
   const user = useAppSelector(state => state.account.user);
@@ -65,7 +66,11 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
     setSearchData(prev => ({ ...prev, ...newData }));
   };
 
-  const headerClass = `${styles.header} ${isScrolled ? styles.scrolled : ''} ${isExpanded ? styles.expanded : ''}`;
+  // Khóa thanh header khi đang ở trang tin nhắn
+  const isMessageRoute = location.pathname.startsWith('/message') || location.pathname.startsWith('/book/checkout');
+  const effectiveScrolled = isMessageRoute ? true : isScrolled;
+  const effectiveExpanded = isMessageRoute ? false : isExpanded;
+  const headerClass = `${styles.header} ${effectiveScrolled ? styles.scrolled : ''} ${effectiveExpanded ? styles.expanded : ''}`;
 
   const handleLogout = async () => {
     const res = await callLogout();
@@ -90,7 +95,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
         }]
       : []),
     {
-      label: <Link to={'/'}>Tin nhắn</Link>,
+      label: <Link to={'/messages'}>Tin nhắn</Link>,
       key: 'messages',
       icon: <MessageOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
     },
@@ -138,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
           </Link>
 
           {/* Navigation - Hidden when scrolled, shown when expanded */}
-          {(!isScrolled || isExpanded) && (
+          {(!isMessageRoute && (!effectiveScrolled || effectiveExpanded)) && (
             <nav className={styles.navigation}>
               <a
                 href="#homestay"
@@ -165,7 +170,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
           )}
 
           {/* Search Bar - Shown when scrolled but not expanded */}
-          {isScrolled && !isExpanded && (
+          {(!isMessageRoute && effectiveScrolled && !effectiveExpanded) && (
             <div className={styles.scrolledSearchContainer}>
               <Search
                 isScrolled={true}
@@ -201,7 +206,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
         </div>
 
         {/* Search Section - Shown when not scrolled or when expanded */}
-        {(!isScrolled || isExpanded) && (
+        {(!isMessageRoute && (!effectiveScrolled || effectiveExpanded)) && (
           <div className={styles.headerBottom}>
             <Search
               isScrolled={false}

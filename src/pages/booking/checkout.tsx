@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Row, Col, Card, Typography, InputNumber, Button, Select, Image, Rate, Descriptions, DatePicker, notification, Spin, Input } from 'antd';
+import { Row, Col, Card, Typography, InputNumber, Button, Select, Image, Rate, Descriptions, DatePicker, notification, Spin, Input, Breadcrumb } from 'antd';
 import styles from '@/styles/checkout.module.scss';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs'
 import { callCreateBooking } from '@/config/api';
 import { isSuccessResponse } from '@/config/utils';
@@ -49,8 +49,32 @@ const CheckoutSection = () => {
     };
 
     return (
-        <div className={styles.checkoutSection} style={{ marginTop: 200 }}>
-            <Row gutter={16}>
+        <div className={styles.checkoutSection} style={{ marginTop: 130 }}>
+            {/* Breadcrumb */}
+            <div className={styles['breadcrumb-container']}>
+                <Breadcrumb
+                    items={[
+                        {
+                            title: (
+                                <Link to="/">
+                                    Home
+                                </Link>
+                            ),
+                        },
+                        {
+                            title: (
+                                <Link to={`/homestay/detail?id=${homestayId}`}>
+                                    Chi tiết homestay
+                                </Link>
+                            ),
+                        },
+                        {
+                            title: 'Checkout',
+                        },
+                    ]}
+                />
+            </div>
+            <Row gutter={16} style={{ marginTop: 20 }}>
                 <Col span={12}>
                     <Card>
                         <Title level={3}>Xác nhận và thanh toán</Title>

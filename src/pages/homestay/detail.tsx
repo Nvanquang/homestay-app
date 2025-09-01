@@ -1,9 +1,9 @@
-import { callGetHomestayById, callGetReviewTotal } from "@/config/api";
+import { callGetHomestayById } from "@/config/api";
 import { isSuccessResponse } from "@/config/utils";
 import { IHomestay } from "@/types/backend";
-import { Card, Col, Image, Row } from "antd";
+import { Breadcrumb, Card, Col, Image, Row } from "antd";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styles from '@/styles/homestaydetail.module.scss';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
@@ -11,6 +11,7 @@ import 'leaflet/dist/leaflet.css';
 import HomestayMainContent from "./main.content";
 import ReviewSection from "./review";
 import Title from "antd/es/typography/Title";
+import { HomeOutlined } from "@ant-design/icons";
 
 const customIcon = new L.Icon({
     iconUrl: 'https://unpkg.com/leaflet@1.8.0/dist/images/marker-icon.png',
@@ -47,7 +48,24 @@ const ClientHomestayDetailPage = () => {
     }, [id]);
 
     return (
-        <div className={styles.container} style={{ marginTop: 210 }}>
+        <div className={styles.container} style={{ marginTop: 230 }}>
+            {/* Breadcrumb */}
+            <div className={styles['breadcrumb-container']}>
+                <Breadcrumb
+                    items={[
+                        {
+                            title: (
+                                <Link to="/">
+                                    Home
+                                </Link>
+                            ),
+                        },
+                        {
+                            title: 'Chi tiết homestay',
+                        },
+                    ]}
+                />
+            </div>
             <h1 style={{ paddingTop: 20, paddingBottom: 20 }}>{homestayDetail?.description}</h1>
             <div>
                 <Row gutter={[8, 8]}>
@@ -101,7 +119,7 @@ const ClientHomestayDetailPage = () => {
             />
             <Card className={styles['booking-card']} style={{ marginTop: 24 }}>
                 <Title level={3} className={styles['booking-title']}>Nơi mà bạn sẽ đến</Title>
-                <h3 style={{paddingBottom: 10}}>Địa chỉ: {homestayDetail?.address}</h3>
+                <h3 style={{ paddingBottom: 10 }}>Địa chỉ: {homestayDetail?.address}</h3>
                 {position[0] !== 0 && position[1] !== 0 && (
                     <MapContainer center={position} zoom={13} style={{ height: '400px', width: '100%' }}>
                         <TileLayer

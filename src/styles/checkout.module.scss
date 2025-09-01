@@ -1,8 +1,18 @@
+.breadcrumb-container {
+  // margin-top: 50px;
+  padding: 16px 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 .checkoutSection {
   background: #fff;
-  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1760px;
+  margin: 0 auto;
+  padding: 0 80px;
 
   .ant-btn-primary {
     transition: transform 0.3s ease, background-color 0.3s ease;
