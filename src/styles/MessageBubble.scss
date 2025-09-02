@@ -1,0 +1,140 @@
+// Authentic Airbnb Message Bubble Styles
+.message-bubble {
+  display: flex;
+  margin-bottom: 20px;
+  align-items: flex-end;
+  gap: 12px;
+  max-width: 100%;
+
+  &--sent {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+  }
+
+  &--received {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+    margin-bottom: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &__content {
+    max-width: 65%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  &__sender {
+    font-size: 13px;
+    color: #717171;
+    margin-bottom: 6px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  &__text {
+    padding: 14px 18px;
+    border-radius: 20px;
+    font-size: 15px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+    &--sent {
+      background: linear-gradient(135deg, #ff5a5f 0%, #ff385c 100%);
+      color: white;
+      border-bottom-right-radius: 8px;
+      margin-left: auto;
+      box-shadow: 0 2px 8px rgba(255, 90, 95, 0.3);
+    }
+
+    &--received {
+      background: #f0f0f0;
+      color: #222222;
+      border-bottom-left-radius: 8px;
+      margin-right: auto;
+      border: 1px solid #e8e8e8;
+    }
+  }
+
+  &__timestamp {
+    font-size: 12px;
+    color: #717171;
+    margin-top: 6px;
+    text-align: right;
+    font-weight: 500;
+
+    .message-bubble--received & {
+      text-align: left;
+    }
+  }
+}
+
+// Group consecutive messages from same sender
+.message-bubble + .message-bubble {
+  &.message-bubble--sent + .message-bubble--sent,
+  &.message-bubble--received + .message-bubble--received {
+    margin-top: -12px;
+
+    .message-bubble__avatar {
+      visibility: hidden;
+    }
+
+    .message-bubble__sender {
+      display: none;
+    }
+
+    .message-bubble__text {
+      &--sent {
+        border-top-right-radius: 8px;
+      }
+
+      &--received {
+        border-top-left-radius: 8px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .message-bubble {
+    gap: 8px;
+    margin-bottom: 16px;
+
+    &__content {
+      max-width: 75%;
+    }
+
+    &__text {
+      padding: 12px 16px;
+      font-size: 14px;
+    }
+
+    &__sender {
+      font-size: 12px;
+    }
+
+    &__timestamp {
+      font-size: 11px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .message-bubble {
+    &__content {
+      max-width: 85%;
+    }
+
+    &__text {
+      padding: 10px 14px;
+      font-size: 14px;
+    }
+  }
+}

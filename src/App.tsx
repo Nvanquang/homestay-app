@@ -30,6 +30,7 @@ import { ISearchHomestayRequest } from './types/backend';
 import CheckoutSection from './pages/booking/checkout';
 import PaymentSuccessPage from './pages/booking/payment.success.page';
 import HomestayListPage from './pages/homestay/homestay.list';
+import ChatPage from './pages/chat';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -82,7 +83,8 @@ export default function App() {
         { path: "homestay/:id", element: <ClientHomestayDetailPage /> },
         { path: "book/checkout/:homestayId", element: <CheckoutSection /> },
         { path: "/payments/payment-callback", element: <PaymentSuccessPage /> },
-        { path: "/homestay-search", element: <HomestayListPage /> }
+        { path: "/homestay-search", element: <HomestayListPage /> },
+        { path: "/messages", element: <ChatPage /> }
       ],
     },
 

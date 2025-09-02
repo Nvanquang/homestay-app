@@ -1,5 +1,6 @@
-import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal, IVnpayBookingResponse, IBookingStatus, ISearchHomestayRequest, ISearchHomestayResponse, IConversation, IMessage, IChatConversationResponse, IChatMessageResponse, ICreateConversationResponse, ISendMessageResponse, ICursorPageResponse } from '@/types/backend';
+import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal, IVnpayBookingResponse, IBookingStatus, ISearchHomestayRequest, ISearchHomestayResponse, IConversation, IMessage, IChatConversationResponse, IChatMessageResponse, ICreateConversationResponse, ISendMessageResponse, ICursorPageResponse, Message } from '@/types/backend';
 import axios from './axios-customize';
+import { Conversation } from '@/components/chat/types';
 
 /**
  * 
@@ -380,8 +381,8 @@ export const callCreateConversation = async (data: {
         .catch((error) => error.response.data);
 };
 
-export const callGetConversationsByUser = async (userId: string): Promise<IBackendRes<IChatConversationResponse[]> | IBackendError> => {
-    return axios.get<IBackendRes<IChatConversationResponse[]>>(`/api/v1/conversations/user/${userId}`)
+export const callGetConversationsByUser = async (userId: string): Promise<IBackendRes<Conversation[]> | IBackendError> => {
+    return axios.get<IBackendRes<Conversation[]>>(`/api/v1/conversations/user/${userId}`)
         .then((res) => res)
         .catch((error) => error.response.data);
 };
@@ -429,8 +430,8 @@ export const callMarkMessageAsRead = async (id: string, data: {
         .catch((error) => error.response.data);
 };
 
-export const callGetMessages = async (conversationId: string, cursor: Date, page: number = 0, size: number = 20): Promise<IBackendRes<ICursorPageResponse<IChatMessageResponse>> | IBackendError> => {
-    return axios.get<IBackendRes<ICursorPageResponse<IChatMessageResponse>>>(`/api/v1/conversations/${conversationId}/messages?page=${page}&size=${size}`)
+export const callGetMessages = async (conversationId: string, page: number = 0, size: number = 5): Promise<IBackendRes<Message[]> | IBackendError> => {
+    return axios.get<IBackendRes<Message[]>>(`/api/v1/conversations/${conversationId}/messages?page=${page}&size=${size}`)
         .then((res) => res)
         .catch((error) => error.response.data);
 };

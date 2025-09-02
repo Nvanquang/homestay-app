@@ -272,15 +272,28 @@ export interface IMessage {
 
 export interface IConversation {
     id?: string;
-    userId?: string;
-    hostId?: string;
-    homestayId?: string;
-    messages?: IMessage[];
+    title?: string;
+    participants?: User[];
     unreadCount?: number;
-    lastMessage?: string;
-    createdAt?: Date | string;
-    lastMessageAt?: Date | string;
+    lastMessage?: Message;
+    lastActivity?: Date;
+    
 }
+
+export interface User {
+    id: string;
+    name: string;
+    avatar: string;
+    role: string;
+  }
+  
+  export interface Message {
+    id: string;
+    content: string;
+    senderId: string;
+    timestamp: Date;
+    type: string;
+  }
 
 // Chat Response Interfaces for Backend API
 export interface IChatUserInfo {
