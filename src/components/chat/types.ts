@@ -1,6 +1,6 @@
 export interface User {
   id: string;
-  name: string;
+  fullName: string;
   avatar: string;
   role: string;
 }
@@ -20,8 +20,8 @@ export interface HomestayInfo {
   description: string;
   guests: number;
   address: string;
-  images: string;
-  status: 'active' | 'inactive' | 'maintenance';
+  image: string;
+  status: string;
   nightAmount: number;
   averageRating?: number;
   totalReviews?: number;

@@ -20,7 +20,15 @@ export default defineConfig(({ command, mode }) => {
       // visualizer() as PluginOption
     ],
     server: {
-      port: parseInt(env.PORT)
+      host: true,
+      port: parseInt(env.PORT),
+      proxy: {
+        '/chat': {
+          target: 'ws://localhost:8080',
+          ws: true,
+          changeOrigin: true,
+        },
+      },
     },
     resolve: {
       alias: {
@@ -30,6 +38,9 @@ export default defineConfig(({ command, mode }) => {
         config: `${path.resolve(__dirname, "./src/config/")}`,
         pages: `${path.resolve(__dirname, "./src/pages/")}`,
       },
+    },
+    define: {
+      global: 'window',
     },
   }
 })

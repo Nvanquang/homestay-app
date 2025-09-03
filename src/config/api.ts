@@ -299,7 +299,7 @@ export const callCreateUser = async (data: {
         .catch((error) => error.response.data);
 };
 
-export const callGetUserById = async (id: string): Promise<IBackendRes<IRole> | IBackendError> => {
+export const callGetUserById = async (id: string): Promise<IBackendRes<IUser> | IBackendError> => {
     return axios.get<IBackendRes<IUser>>(`/api/v1/users/${id}`)
         .then((res) => res)
         .catch((error) => error.response.data);
@@ -410,18 +410,6 @@ export const callDeleteConversation = async (id: string, data: {
 };
 
 // MESSAGE
-export const callSendMessage = async (data: {
-    conversationId: string;
-    senderId: string;
-    content: string;
-    type: string;
-    mediaUrl?: string;
-}): Promise<IBackendRes<ISendMessageResponse> | IBackendError> => {
-    return axios.post<IBackendRes<ISendMessageResponse>>('/api/v1/messages', data)
-        .then((res) => res)
-        .catch((error) => error.response.data);
-};
-
 export const callMarkMessageAsRead = async (id: string, data: {
     userId: string;
 }): Promise<IBackendRes<void> | IBackendError> => {

@@ -76,7 +76,7 @@ export interface IUser {
         id: string;
         name: string;
     }
-
+    avatar?: string;
 }
 
 // Role & Permission
@@ -291,6 +291,7 @@ export interface User {
     id: string;
     content: string;
     senderId: string;
+    role: string;
     timestamp: Date;
     type: string;
   }

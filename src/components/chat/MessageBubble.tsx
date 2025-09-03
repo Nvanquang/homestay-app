@@ -11,7 +11,7 @@ interface MessageBubbleProps {
 }
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({ message, sender, isCurrentUser }) => {
-
+  
   return (
     <div className={`message-bubble ${isCurrentUser ? 'message-bubble--sent' : 'message-bubble--received'}`}>
       {!isCurrentUser && (
@@ -25,7 +25,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, sender, isCurren
       <div className="message-bubble__content">
         {!isCurrentUser && (
           <div className="message-bubble__sender">
-            {sender.name} - {sender.role === 'host' ? 'Chủ nhà' : 'Khách'}
+            {sender.fullName} - {sender.role === 'host' ? 'Chủ nhà' : 'Khách'}
           </div>
         )}
         

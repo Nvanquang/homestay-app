@@ -58,7 +58,6 @@ const HomestayListPage = () => {
       try {
         setLoading(true);
         const res = await callSearchHomestays(longitude, latitude, radius, checkin, checkout, guests, available);
-        console.log('Search homestays response:', res.data);
         if (res?.status === 200 && res.data) {
           setHomestays(Array.isArray(res.data) ? res.data : [res.data]);
         }

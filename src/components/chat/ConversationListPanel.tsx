@@ -31,16 +31,8 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
       return unreadCount > 0;
     })
     : conversations;
-
-  useEffect(() => {
-    const init = async () => {
-      const res = await callGetConversationsByUser(userId);
-      if (isSuccessResponse(res) && res.data) {
-        setConversations(res.data);
-      }
-     }
-    init();
-  }, [userId]);
+  
+    
   return (
     <div className="conversation-panel">
       <div className="conversation-panel__header">
