@@ -42,7 +42,8 @@ const ModalPermission = (props: IProps) => {
                 const errRes = res as IBackendError;
                 notification.error({
                     message: 'Có lỗi xảy ra',
-                    description: errRes.detail
+                    description: errRes.detail,
+                    duration: 2
                 });
             }
         } else {
@@ -60,7 +61,8 @@ const ModalPermission = (props: IProps) => {
                 const errRes = res as IBackendError;
                 notification.error({
                     message: 'Có lỗi xảy ra',
-                    description: errRes.detail
+                    description: errRes.detail,
+                    duration: 2
                 });
             }
         }

@@ -78,11 +78,11 @@ const MainContent = (props: IProps) => {
                             </div>
                             <div className={styles.destinationInfo}>
                                 <h4>{destination.name}</h4>
-                                <div style={{marginTop: 10}}>
-                                    <Rate disabled value={Number(destination.averageRating)} allowHalf style={{ fontSize: 14 }} />
-                                <Typography.Text style={{ marginLeft: 8, fontSize: 13 }} >
-                                    {destination.averageRating} ({destination.totalReviews} đánh giá)
-                                </Typography.Text>
+                                <div style={{ marginTop: 10 }}>
+                                    <Rate disabled value={Number(destination.averageRating)} allowHalf style={{ fontSize: 13 }} />
+                                    <Typography.Text style={{ marginLeft: 5, fontSize: 13 }} >
+                                        {(destination.averageRating || 0).toFixed(1)} ({destination.totalReviews} đánh giá)
+                                    </Typography.Text>
                                 </div>
                             </div>
                         </Card>

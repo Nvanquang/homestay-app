@@ -117,7 +117,8 @@ const ModalHomestay = (props: IProps) => {
                 console.error("Error initializing modal:", error);
                 notification.error({
                     message: "Lỗi khởi tạo",
-                    description: "Không thể tải dữ liệu homestay."
+                    description: "Không thể tải dữ liệu homestay.",
+                    duration: 2
                 });
             });
         }
@@ -139,16 +140,18 @@ const ModalHomestay = (props: IProps) => {
         if (!isValidType) {
             notification.error({
                 message: 'Lỗi upload',
-                description: 'Chỉ được upload file JPG, JPEG hoặc PNG!'
+                description: 'Chỉ được upload file JPG, JPEG hoặc PNG!',
+                duration: 2
             });
             return Upload.LIST_IGNORE;
         }
 
-        const isUnder1MB = file.size <= 1 * 1024 * 1024; // 1MB
-        if (!isUnder1MB) {
+        const isUnder2MB = file.size <= 2 * 1024 * 1024; // 2MB
+        if (!isUnder2MB) {
             notification.error({
                 message: 'Lỗi upload',
-                description: 'Kích thước file phải nhỏ hơn 1MB!'
+                description: 'Kích thước file phải nhỏ hơn 2MB!',
+                duration: 2
             });
             return Upload.LIST_IGNORE;
         }
@@ -157,7 +160,8 @@ const ModalHomestay = (props: IProps) => {
         if (!isUnderLimit) {
             notification.error({
                 message: 'Lỗi upload',
-                description: 'Chỉ được upload tối đa 5 ảnh!'
+                description: 'Chỉ được upload tối đa 5 ảnh!',
+                duration: 2
             });
             return Upload.LIST_IGNORE;
         }
@@ -233,7 +237,8 @@ const ModalHomestay = (props: IProps) => {
         if (actualFiles.length === 0 && currentImages.length === 0) {
             notification.error({
                 message: "Có lỗi xảy ra",
-                description: "Vui lòng upload ít nhất một ảnh homestay."
+                description: "Vui lòng upload ít nhất một ảnh homestay.",
+                duration: 2
             });
             return;
         }
@@ -292,14 +297,16 @@ const ModalHomestay = (props: IProps) => {
                 const errRes = res as IBackendError;
                 notification.error({
                     message: "Có lỗi xảy ra",
-                    description: errRes.detail || "Không thể lưu homestay."
+                    description: errRes.detail || "Không thể lưu homestay.",
+                    duration: 2
                 });
             }
         } catch (error) {
             console.error("Error submitting homestay:", error);
             notification.error({
                 message: "Có lỗi xảy ra",
-                description: "Không thể lưu homestay. Vui lòng thử lại."
+                description: "Không thể lưu homestay. Vui lòng thử lại.",
+                duration: 2
             });
         }
     };

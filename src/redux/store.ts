@@ -11,6 +11,7 @@ import homestayReducer from './slice/homestaySlide';
 import bookingReducer from './slice/bookingSlide';
 import transactionReducer from './slice/transactionSlide';
 import availabilityReducer from './slice/availabilitySlide';
+import notificationReducer from './slice/notificationSlice';
 
 export const store = configureStore({
   reducer: {
@@ -22,9 +23,9 @@ export const store = configureStore({
     homestay: homestayReducer,
     transaction: transactionReducer,
     availability: availabilityReducer,
+    notifications: notificationReducer,
   },
 });
-
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

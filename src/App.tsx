@@ -31,6 +31,7 @@ import CheckoutSection from './pages/booking/checkout';
 import PaymentSuccessPage from './pages/booking/payment.success.page';
 import HomestayListPage from './pages/homestay/homestay.list';
 import ChatPage from './pages/chat';
+import { WebSocketProvider } from './contexts/WebSocketContext';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,7 +63,6 @@ const LayoutClient = () => {
 export default function App() {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(state => state.account.isLoading);
-
 
   useEffect(() => {
     if (
@@ -161,8 +161,8 @@ export default function App() {
   ]);
 
   return (
-    <>
+    <WebSocketProvider>
       <RouterProvider router={router} />
-    </>
+    </WebSocketProvider>
   )
 }

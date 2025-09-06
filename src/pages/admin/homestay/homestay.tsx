@@ -42,7 +42,8 @@ const HomestayPage = ({ setActiveKey, setOpenViewAvailabity, setInitHomestayId, 
                 const errRes = res as IBackendError;
                 notification.error({
                     message: 'Có lỗi xảy ra',
-                    description: errRes.detail
+                    description: errRes.detail,
+                    duration: 2
                 });
             }
         }

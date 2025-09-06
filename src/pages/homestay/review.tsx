@@ -68,7 +68,7 @@ const ReviewSection = (props: IProps) => {
                 <TrophyOutlined className={styles['trophy-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
               </div>
               <div className={styles['score-content']}>
-                <Title level={1} className={styles['score-number']}>{homestayDetail?.averageRating}</Title>
+                <Title level={1} className={styles['score-number']}>{(homestayDetail?.averageRating || 0).toFixed(1)}</Title>
                 <Text className={styles['score-label']}>Điểm đánh giá</Text>
               </div>
             </div>
@@ -84,7 +84,7 @@ const ReviewSection = (props: IProps) => {
                 </div>
                 <div className={styles['stat-divider']}></div>
                 <div className={styles['stat-item']}>
-                  <Text strong className={styles['stat-number']}>{Number(homestayDetail?.averageRating) * 20}%</Text>
+                  <Text strong className={styles['stat-number']}>{((Number(homestayDetail?.averageRating) || 0) * 20).toFixed(1)}%</Text>
                   <Text className={styles['stat-label']}>Hài lòng</Text>
                 </div>
               </div>
@@ -131,6 +131,7 @@ const ReviewSection = (props: IProps) => {
                         <Paragraph 
                           ellipsis={{ rows: 3, expandable: true, symbol: 'Xem thêm' }}
                           className={styles['review-comment']}
+                          style={{marginLeft: 10}}
                         >
                           {item.comment}
                         </Paragraph>
@@ -174,6 +175,7 @@ const ReviewSection = (props: IProps) => {
                         <Paragraph 
                           ellipsis={{ rows: 3, expandable: true, symbol: 'Xem thêm' }}
                           className={styles['review-comment']}
+                          style={{marginLeft: 10}}
                         >
                           {item.comment}
                         </Paragraph>

@@ -36,7 +36,8 @@ const UserPage = () => {
             } else {
                 notification.error({
                     message: 'Có lỗi xảy ra',
-                    description: res.detail
+                    description: res.detail,
+                    duration: 2
                 });
             }
         }

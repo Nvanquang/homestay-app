@@ -418,7 +418,7 @@ export const callMarkMessageAsRead = async (id: string, data: {
         .catch((error) => error.response.data);
 };
 
-export const callGetMessages = async (conversationId: string, page: number = 0, size: number = 5): Promise<IBackendRes<Message[]> | IBackendError> => {
+export const callGetMessages = async (conversationId: string, page: number = 0, size: number = 30): Promise<IBackendRes<Message[]> | IBackendError> => {
     return axios.get<IBackendRes<Message[]>>(`/api/v1/conversations/${conversationId}/messages?page=${page}&size=${size}`)
         .then((res) => res)
         .catch((error) => error.response.data);

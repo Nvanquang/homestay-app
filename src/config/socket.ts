@@ -2,6 +2,7 @@ import { Client } from "@stomp/stompjs";
 
 let stompClient: Client | null = null;
 
+// Chat WebSocket functions only
 export const connectWS = (
   conversationId: number,
   onMessage: (msg: any) => void,
@@ -32,6 +33,7 @@ export const connectWS = (
               }
             }
           );
+          resolve(stompClient!);
       },
 
       onWebSocketError: (error) => {

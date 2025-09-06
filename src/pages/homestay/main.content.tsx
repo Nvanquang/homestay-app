@@ -171,7 +171,7 @@ const HomestayMainContent = (props: IProps) => {
                 value={Number(homestayDetail?.averageRating)} 
                 className={styles.ratingStars}
               />
-              <Text strong className={styles.ratingScore}>{homestayDetail?.averageRating}</Text>
+              <Text strong className={styles.ratingScore}>{(homestayDetail?.averageRating || 0).toFixed(1)}</Text>
               <Text type="secondary" className={styles.ratingCount}>
                 ({homestayDetail?.totalReviews} đánh giá)
               </Text>

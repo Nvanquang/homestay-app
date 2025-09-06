@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Row, Col, Card, Typography, InputNumber, Button, Select, Image, Rate, Descriptions, DatePicker, notification, Spin, Input, Breadcrumb } from 'antd';
 import styles from '@/styles/checkout.module.scss';
 import { Link, useLocation } from 'react-router-dom';
-import dayjs from 'dayjs'
+import { useAppSelector } from '@/redux/hooks';
 import { callCreateBooking } from '@/config/api';
 import { isSuccessResponse } from '@/config/utils';
+import { useWebSocket } from '@/contexts/WebSocketContext';
+import dayjs from 'dayjs';
 import { IBackendError } from '@/types/backend';
 import Access from '@/components/share/access';
 import { ALL_PERMISSIONS } from '@/config/permissions';
@@ -21,6 +23,9 @@ const CheckoutSection = () => {
     const [bookingLoading, setBookingLoading] = useState(false);
 
     const [paymentMethod, setPaymentMethod] = useState<string>('vnpay');
+    const user = useAppSelector(state => state.account.user);
+    const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
+    const { subscribeToPayment } = useWebSocket();
     const [startDate, setStartDate] = useState<string | null>(bookedMainForm[0] ? dayjs(bookedMainForm[0]).format('YYYY-MM-DD') : null);
     const [endDate, setEndDate] = useState<string | null>(bookedMainForm[1] ? dayjs(bookedMainForm[1]).format('YYYY-MM-DD') : null);
 
@@ -29,21 +34,33 @@ const CheckoutSection = () => {
         setPaymentMethod(value);
     };
 
+
     const handlePayment = async () => {
         try {
             setBookingLoading(true);
             const res = await callCreateBooking(userId, homestayId, String(startDate), String(endDate), guests.toString(), note);
 
-            if (isSuccessResponse(res) && res?.status === 201 && res.data?.payment?.vnpUrl) {
-                window.location.assign(res.data.payment.vnpUrl);
+            if (isSuccessResponse(res) && res.status === 201 && res.data) {
+                const bookingId = res.data.booking.id;
+                console.log('Booking created successfully:', bookingId);
+                
+                // Subscribe to payment notifications for this booking
+                if (bookingId) {
+                    subscribeToPayment(Number(bookingId));
+                }
+                
+                // Redirect to VNPay payment URL
+                window.location.href = res.data.payment.vnpUrl;
+            } else {
+                const errMes = res as IBackendError;
+                notification.error({
+                    message: 'Có lỗi xảy ra',
+                    description: errMes.detail,
+                    duration: 2
+                });
             }
-        } catch (error) {
-            const errMes = error as IBackendError;
-            notification.error({
-                message: 'Có lỗi xảy ra',
-                description: errMes.message
-            });
-        } finally {
+        } 
+        finally {
             setBookingLoading(false);
         }
     };

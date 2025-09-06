@@ -45,9 +45,7 @@
 
   .homestay-card-image {
     width: 100% !important;
-    height: 200px !important; /* Force exact height */
     min-height: 200px !important; /* Ensure minimum height */
-    max-height: 200px !important; /* Cap maximum height */
     min-width: 100% !important; /* Ensure image covers full width */
     object-fit: cover !important; /* Crop/scale to fit while maintaining aspect ratio */
     object-position: center !important;

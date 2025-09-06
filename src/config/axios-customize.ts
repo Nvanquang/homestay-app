@@ -74,7 +74,8 @@ instance.interceptors.response.use(
         if (+error.response.status === 403) {
             notification.error({
                 message: error?.response?.data?.detail ?? "",
-                description: error?.response?.data?.message ?? ""
+                description: error?.response?.data?.message ?? "",
+                duration: 2
             })
         }
 

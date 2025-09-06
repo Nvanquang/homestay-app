@@ -68,7 +68,8 @@ const ModalUser = (props: IProps) => {
                 const errRes = res as IBackendError;
                 notification.error({
                     message: 'Có lỗi xảy ra',
-                    description: errRes.detail
+                    description: errRes.detail,
+                    duration: 2
                 });
             }
         } else {
@@ -91,7 +92,8 @@ const ModalUser = (props: IProps) => {
                 const errRes = res as IBackendError;
                 notification.error({
                     message: 'Có lỗi xảy ra',
-                    description: errRes.detail
+                    description: errRes.detail,
+                    duration: 2
                 });
             }
         }
