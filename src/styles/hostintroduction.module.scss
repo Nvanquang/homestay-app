@@ -1,0 +1,563 @@
+// Premium Host Introduction Component Styles
+.host-introduction {
+  margin: 48px 0;
+  
+  .section-title {
+    margin-bottom: 32px !important;
+    font-weight: 700;
+    color: #222222;
+    font-size: 32px !important;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #000000 0%, #000000 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+// Premium Host Card Styles
+.premium-host-card {
+  margin-bottom: 32px;
+  
+  .host-main-card {
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    border: none;
+    background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+    }
+    
+    .ant-card-body {
+      padding: 40px;
+    }
+  }
+}
+
+// Host Profile Section
+.host-profile-section {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  
+  .host-avatar-section {
+    flex-shrink: 0;
+    
+    .host-ribbon {
+      .ant-ribbon {
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+      }
+    }
+    
+    .avatar-wrapper {
+      position: relative;
+      display: inline-block;
+      
+      .premium-avatar {
+        border: 4px solid #ffffff;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+        }
+      }
+      
+      .verified-badge-premium {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+        border-radius: 50%;
+        padding: 8px;
+        color: white;
+        font-size: 16px;
+        box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+        animation: pulse 2s infinite;
+      }
+    }
+  }
+  
+  .host-info-text {
+    flex: 1;
+    
+    .host-name {
+      margin: 0 0 8px 0 !important;
+      font-weight: 700;
+      color: #222222;
+      font-size: 28px !important;
+    }
+    
+    .host-title {
+      font-size: 16px;
+      color: #717171;
+      margin-bottom: 16px;
+      display: block;
+    }
+    
+    .host-badges {
+      margin: 16px 0 24px 0;
+      
+      .badge-item {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        color: #495057;
+        border: 1px solid #dee2e6;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background: linear-gradient(135deg, #FF385C 0%, #E61E4D 100%);
+          color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(255, 56, 92, 0.3);
+        }
+        
+        .anticon {
+          margin-right: 6px;
+        }
+      }
+    }
+  }
+}
+
+// Enhanced Host Stats
+.host-stats {
+  margin-top: 16px;
+  
+  .stat-item {
+    text-align: center;
+    padding: 12px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: linear-gradient(135deg, #FF385C 0%, #E61E4D 100%);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 56, 92, 0.25);
+      
+      .stat-number, .stat-label {
+        color: white !important;
+      }
+      
+      .star-icon {
+        color: #ffd700 !important;
+      }
+    }
+    
+    .stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: #222222;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #717171;
+      font-weight: 500;
+    }
+    
+    .star-icon {
+      color: #FF385C;
+      font-size: 16px;
+      margin-left: 4px;
+    }
+  }
+}
+
+// Host Info Section
+.host-info-section {
+  .host-info-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    
+    .ant-card-body {
+      padding: 24px;
+    }
+    
+    .info-stats {
+      .info-stat-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background: rgba(255, 56, 92, 0.05);
+          border-color: rgba(255, 56, 92, 0.2);
+          transform: translateY(-1px);
+        }
+        
+        .info-icon {
+          color: #FF385C;
+          font-size: 18px;
+          flex-shrink: 0;
+        }
+        
+        .info-value {
+          font-size: 18px;
+          font-weight: 700;
+          color: #222222;
+          line-height: 1;
+        }
+        
+        .info-label {
+          font-size: 12px;
+          color: #717171;
+          margin-top: 2px;
+        }
+      }
+    }
+    
+    .premium-message-button {
+      background: linear-gradient(135deg, #FF385C 0%, #E61E4D 100%);
+      border: none;
+      border-radius: 16px;
+      font-weight: 600;
+      height: 48px;
+      font-size: 16px;
+      box-shadow: 0 4px 16px rgba(255, 56, 92, 0.3);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: linear-gradient(135deg, #E61E4D 0%, #D63384 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(255, 56, 92, 0.4);
+      }
+      
+      &:focus {
+        background: linear-gradient(135deg, #E61E4D 0%, #D63384 100%);
+        box-shadow: 0 8px 24px rgba(255, 56, 92, 0.4);
+      }
+    }
+  }
+}
+
+// Premium Host Bio
+.premium-host-bio {
+  margin-top: 32px;
+  
+  .bio-card {
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    border: none;
+    background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+    
+    .ant-card-body {
+      padding: 32px;
+    }
+    
+    .bio-title {
+      margin: 0 0 16px 0 !important;
+      font-weight: 700;
+      color: #222222;
+      font-size: 24px !important;
+    }
+    
+    .bio-text {
+      font-size: 16px;
+      line-height: 1.7;
+      color: #484848;
+      margin-bottom: 0 !important;
+    }
+    
+    .bio-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 20px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+      height: 100%;
+      
+      &:hover {
+        background: linear-gradient(135deg, #FF385C 0%, #E61E4D 100%);
+        color: white;
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(255, 56, 92, 0.25);
+        
+        .bio-icon {
+          color: white !important;
+        }
+        
+        .ant-typography {
+          color: white !important;
+        }
+      }
+      
+      .bio-icon {
+        color: #FF385C;
+        font-size: 20px;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(82, 196, 26, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+  }
+}
+
+// Enhanced Responsive Design
+@media (max-width: 1200px) {
+  .host-profile-section {
+    flex-direction: column;
+    gap: 24px;
+    
+    .host-avatar-section {
+      align-self: center;
+    }
+    
+    .host-info-text {
+      text-align: center;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .host-introduction {
+    margin: 32px 0;
+    
+    .section-title {
+      font-size: 24px !important;
+      text-align: center;
+    }
+  }
+  
+  .premium-host-card {
+    .host-main-card {
+      border-radius: 16px;
+      
+      .ant-card-body {
+        padding: 24px;
+      }
+    }
+  }
+  
+  .host-profile-section {
+    .host-avatar-section {
+      .avatar-wrapper {
+        .premium-avatar {
+          width: 100px !important;
+          height: 100px !important;
+        }
+      }
+    }
+    
+    .host-info-text {
+      .host-name {
+        font-size: 24px !important;
+      }
+      
+      .host-badges {
+        justify-content: center;
+        
+        .badge-item {
+          font-size: 12px;
+          padding: 6px 12px;
+        }
+      }
+    }
+  }
+  
+  .host-stats {
+    .stat-item {
+      padding: 8px;
+      
+      .stat-number {
+        font-size: 20px;
+      }
+      
+      .stat-label {
+        font-size: 11px;
+      }
+    }
+  }
+  
+  .host-info-section {
+    .host-info-card {
+      .ant-card-body {
+        padding: 20px;
+      }
+      
+      .info-stats {
+        .info-stat-item {
+          padding: 12px;
+          
+          .info-value {
+            font-size: 16px;
+          }
+        }
+      }
+      
+      .premium-message-button {
+        height: 44px;
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .premium-host-bio {
+    .bio-card {
+      border-radius: 16px;
+      
+      .ant-card-body {
+        padding: 24px;
+      }
+      
+      .bio-title {
+        font-size: 20px !important;
+        text-align: center;
+      }
+      
+      .bio-text {
+        font-size: 15px;
+      }
+      
+      .bio-info-item {
+        padding: 16px;
+        text-align: center;
+        
+        .bio-icon {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .host-introduction {
+    margin: 24px 0;
+    
+    .section-title {
+      font-size: 20px !important;
+    }
+  }
+  
+  .premium-host-card {
+    .host-main-card {
+      .ant-card-body {
+        padding: 16px;
+      }
+    }
+  }
+  
+  .host-profile-section {
+    .host-avatar-section {
+      .avatar-wrapper {
+        .premium-avatar {
+          width: 80px !important;
+          height: 80px !important;
+        }
+        
+        .verified-badge-premium {
+          padding: 6px;
+          font-size: 14px;
+        }
+      }
+    }
+    
+    .host-info-text {
+      .host-name {
+        font-size: 20px !important;
+      }
+      
+      .host-title {
+        font-size: 14px;
+      }
+      
+      .host-badges {
+        .badge-item {
+          font-size: 11px;
+          padding: 4px 8px;
+        }
+      }
+    }
+  }
+  
+  .host-stats {
+    .stat-item {
+      padding: 6px;
+      
+      .stat-number {
+        font-size: 18px;
+      }
+      
+      .stat-label {
+        font-size: 10px;
+      }
+    }
+  }
+  
+  .host-info-section {
+    .host-info-card {
+      .ant-card-body {
+        padding: 16px;
+      }
+      
+      .premium-message-button {
+        height: 40px;
+        font-size: 13px;
+      }
+    }
+  }
+  
+  .premium-host-bio {
+    .bio-card {
+      .ant-card-body {
+        padding: 20px;
+      }
+      
+      .bio-title {
+        font-size: 18px !important;
+      }
+      
+      .bio-text {
+        font-size: 14px;
+      }
+      
+      .bio-info-item {
+        padding: 12px;
+        
+        .bio-icon {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+}

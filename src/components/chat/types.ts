@@ -9,6 +9,7 @@ export interface Message {
   id: string;
   content: string;
   senderId: string;
+  conversationId: string;
   timestamp: Date;
   type: string;
   readAt?: Date;

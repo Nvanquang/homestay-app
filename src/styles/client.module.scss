@@ -718,11 +718,27 @@
   max-width: 1760px;
   margin: 0 auto;
   padding: 0 80px;
+
+  @media (max-width: 1440px) {
+    padding: 0 60px;
+  }
+
+  @media (max-width: 1024px) {
+    padding: 0 40px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 16px;
+  }
 }
 
 // Section Titles
 .sectionTitle {
-  font-size: 20px;
+  font-size: 32px;
   font-weight: 700;
   text-align: center;
   margin-bottom: 3rem;
@@ -740,6 +756,21 @@
     background: linear-gradient(135deg, #000000, #000000);
     border-radius: 2px;
   }
+
+  @media (max-width: 1024px) {
+    font-size: 28px;
+    margin-bottom: 2.5rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+    margin-bottom: 1.5rem;
+  }
 }
 
 // Featured Destinations Section
@@ -749,19 +780,14 @@
 }
 
 .destinationGrid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 30px;
   margin-top: 40px;
 
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
   @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
+    margin-top: 24px;
   }
+
   @media (max-width: 480px) {
-    grid-template-columns: 1fr;
+    margin-top: 20px;
   }
 }
 
@@ -772,10 +798,29 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
     transform: translateY(-10px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  @media (max-width: 768px) {
+    border-radius: 16px;
+    
+    &:hover {
+      transform: translateY(-5px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    border-radius: 12px;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
   }
 }
 
@@ -783,6 +828,7 @@
 .destinationImage {
   height: 200px;
   overflow: hidden;
+  position: relative;
 
   img {
     width: 100%;
@@ -794,21 +840,95 @@
   .destinationCard:hover & img {
     transform: scale(1.1);
   }
+
+  @media (max-width: 1024px) {
+    height: 180px;
+  }
+
+  @media (max-width: 768px) {
+    height: 160px;
+  }
+
+  @media (max-width: 480px) {
+    height: 140px;
+  }
 }
+
 
 .destinationInfo {
   padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
-  h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #222;
+  @media (max-width: 768px) {
+    padding: 16px;
   }
 
-  p {
-    color: #717171;
-    font-size: 0.9rem;
+  @media (max-width: 480px) {
+    padding: 12px;
+  }
+}
+
+.destinationName {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #222;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+}
+
+.ratingSection {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  @media (max-width: 480px) {
+    gap: 2px;
+  }
+}
+
+.ratingStars {
+  font-size: 13px;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+  }
+}
+
+.ratingText {
+  font-size: 13px;
+  color: #717171;
+  margin-left: 0 !important;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 11px;
   }
 }
 
@@ -879,6 +999,129 @@
   }
 }
 
+// Skeleton Loading Styles
+.skeletonImage {
+  width: 100% !important;
+  height: 200px !important;
+  
+  @media (max-width: 1024px) {
+    height: 180px !important;
+  }
+
+  @media (max-width: 768px) {
+    height: 160px !important;
+  }
+
+  @media (max-width: 480px) {
+    height: 140px !important;
+  }
+}
+
+// Empty State Styles
+.emptyState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: 40px 20px;
+
+  @media (max-width: 768px) {
+    min-height: 200px;
+    padding: 20px;
+  }
+}
+
+.emptyContent {
+  .ant-empty-description {
+    color: #717171;
+    font-size: 16px;
+
+    @media (max-width: 768px) {
+      font-size: 14px;
+    }
+  }
+}
+
+// Pagination Styles
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+  padding: 20px 0;
+
+  @media (max-width: 768px) {
+    margin-top: 40px;
+    padding: 16px 0;
+  }
+
+  @media (max-width: 480px) {
+    margin-top: 30px;
+    padding: 12px 0;
+  }
+}
+
+.pagination {
+  .ant-pagination-item {
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    
+    &:hover {
+      border-color: #000000;
+    }
+
+    @media (max-width: 480px) {
+      min-width: 32px;
+      height: 32px;
+      line-height: 30px;
+    }
+  }
+
+  .ant-pagination-item-active {
+    background: #000000;
+    border-color: #000000;
+
+    a {
+      color: white;
+    }
+  }
+
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    
+    &:hover {
+      border-color: #000000;
+    }
+
+    @media (max-width: 480px) {
+      min-width: 32px;
+      height: 32px;
+      line-height: 30px;
+    }
+  }
+
+  .ant-pagination-jump-prev,
+  .ant-pagination-jump-next {
+    @media (max-width: 480px) {
+      min-width: 32px;
+      height: 32px;
+      line-height: 30px;
+    }
+  }
+}
+
+// Featured Section Responsive Adjustments
+.featuredSection {
+  @media (max-width: 768px) {
+    padding: 60px 0;
+  }
+
+  @media (max-width: 480px) {
+    padding: 40px 0;
+  }
+}
+
 // Responsive adjustments
 @media (max-width: 768px) {
   .heroTitle {
@@ -889,27 +1132,6 @@
     font-size: 1rem;
   }
   
-  .sectionTitle {
-    font-size: 2rem;
-  }
-  
-  .destinationGrid {
-    display: grid;
-    // grid-template-columns: repeat(4, 1fr); // 5 cột mỗi hàng
-    gap: 30px;
-    margin-top: 40px;
-
-    @media (max-width: 1200px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    @media (max-width: 768px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    @media (max-width: 480px) {
-      grid-template-columns: 1fr;
-    }
-  }
-  .featuredSection,
   .experienceSection {
     padding: 60px 0;
   }
@@ -1391,6 +1613,32 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.3);
+}
+
+// Touch-friendly interactions for mobile
+@media (hover: none) and (pointer: coarse) {
+  .destinationCard {
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+// Improved focus states for accessibility
+.destinationCard {
+  &:focus-visible {
+    outline: 2px solid #000000;
+    outline-offset: 2px;
+  }
+}
+
+// Performance optimizations
+.destinationImage img {
+  will-change: transform;
+}
+
+.destinationCard {
+  will-change: transform, box-shadow;
 }
 
 // Airbnb style footer

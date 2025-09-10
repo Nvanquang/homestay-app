@@ -66,6 +66,7 @@ export const ALL_PERMISSIONS = {
     },
     CONVERSATION: {
         CREATE: { method: "POST", apiPath: "/api/v1/conversations", module: "CONVERSATION" },
+        GET_BY_CONVERSATION: { method: "GET", apiPath: "/api/v1/conversations/{conversationId}/messages", module: "CONVERSATION" },
         GET_BY_USER: { method: "GET", apiPath: "/api/v1/conversations/user/{userId}", module: "CONVERSATION" },
         GET_BY_ID: { method: "GET", apiPath: "/api/v1/conversations/{id}", module: "CONVERSATION" },
         UPDATE_UNREAD: { method: "PATCH", apiPath: "/api/v1/conversations/{id}/unread", module: "CONVERSATION" },
@@ -73,8 +74,7 @@ export const ALL_PERMISSIONS = {
     },
     MESSAGE: {
         SEND: { method: "POST", apiPath: "/api/v1/messages", module: "MESSAGE" },
-        MARK_AS_READ: { method: "PATCH", apiPath: "/api/v1/messages/{id}/read", module: "MESSAGE" },
-        GET_BY_CONVERSATION: { method: "GET", apiPath: "/api/v1/conversations/{conversationId}/messages", module: "MESSAGE" },
+        MARK_AS_READ: { method: "PATCH", apiPath: "/api/v1/messages/{id}/read", module: "MESSAGE" },   
     },
 
 };

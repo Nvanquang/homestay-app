@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Typography, Input, Avatar } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { Typography, Input, Avatar, Button } from 'antd';
+import { SearchOutlined, MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import ConversationListPanel from './ConversationListPanel';
 import ChatArea from './ChatArea';
 import BookingInfo from './BookingInfo';
@@ -9,6 +9,7 @@ import '../../styles/ChatInterface.scss';
 import { callGetConversationsByUser, callGetMessages } from '@/config/api';
 import { isSuccessResponse } from '@/config/utils';
 import { useAppSelector } from '@/redux/hooks';
+import { useChatWebSocket, ChatMessage } from '@/contexts/ChatWebSocketContext';
 
 const { Title } = Typography;
 
@@ -20,21 +21,60 @@ const ChatInterface: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [currentConversation, setCurrentConversation] = useState<any>(null);
   const [conversationsData, setConversationsData] = useState<Conversation[]>([]);
+  const [showConversationList, setShowConversationList] = useState(false);
+  const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1200);
   const userStore = useAppSelector(state => state.account.user);
   const userId = userStore.id;
   
-  // Mock current user for now
-  // const currentUse = { id: '1', name: 'User', avatar: '', fullName: 'User', role: 'guest' };
+  // Use the chat WebSocket context
+  const { isConnected, joinConversation, leaveConversation, sendMessage: sendChatMessage, onMessageReceived } = useChatWebSocket();
+  
   const currentUser = {
     id: userStore.id,
     fullName: userStore.name,
     avatar: "",
     role: userStore.role.name === "USER" ? "guest" : "host"
   }
-  // Use mock data for now
+  // Initialize conversations and set up message listener
   useEffect(() => {
     init();
-  }, [userId]);
+    
+    // Set up message listener for real-time updates
+    onMessageReceived((message: ChatMessage) => {
+      // Convert ChatMessage to local Message format
+      const localMessage: Message = {
+        id: message.id,
+        content: message.content,
+        senderId: message.senderId,
+        conversationId: message.conversationId,
+        timestamp: message.timestamp,
+        type: message.type
+      };
+      
+      // Only add message if it's for the current conversation
+      if (message.conversationId === selectedConversation) {
+        setMessages(prev => {
+          // Avoid duplicates
+          const exists = prev.some(msg => msg.id === message.id);
+          if (exists) return prev;
+          return [...prev, localMessage];
+        });
+      }
+    });
+  }, [userId, selectedConversation, onMessageReceived]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+      // Auto close conversation list on desktop
+      if (window.innerWidth >= 768) {
+        setShowConversationList(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const init = async () => {
     const res = await callGetConversationsByUser(userId);
@@ -46,18 +86,35 @@ const ChatInterface: React.FC = () => {
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation) return;
 
-    const messageData = {
+    const messageData: ChatMessage = {
       id: Date.now().toString(),
       content: newMessage,
       senderId: currentUser.id,
       conversationId: selectedConversation,
       timestamp: new Date(),
-      type: 'text' as const
+      type: 'text'
     };
 
-    // Add message to local state immediately
-    setMessages(prev => [...prev, messageData]);
-    setNewMessage('');
+    try {
+      // Send via WebSocket
+      await sendChatMessage(messageData);
+      
+      // Add message to local state immediately for better UX
+      const localMessage: Message = {
+        id: messageData.id,
+        content: messageData.content,
+        senderId: messageData.senderId,
+        conversationId: messageData.conversationId,
+        timestamp: messageData.timestamp,
+        type: messageData.type
+      };
+      
+      setMessages(prev => [...prev, localMessage]);
+      setNewMessage('');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      // Could show error notification here
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -102,51 +159,77 @@ const ChatInterface: React.FC = () => {
 
   const handleConversationSelect = (conversationId: string) => {
     if (conversationId !== selectedConversation) {
+      // Leave previous conversation
+      if (selectedConversation) {
+        leaveConversation();
+      }
+      
       const selectedConv = conversationsData.find(conv => conv.id === conversationId);
       
       if (selectedConv) {
         setCurrentConversation(selectedConv);
         initMessages(conversationId);
+        
+        // Join the new conversation via WebSocket
+        joinConversation(conversationId);
       }
       
       setSelectedConversation(conversationId);
+      
+      // Close conversation list on mobile after selection
+      if (windowWidth < 768) {
+        setShowConversationList(false);
+      }
     }
+  };
+
+  const toggleConversationList = () => {
+    setShowConversationList(!showConversationList);
   };
 
   const initMessages = async (conversationId: string) => {
     const res = await callGetMessages(conversationId);
     if (isSuccessResponse(res) && res.data) {
-      setMessages(res.data);
+      // Convert backend messages to local Message format
+      const localMessages: Message[] = res.data.map(msg => ({
+        id: msg.id,
+        content: msg.content,
+        senderId: msg.senderId,
+        conversationId: conversationId,
+        timestamp: msg.timestamp,
+        type: msg.type
+      }));
+      setMessages(localMessages);
     }
   };
 
 
   return (
     <div className="airbnb-chat">
-      {/* Header */}
-      <div className="airbnb-chat__header">
-        <div className="airbnb-chat__header-left">
-          <Title level={3} className="airbnb-chat__title">Tin nhắn</Title>
-        </div>
-        <div className="airbnb-chat__header-right">
-          <Input
-            placeholder="Tìm kiếm tin nhắn"
-            prefix={<SearchOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
-            className="airbnb-chat__search"
-          />
-          <Avatar src={currentUser?.avatar} size={32} />
-        </div>
+      {/* Simple Header with Avatar */}
+      <div className="airbnb-chat__simple-header">
+        <Avatar src={currentUser?.avatar} size={40} />
       </div>
 
       <div className="airbnb-chat__body">
         {/* Conversation List */}
-        <div className="airbnb-chat__conversations">
+        <div className={`airbnb-chat__conversations ${
+          windowWidth < 768 && showConversationList ? 'airbnb-chat__conversations--open' : ''
+        }`}>
           <ConversationListPanel
             conversations={conversationsData.length > 0 ? conversationsData : []}
             activeConversationId={selectedConversation || undefined}
             onConversationSelect={handleConversationSelect}
           />
         </div>
+
+        {/* Mobile Overlay */}
+        {windowWidth < 768 && showConversationList && (
+          <div 
+            className="airbnb-chat__overlay"
+            onClick={() => setShowConversationList(false)}
+          />
+        )}
 
         {/* Main Chat Area */}
         <div className="airbnb-chat__main">
@@ -160,6 +243,9 @@ const ChatInterface: React.FC = () => {
             onKeyPress={handleKeyPress}
             getUserById={getUserById}
             currentUser={currentUser}
+            showConversationList={showConversationList}
+            onToggleConversationList={toggleConversationList}
+            windowWidth={windowWidth}
           />
         </div>
 

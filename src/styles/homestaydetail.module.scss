@@ -1,3 +1,23 @@
+// Override Ant Design Image default display - multiple approaches
+.ant-image {
+  display: block !important;
+}
+
+:where(.css-dev-only-do-not-override-99djwu).ant-image {
+  display: block !important;
+}
+
+// Global override for all ant image components
+:global(.ant-image) {
+  display: block !important;
+}
+
+// More specific targeting
+.ant-image img {
+  display: block !important;
+  width: 100% !important;
+}
+
 .breadcrumb-container {
   // margin-top: 50px;
   padding: 16px 20px;

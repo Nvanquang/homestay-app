@@ -32,6 +32,7 @@ import PaymentSuccessPage from './pages/booking/payment.success.page';
 import HomestayListPage from './pages/homestay/homestay.list';
 import ChatPage from './pages/chat';
 import { WebSocketProvider } from './contexts/WebSocketContext';
+import { ChatWebSocketProvider } from './contexts/ChatWebSocketContext';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -162,7 +163,9 @@ export default function App() {
 
   return (
     <WebSocketProvider>
-      <RouterProvider router={router} />
+      <ChatWebSocketProvider>
+        <RouterProvider router={router} />
+      </ChatWebSocketProvider>
     </WebSocketProvider>
   )
 }

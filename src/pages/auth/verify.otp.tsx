@@ -81,10 +81,10 @@ const VerifyOtpPage = () => {
                 localStorage.removeItem("verifyEmail");
                 navigate('/login')
             } else {
-                message.error((res as any)?.message || 'Xác thực OTP thất bại!');
+                message.error((res as any)?.detail || 'Xác thực OTP thất bại!');
             }
         } catch (err: any) {
-            message.error(err?.message || 'Có lỗi xảy ra!');
+            message.error(err?.detail || 'Có lỗi xảy ra!');
         } finally {
             setLoading(false);
         }

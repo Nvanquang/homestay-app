@@ -375,6 +375,7 @@ export const callCreateConversation = async (data: {
     userId: string;
     hostId: string;
     homestayId: string;
+    firstMessage: string;
 }): Promise<IBackendRes<ICreateConversationResponse> | IBackendError> => {
     return axios.post<IBackendRes<ICreateConversationResponse>>('/api/v1/conversations', data)
         .then((res) => res)

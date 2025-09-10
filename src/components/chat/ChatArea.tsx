@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Typography, Input, Button, Avatar } from 'antd';
-import { SendOutlined, MoreOutlined } from '@ant-design/icons';
+import { SendOutlined, MoreOutlined, MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import MessageBubble from './MessageBubble';
 import { Message, User } from './types';
 import { useAppSelector } from '@/redux/hooks';
-import { connectWS, sendMessage, disconnectWS, isConnected } from '@/config/socket';
+import { useChatWebSocket, ChatMessage } from '@/contexts/ChatWebSocketContext';
 
 const { Title, Text } = Typography;
 
@@ -18,6 +18,9 @@ interface ChatAreaProps {
   onKeyPress: (e: React.KeyboardEvent) => void;
   getUserById: (userId: string) => User;
   currentUser: User;
+  showConversationList?: boolean;
+  onToggleConversationList?: () => void;
+  windowWidth?: number;
 }
 
 const ChatArea: React.FC<ChatAreaProps> = ({
@@ -27,85 +30,101 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   setNewMessage,
   isTyping,
   getUserById,
-  currentUser
+  currentUser,
+  showConversationList,
+  onToggleConversationList,
+  windowWidth
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const userId = useAppSelector(state => state.account.user.id);
   const conversationId = currentConversation?.id;
   const [loadMessages, setLoadMessages] = useState<Message[]>([]);
-  const [wsConnected, setWsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+  
+  const { 
+    isConnected: wsConnected, 
+    connectionState, 
+    joinConversation, 
+    leaveConversation, 
+    sendMessage: sendChatMessage, 
+    onMessageReceived 
+  } = useChatWebSocket();
   
   const host = currentConversation?.participants?.find((user: User) => user.role === 'host') 
     || currentConversation?.participants?.[0] 
     || currentUser;
 
   // Callback để xử lý tin nhắn mới từ WebSocket
-  const handleNewMessage = useCallback((msg: Message) => {
+  const handleNewMessage = useCallback((msg: ChatMessage) => {
     console.log('Received new message:', msg);
+    
+    // Convert ChatMessage to Message format
+    const message: Message = {
+      id: msg.id,
+      content: msg.content,
+      senderId: msg.senderId,
+      conversationId: msg.conversationId,
+      timestamp: msg.timestamp,
+      type: msg.type
+    };
     
     // Kiểm tra nếu tin nhắn đã tồn tại (tránh duplicate)
     setLoadMessages((prev) => {
       const exists = prev.some(existingMsg => 
-        existingMsg.id === msg.id || 
-        (existingMsg.senderId === msg.senderId && 
-         existingMsg.content === msg.content && 
-         Math.abs(new Date(existingMsg.timestamp).getTime() - new Date(msg.timestamp).getTime()) < 1000)
+        existingMsg.id === message.id || 
+        (existingMsg.senderId === message.senderId && 
+         existingMsg.content === message.content && 
+         Math.abs(new Date(existingMsg.timestamp).getTime() - new Date(message.timestamp).getTime()) < 1000)
       );
       
       if (exists) {
         return prev;
       }
       
-      return [...prev, msg];
+      return [...prev, message];
     });
   }, []);
 
-  // Callback để xử lý lỗi WebSocket
-  const handleError = useCallback((error: any) => {
-    console.error('WebSocket error:', error);
-    setConnectionError('Lỗi kết nối WebSocket');
-    setWsConnected(false);
-  }, []);
+  // Set up message listener
+  useEffect(() => {
+    onMessageReceived(handleNewMessage);
+  }, [onMessageReceived, handleNewMessage]);
 
-  // Effect để quản lý WebSocket connection
+  // Effect để quản lý conversation joining/leaving
   useEffect(() => {
     if (!conversationId) {
       setLoadMessages([]);
-      setWsConnected(false);
       setConnectionError(null);
+      leaveConversation();
       return;
     }
 
-    console.log('Connecting to WebSocket for conversation:', conversationId);
+    console.log('Joining conversation:', conversationId);
     
     // Reset state khi chuyển conversation
     setLoadMessages([]);
     setConnectionError(null);
 
-    // Kết nối WebSocket
-    const client = connectWS(conversationId, handleNewMessage, handleError);
-
-    // Kiểm tra trạng thái kết nối
-    const connectionInterval = setInterval(() => {
-      const connected = isConnected();
-      setWsConnected(connected);
-      
-      if (connected && connectionError) {
-        setConnectionError(null);
-      }
-    }, 1000);
+    // Join conversation
+    joinConversation(conversationId.toString());
 
     // Cleanup function
     return () => {
-      console.log('Cleaning up WebSocket connection');
-      clearInterval(connectionInterval);
-      disconnectWS();
-      setWsConnected(false);
+      console.log('Leaving conversation');
+      leaveConversation();
     };
-  }, [conversationId, handleNewMessage, handleError]);
+  }, [conversationId, joinConversation, leaveConversation]);
 
-  const handleSendMessage = useCallback(() => {
+  // Update connection error based on connection state
+  useEffect(() => {
+    if (connectionState === 'ERROR') {
+      setConnectionError('Lỗi kết nối WebSocket');
+    } else if (connectionState === 'CONNECTED') {
+      setConnectionError(null);
+    }
+  }, [connectionState]);
+
+  const handleSendMessage = useCallback(async () => {
     console.log("Attempting to send message");
     
     if (!newMessage.trim()) {
@@ -113,11 +132,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       return;
     }
 
-    if (!wsConnected) {
-      console.warn("WebSocket not connected");
-      setConnectionError('Chưa kết nối được WebSocket');
-      return;
-    }
+    // Remove this check since sendMessage will handle connection automatically
 
     console.log("Sending message:", {
       conversationId,
@@ -125,15 +140,36 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       message: newMessage
     });
 
-    const success = sendMessage(conversationId, userId, newMessage);
-    
-    if (success) {
+    try {
+      const chatMessage: ChatMessage = {
+        id: Date.now().toString(),
+        content: newMessage,
+        senderId: userId,
+        conversationId: conversationId.toString(),
+        timestamp: new Date(),
+        type: 'text'
+      };
+      
+      await sendChatMessage(chatMessage);
+      
+      // Optimistically add message to UI immediately
+      const message: Message = {
+        id: chatMessage.id,
+        content: chatMessage.content,
+        senderId: chatMessage.senderId,
+        conversationId: chatMessage.conversationId,
+        timestamp: chatMessage.timestamp,
+        type: chatMessage.type
+      };
+      
+      setLoadMessages((prev) => [...prev, message]);
       setNewMessage(''); // Clear input after sending
       setConnectionError(null);
-    } else {
+    } catch (error) {
+      console.error('Error sending message:', error);
       setConnectionError('Không thể gửi tin nhắn');
     }
-  }, [newMessage, wsConnected, conversationId, userId, setNewMessage]);
+  }, [newMessage, wsConnected, conversationId, userId, setNewMessage, sendChatMessage]);
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -176,8 +212,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     
     // Convert back to array và sort theo thời gian
     return Array.from(messageMap.values()).sort((a, b) => {
-      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+      const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
       return timeA - timeB;
     });
   }, [messages, loadMessages, currentConversation]);
@@ -204,7 +240,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
   return (
     <>
-      <div className="airbnb-chat__chat-header">
+      <div className="airbnb-chat__chat-header" style={{marginTop: 20}}>
         <div className="airbnb-chat__chat-info">
           <Avatar.Group size={36} maxCount={3}>
             {currentConversation.participants?.map((participant: User) => (
@@ -234,7 +270,21 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             </div>
           </div>
         </div>
-        <Button type="text" icon={<MoreOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Hamburger Menu Button - Only show on mobile */}
+          {windowWidth && windowWidth < 768 && onToggleConversationList && (
+            <Button
+              type="text"
+              icon={showConversationList ? 
+                <CloseOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> : 
+                <MenuOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+              }
+              onClick={onToggleConversationList}
+              className="airbnb-chat__hamburger-btn"
+            />
+          )}
+          <Button type="text" icon={<MoreOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} />
+        </div>
       </div>
 
       <div className="airbnb-chat__messages">
@@ -274,13 +324,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           placeholder={wsConnected ? "Soạn tin nhắn..." : "Đang kết nối..."}
           autoSize={{ minRows: 1, maxRows: 3 }}
           className="airbnb-chat__input-field"
-          disabled={!wsConnected}
+          disabled={false}
         />
         <Button
           type="primary"
           icon={<SendOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
           onClick={handleSendMessage}
-          disabled={!newMessage.trim() || !wsConnected}
+          disabled={!newMessage.trim()}
           className="airbnb-chat__send-btn"
           title={!wsConnected ? "Chưa kết nối WebSocket" : "Gửi tin nhắn"}
         />

@@ -84,7 +84,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
       reconnectDelay: 0, // We handle reconnection manually
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
-      connectionTimeout: 5000,
+      connectionTimeout: 3000,
 
       onConnect: () => {
         console.log('WebSocket connected successfully');

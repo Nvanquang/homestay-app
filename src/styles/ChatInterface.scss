@@ -6,35 +6,14 @@
   background: #ffffff;
   font-family: 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  // Header Section
-  &__header {
-    height: 80px;
-    background: white;
-    border-bottom: 1px solid #ebebeb;
+  &__simple-header {
     display: flex;
+    justify-content: flex-end;
     align-items: center;
-    justify-content: space-between;
+    height: 72px;
     padding: 0 24px;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
-
-    &-left {
-      display: flex;
-      align-items: center;
-    }
-
-    &-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-  }
-
-  &__title {
-    margin: 0 !important;
-    color: #222222 !important;
-    font-size: 32px !important;
-    font-weight: 600 !important;
-    letter-spacing: -0.02em;
+    border-bottom: 1px solid #e8e8e8;
+    background: white;
   }
 
   &__search {
@@ -60,6 +39,46 @@
       border-color: #222222;
       box-shadow: 0 0 0 2px rgba(34, 34, 34, 0.1);
     }
+  }
+
+  // Hamburger Menu Button
+  &__hamburger-btn {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 8px !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+    
+    .anticon {
+      color: #222222 !important;
+      font-size: 18px !important;
+    }
+
+    &:hover {
+      background: #f7f7f7 !important;
+      color: #222222 !important;
+    }
+
+    &:focus {
+      background: #f7f7f7 !important;
+      color: #222222 !important;
+    }
+  }
+
+  // Mobile Overlay
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    backdrop-filter: blur(2px);
   }
 
   // Main Body Layout
@@ -628,33 +647,80 @@
     &__header {
       padding: 0 16px;
       height: 64px;
+      position: relative;
+      z-index: 1001;
+
+      &-left {
+        flex: 1;
+        min-width: 0;
+      }
 
       &-right {
         gap: 12px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
       }
     }
 
     &__title {
-      font-size: 24px !important;
+      font-size: 20px !important;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &__search {
       width: 200px;
     }
 
+    &__hamburger-btn {
+      background: transparent !important;
+      border: none !important;
+      border-radius: 8px !important;
+      width: 40px !important;
+      height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: all 0.2s ease !important;
+      
+      .anticon {
+        color: #222222 !important;
+        font-size: 18px !important;
+      }
+
+      &:hover {
+        background: #f7f7f7 !important;
+        color: #222222 !important;
+      }
+
+      &:focus {
+        background: #f7f7f7 !important;
+        color: #222222 !important;
+      }
+    }
+
     &__conversations {
-      width: 100%;
-      position: absolute;
+      width: 85%;
+      max-width: 360px;
+      position: fixed;
       left: -100%;
       top: 64px;
       height: calc(100vh - 64px);
       z-index: 1000;
-      transition: left 0.3s ease;
-      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+      transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 2px 0 16px rgba(0, 0, 0, 0.2);
+      border-right: 1px solid #ebebeb;
+      background: white;
 
       &--open {
         left: 0;
       }
+    }
+
+    &__overlay {
+      display: block;
     }
 
     &__main {
@@ -668,6 +734,7 @@
 
     &__messages {
       padding: 16px;
+      height: calc(100vh - 64px - 60px - 80px);
     }
 
     &__input {
@@ -679,13 +746,22 @@
         font-size: 16px; // Prevent zoom on iOS
       }
     }
+
+    // Ensure avatar is properly sized and positioned
+    .ant-avatar {
+      flex-shrink: 0;
+    }
   }
 }
 
 @media (max-width: 480px) {
   .airbnb-chat {
     &__header {
+      padding: 0 12px;
+      
       &-right {
+        gap: 8px;
+        
         .airbnb-chat__search {
           display: none;
         }
@@ -693,7 +769,22 @@
     }
 
     &__title {
-      font-size: 20px !important;
+      font-size: 18px !important;
+    }
+
+    &__hamburger-btn {
+      width: 36px !important;
+      height: 36px !important;
+      margin-right: 4px;
+      
+      .anticon {
+        font-size: 16px !important;
+      }
+    }
+
+    &__conversations {
+      width: 95%;
+      max-width: 320px;
     }
 
     &__chat-title {
@@ -702,6 +793,12 @@
 
     &__chat-subtitle {
       font-size: 12px !important;
+    }
+
+    // Smaller avatar on very small screens
+    .ant-avatar {
+      width: 28px !important;
+      height: 28px !important;
     }
   }
 }

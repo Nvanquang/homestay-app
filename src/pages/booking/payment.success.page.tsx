@@ -66,7 +66,7 @@ const PaymentSuccessPage = () => {
         console.log('No WebSocket notification received, falling back to API...');
         checkPaymentStatusAPI();
       }
-    }, 3000); // 3 second timeout
+    }, 3000); // 30 second timeout
 
     // Cleanup timeout if component unmounts
     return () => {
