@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Typography, Input, Avatar, Button } from 'antd';
-import { SearchOutlined, MenuOutlined, CloseOutlined } from '@ant-design/icons';
-import ConversationListPanel from './ConversationListPanel';
-import ChatArea from './ChatArea';
-import BookingInfo from './BookingInfo';
+import React, { useState, useEffect } from 'react';
+import { Typography, Avatar } from 'antd';
+import ConversationListPanel from './conversation.list.panel';
+import ChatArea from './chat.area';
+import BookingInfo from './booking.info';
 import { Conversation, Message, User } from './types';
-import '../../styles/ChatInterface.scss';
+import '../../styles/chat.interface.scss';
 import { callGetConversationsByUser, callGetMessages } from '@/config/api';
 import { isSuccessResponse } from '@/config/utils';
 import { useAppSelector } from '@/redux/hooks';

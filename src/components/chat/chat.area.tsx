@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Typography, Input, Button, Avatar } from 'antd';
 import { SendOutlined, MoreOutlined, MenuOutlined, CloseOutlined } from '@ant-design/icons';
-import MessageBubble from './MessageBubble';
+import MessageBubble from './message.bubble';
 import { Message, User } from './types';
 import { useAppSelector } from '@/redux/hooks';
 import { useChatWebSocket, ChatMessage } from '@/contexts/ChatWebSocketContext';

@@ -89,11 +89,16 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
     },
     ...(roleName === 'SUPER_ADMIN' || roleName === 'HOST'
       ? [{
-          label: <Link to={'/admin'}>Quản trị hệ thống</Link>,
-          key: 'admin',
-          icon: <SettingOutlined  onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
-        }]
+        label: <Link to={'/admin'}>Quản trị hệ thống</Link>,
+        key: 'admin',
+        icon: <SettingOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      }]
       : []),
+    {
+      label: <Link to={'/users/profile'}>Hồ sơ</Link>,
+      key: 'profile',
+      icon: <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+    },
     {
       label: <Link to={'/messages'}>Tin nhắn</Link>,
       key: 'messages',

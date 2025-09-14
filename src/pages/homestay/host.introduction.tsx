@@ -22,7 +22,7 @@ import {
   TrophyOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import HostChatModal from './HostChatModal';
+import HostChatModal from './host.chat.modal';
 import styles from '@/styles/hostintroduction.module.scss';
 
 const { Title, Text, Paragraph } = Typography;

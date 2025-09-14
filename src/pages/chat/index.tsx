@@ -1,5 +1,5 @@
 import React from 'react';
-import ChatInterface from '../../components/chat/ChatInterface';
+import ChatInterface from '../../components/chat/chat.interface';
 
 /**
  * Chat Page Component

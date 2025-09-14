@@ -21,6 +21,7 @@ import { isSuccessResponse } from '@/config/utils';
 import queryString from 'query-string';
 import Access from '@/components/share/access';
 import { ALL_PERMISSIONS } from '@/config/permissions';
+import { useAppSelector } from '@/redux/hooks';
 const { Title, Paragraph, Text } = Typography;
 const { RangePicker } = DatePicker;
 
@@ -45,11 +46,13 @@ const HomestayMainContent = (props: IProps) => {
 
   const [bookingLoading, setBookingLoading] = useState(false);
   const [dateWarning, setDateWarning] = useState<string | null>(null);
+  const [costWarning, setCostWarning] = useState<string | null>(null);
   const [guests, setGuests] = useState(2);
   const [dates, setDates] = useState<any>(null);
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
   const [bookedDates, setBookedDates] = useState<string[]>([]);
+  const userId = useAppSelector(state => state.account.user.id);
 
   const [costTotal, setCostTotal] = useState<number>(0);
   const [datebetween, setDateBetween] = useState<number>(0);
@@ -102,7 +105,7 @@ const HomestayMainContent = (props: IProps) => {
       state: {
         homestayId: id,
         homestayName: homestayDetail?.name,
-        userId: '1',
+        userId: userId,
         costTotal: costTotal,
         checkin: startDate,
         checkout: endDate,
@@ -141,8 +144,16 @@ const HomestayMainContent = (props: IProps) => {
       const total = availList.reduce((sum: number, item: any) => sum + (item.price || 0), 0);
       setCostTotal(total);
       setDateBetween(calculateDaysBetween(start, end));
+      
+      // Kiểm tra nếu total = 0 thì hiển thị cảnh báo
+      if (total === 0) {
+        setCostWarning('Chưa có dữ liệu đặt phòng!');
+      } else {
+        setCostWarning(null);
+      }
     } else {
       setCostTotal(0);
+      setCostWarning('Chưa có dữ liệu đặt phòng!');
     }
   }
 
@@ -292,14 +303,14 @@ const HomestayMainContent = (props: IProps) => {
                       }
                     }}
                     disabledDate={current => {
-                      // Không cho chọn ngày trong quá khứ
+                      // Không cho chọn ngày hôm nay và quá khứ
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
                       const currentDate = current.toDate();
                       currentDate.setHours(0, 0, 0, 0);
                       
-                      // Disable ngày trong quá khứ hoặc ngày đã được đặt
-                      return currentDate < today || bookedDates.includes(current.format('YYYY-MM-DD'));
+                      // Disable ngày hôm nay, quá khứ hoặc ngày đã được đặt
+                      return currentDate <= today || bookedDates.includes(current.format('YYYY-MM-DD'));
                     }}
                     dateRender={current => {
                       const isBooked = bookedDates.includes(current.format('YYYY-MM-DD'));
@@ -338,6 +349,10 @@ const HomestayMainContent = (props: IProps) => {
                 {dateWarning && (
                   <div className={styles.dateWarning}>{dateWarning}</div>
                 )}
+                
+                {costWarning && (
+                  <div className={styles.dateWarning}>{costWarning}</div>
+                )}
 
                 <Access
                   permission={ALL_PERMISSIONS.BOOKING.CREATE}
@@ -350,7 +365,7 @@ const HomestayMainContent = (props: IProps) => {
                     className={styles.bookingBtn}
                     onClick={handleBooking}
                     block
-                    disabled={!startDate || !endDate}
+                    disabled={!startDate || !endDate || costTotal === 0}
                   >
                     {bookingLoading ? <Spin size="small" /> : 'Đặt phòng'}
                   </Button>

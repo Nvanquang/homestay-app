@@ -172,3 +172,87 @@ export const POPULAR_LOCATIONS: PopularLocation[] = [
     image: 'https://www.dalattrip.com/media/2012/10/Dalat-Vietnam-Dalat-central-lake.jpg'
   }
 ];
+
+// Phone number validation utilities
+export interface PhoneValidationConfig {
+  // Vietnamese phone number patterns
+  vietnam: RegExp;
+  // International E.164 format pattern for future extension
+  international: RegExp;
+}
+
+export const PHONE_REGEX: PhoneValidationConfig = {
+  // Simplified: allows 10 digits starting with 0 or +84 format
+  vietnam: /^(\+84|0)\d{9}$/,
+  // For easy extension to international E.164 format
+  international: /^\+[1-9]\d{1,14}$/
+};
+
+/**
+ * Validates Vietnamese phone number format
+ * @param value - Phone number string to validate
+ * @param allowEmpty - Whether to allow empty values (default: true)
+ * @returns boolean indicating if phone number is valid
+ */
+export const validateVietnamesePhoneNumber = (value: string, allowEmpty: boolean = true): boolean => {
+  if (!value) return allowEmpty;
+  return PHONE_REGEX.vietnam.test(value);
+};
+
+/**
+ * Validates international phone number format (E.164)
+ * @param value - Phone number string to validate
+ * @param allowEmpty - Whether to allow empty values (default: true)
+ * @returns boolean indicating if phone number is valid
+ */
+export const validateInternationalPhoneNumber = (value: string, allowEmpty: boolean = true): boolean => {
+  if (!value) return allowEmpty;
+  return PHONE_REGEX.international.test(value);
+};
+
+/**
+ * Cleans phone number input by removing invalid characters
+ * @param value - Raw input value
+ * @returns cleaned string with only numbers and + symbol
+ */
+export const cleanPhoneNumber = (value: string): string => {
+  return value.replace(/[^0-9+]/g, '');
+};
+
+/**
+ * Formats Vietnamese phone number from 0xxx to +84xxx format
+ * @param phoneNumber - Phone number to format
+ * @returns formatted phone number for backend
+ */
+export const formatPhoneForBackend = (phoneNumber: string): string => {
+  if (!phoneNumber) return phoneNumber;
+  
+  // If starts with 0, replace with +84
+  if (phoneNumber.startsWith('0')) {
+    return '+84' + phoneNumber.substring(1);
+  }
+  
+  // If already starts with +84, return as is
+  if (phoneNumber.startsWith('+84')) {
+    return phoneNumber;
+  }
+  
+  // Default: return as is
+  return phoneNumber;
+};
+
+/**
+ * Gets appropriate error message for invalid phone number
+ * @param type - Type of validation ('vietnam' | 'international')
+ * @returns error message string
+ */
+export const getPhoneValidationErrorMessage = (type: 'vietnam' | 'international' = 'vietnam'): string => {
+  switch (type) {
+    case 'vietnam':
+      return 'Số điện thoại phải có 10 số.';
+    case 'international':
+      return 'Số điện thoại không hợp lệ.';
+    default:
+      return 'Số điện thoại không hợp lệ';
+  }
+};

@@ -4,18 +4,42 @@ import { Link, useNavigate } from 'react-router-dom';
 import { callRegister } from 'config/api';
 import styles from 'styles/auth.module.scss';
 import { IBackendError, IUser } from '@/types/backend';
-import { isSuccessResponse } from '@/config/utils';
+import { 
+    isSuccessResponse, 
+    validateVietnamesePhoneNumber, 
+    cleanPhoneNumber, 
+    getPhoneValidationErrorMessage,
+    formatPhoneForBackend 
+} from '@/config/utils';
 const { Option } = Select;
 
 
 const RegisterPage = () => {
     const navigate = useNavigate();
     const [isSubmit, setIsSubmit] = useState(false);
+    const [phoneValue, setPhoneValue] = useState<string>('');
+    const [phoneError, setPhoneError] = useState<string>('');
+
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        
+        // Clean input using utility function
+        const cleanValue = cleanPhoneNumber(value);
+        
+        setPhoneValue(cleanValue);
+        
+        // Validate using utility function
+        if (cleanValue && !validateVietnamesePhoneNumber(cleanValue)) {
+            setPhoneError(getPhoneValidationErrorMessage('vietnam'));
+        } else {
+            setPhoneError('');
+        }
+    };
 
     const onFinish = async (values: IUser) => {
         const { userName, password, confirmPassword, email, phoneNumber, fullName, gender } = values;
         setIsSubmit(true);
-        const res = await callRegister(userName, password as string, confirmPassword as string, email, phoneNumber, fullName, gender);
+        const res = await callRegister(userName, password as string, confirmPassword as string, email, formatPhoneForBackend(phoneNumber), fullName, gender);
         setIsSubmit(false);
         if (isSuccessResponse(res) &&  res?.status === 200) {
             message.success('Đăng ký tài khoản thành công!');
@@ -65,9 +89,26 @@ const RegisterPage = () => {
                                         labelCol={{ span: 24 }}
                                         label="Số điện thoại"
                                         name="phoneNumber"
-                                        rules={[{ required: true, message: 'Số điện thoại không được để trống!' }]}
+                                        rules={[
+                                            { required: true, message: 'Số điện thoại không được để trống!' },
+                                            {
+                                                validator: (_, value) => {
+                                                    if (!value || validateVietnamesePhoneNumber(value)) {
+                                                        return Promise.resolve();
+                                                    }
+                                                    return Promise.reject(new Error('Số điện thoại không hợp lệ'));
+                                                }
+                                            }
+                                        ]}
+                                        validateStatus={phoneError ? 'error' : ''}
+                                        help={phoneError}
                                     >
-                                        <Input type='phoneNumber' />
+                                        <Input 
+                                            value={phoneValue}
+                                            onChange={handlePhoneChange}
+                                            placeholder="Nhập số điện thoại (0xxxxxxxxx hoặc +84xxxxxxxxx)"
+                                            maxLength={12}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>

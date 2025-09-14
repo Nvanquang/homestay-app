@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { List, Avatar, Typography, Badge, Input, Button } from 'antd';
 import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { Conversation } from './types';
-import '@/styles/ConversationListPanel.scss';
+import '@/styles/conversation.list.panel.scss';
 import { useAppSelector } from '@/redux/hooks';
-import { callGetConversationsByUser } from '@/config/api';
-import { isSuccessResponse } from '@/config/utils';
 
 const { Text } = Typography;
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import ConversationListPanel from './ConversationListPanel';
+import ConversationListPanel from './conversation.list.panel';
 import { Conversation } from './types';
 
 interface ConversationListProps {

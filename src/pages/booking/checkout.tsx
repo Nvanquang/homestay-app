@@ -24,7 +24,7 @@ const CheckoutSection = () => {
 
     const [paymentMethod, setPaymentMethod] = useState<string>('vnpay');
     const user = useAppSelector(state => state.account.user);
-    const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
+    // const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
     const { subscribeToPayment } = useWebSocket();
     const [startDate, setStartDate] = useState<string | null>(bookedMainForm[0] ? dayjs(bookedMainForm[0]).format('YYYY-MM-DD') : null);
     const [endDate, setEndDate] = useState<string | null>(bookedMainForm[1] ? dayjs(bookedMainForm[1]).format('YYYY-MM-DD') : null);

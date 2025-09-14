@@ -29,10 +29,11 @@ import Footer from './components/client/footer.client';
 import { ISearchHomestayRequest } from './types/backend';
 import CheckoutSection from './pages/booking/checkout';
 import PaymentSuccessPage from './pages/booking/payment.success.page';
-import HomestayListPage from './pages/homestay/homestay.list';
+import HomestayListPage from './pages/homestay/homestay.search';
 import ChatPage from './pages/chat';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { ChatWebSocketProvider } from './contexts/ChatWebSocketContext';
+import ProfilePage from './pages/user/profile';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -85,7 +86,8 @@ export default function App() {
         { path: "book/checkout/:homestayId", element: <CheckoutSection /> },
         { path: "/payments/payment-callback", element: <PaymentSuccessPage /> },
         { path: "/homestay-search", element: <HomestayListPage /> },
-        { path: "/messages", element: <ChatPage /> }
+        { path: "/messages", element: <ChatPage /> },
+        { path: "/users/profile", element: <ProfilePage /> },
       ],
     },
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar } from 'antd';
 import dayjs from 'dayjs';
 import { Message, User } from './types';
-import '@/styles/MessageBubble.scss';
+import '@/styles/message.bubble.scss';
 
 interface MessageBubbleProps {
   message: Message;

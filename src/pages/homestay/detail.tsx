@@ -10,9 +10,9 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import HomestayMainContent from "./main.content";
 import ReviewSection from "./review";
-import HostIntroduction from "./HostIntroduction";
+import HostIntroduction from "./host.introduction";
 import Title from "antd/es/typography/Title";
-import { HomeOutlined, PictureOutlined, CloseOutlined } from "@ant-design/icons";
+import { PictureOutlined, CloseOutlined } from "@ant-design/icons";
 
 const customIcon = new L.Icon({
     iconUrl: 'https://unpkg.com/leaflet@1.8.0/dist/images/marker-icon.png',

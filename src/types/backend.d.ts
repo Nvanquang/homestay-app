@@ -177,7 +177,6 @@ export interface IBooking {
     guests: number;
     status: string;
     subtotal: number;
-    fee: number;
     discount: number;
     totalAmount: number;
     note: string;

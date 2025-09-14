@@ -1,11 +1,17 @@
 import { ModalForm, ProForm, ProFormDigit, ProFormSelect, ProFormSwitch, ProFormText } from "@ant-design/pro-components";
-import { Col, Form, Row, message, notification } from "antd";
+import { Col, Form, Row, message, notification, Input } from "antd";
 import { isMobile } from 'react-device-detect';
 import { useState, useEffect } from "react";
 import { callCreateUser, callGetRoles, callUpdateUser } from "@/config/api";
 import { IBackendError, IUser } from "@/types/backend";
 import { DebounceSelect } from "./debouce.select";
-import { isSuccessResponse } from "@/config/utils";
+import { 
+    isSuccessResponse, 
+    validateVietnamesePhoneNumber, 
+    cleanPhoneNumber, 
+    getPhoneValidationErrorMessage,
+    formatPhoneForBackend 
+} from "@/config/utils";
 
 interface IProps {
     openModal: boolean;
@@ -24,11 +30,36 @@ export interface IRoleSelect {
 const ModalUser = (props: IProps) => {
     const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
     const [roles, setRoles] = useState<IRoleSelect[]>([]);
+    const [phoneValue, setPhoneValue] = useState<string>('');
+    const [phoneError, setPhoneError] = useState<string>('');
 
     const [form] = Form.useForm();
 
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        
+        // Clean input using utility function
+        const cleanValue = cleanPhoneNumber(value);
+        
+        setPhoneValue(cleanValue);
+        form.setFieldValue('phoneNumber', cleanValue);
+        
+        // Validate using utility function
+        if (cleanValue && !validateVietnamesePhoneNumber(cleanValue)) {
+            setPhoneError(getPhoneValidationErrorMessage('vietnam'));
+        } else {
+            setPhoneError('');
+        }
+    };
+
     useEffect(() => {
         if (dataInit?.id) {
+            // Initialize phone value when editing existing user
+            if (dataInit.phoneNumber) {
+                setPhoneValue(dataInit.phoneNumber);
+                setPhoneError(''); // Clear any existing error
+            }
+            
             if (dataInit.role) {
                 setRoles([
                     {
@@ -54,7 +85,7 @@ const ModalUser = (props: IProps) => {
                 gender,
                 userName,
                 fullName,
-                phoneNumber,
+                phoneNumber: formatPhoneForBackend(phoneNumber),
                 verified,
                 roleId: role.id,
             }
@@ -75,13 +106,14 @@ const ModalUser = (props: IProps) => {
         } else {
             //create
             const user = {
-                userName,
-                password,
-                email,
-                phoneNumber,
-                fullName,
                 gender,
-                roleId: role.value,
+                userName,
+                fullName,
+                email,
+                phoneNumber: formatPhoneForBackend(phoneNumber),
+                password,
+                verified,
+                roleId: role.id,
             }
             const res = await callCreateUser(user);
             if (isSuccessResponse(res) && res.data) {
@@ -103,6 +135,9 @@ const ModalUser = (props: IProps) => {
         form.resetFields();
         setDataInit(null);
         setRoles([]);
+        // Clear phone state when modal is reset
+        setPhoneValue('');
+        setPhoneError('');
         setOpenModal(false);
     }
 
@@ -155,13 +190,30 @@ const ModalUser = (props: IProps) => {
                         />
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>
-                        <ProFormText
+                        <Form.Item
                             label="Số điện thoại"
                             name="phoneNumber"
-                            initialValue="+84"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập số điện thoại"
-                        />
+                            rules={[
+                                { required: true, message: 'Vui lòng không bỏ trống' },
+                                {
+                                    validator: (_, value) => {
+                                        if (!value || validateVietnamesePhoneNumber(value)) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject(new Error('Số điện thoại không hợp lệ'));
+                                    }
+                                }
+                            ]}
+                            validateStatus={phoneError ? 'error' : ''}
+                            help={phoneError}
+                        >
+                            <Input
+                                value={phoneValue}
+                                onChange={handlePhoneChange}
+                                placeholder="Nhập số điện thoại (0xxxxxxxxx hoặc +84xxxxxxxxx)"
+                                maxLength={12}
+                            />
+                        </Form.Item>
                     </Col>
                     <Col lg={12} md={12} sm={24} xs={24}>
                         <ProFormText.Password

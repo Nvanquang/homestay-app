@@ -94,9 +94,11 @@ export const callGetBookings = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IBooking>>>(`/api/v1/bookings?${query}`);
 };
 
-// export const callUpdateBooking = (id: string, data: { status?: string; paymentDate?: string }) => {
-//     return axios.patch<IBackendRes<IBooking>>(`/api/v1/bookings/${id}`, { id, ...data });
-// };
+export const callUpdateBooking = async (id: string, status: string): Promise<IBackendRes<IBookingStatus> | IBackendError> => {
+    return axios.patch<IBackendRes<IBooking>>(`/api/v1/bookings/${id}`, { id, status })
+        .then((res) => res)
+        .catch((error) => error.response.data);
+};
 
 
 
