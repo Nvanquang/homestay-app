@@ -22,10 +22,11 @@ export const ALL_PERMISSIONS = {
         UPDATE: { method: "PATCH", apiPath: "/api/v1/homestays/{id}", module: "HOMESTAY" },
         DELETE: { method: "DELETE", apiPath: "/api/v1/homestays/{id}", module: "HOMESTAY" },
     },
-    HOMESTAY_IMAGE: {
-        UPLOAD: { method: "POST", apiPath: "/api/v1/homestay/{homestayId}/images", module: "HOMESTAY_IMAGE" },
-        GET_BY_HOMESTAY: { method: "GET", apiPath: "/api/v1/homestay/{homestayId}/images", module: "HOMESTAY_IMAGE" },
-        DELETE: { method: "DELETE", apiPath: "/api/v1/homestay-images/{id}", module: "HOMESTAY_IMAGE" },
+    UPLOAD_FILE: {
+        UPLOAD_SINGLE: { method: "POST", apiPath: "/api/v1/files", module: "UPLOAD_FILE" },
+        UPLOAD_MULTI: { method: "POST", apiPath: "/api/v1/files/homestay/{homestayId}/images", module: "UPLOAD_FILE" },
+        GET_BY_HOMESTAY: { method: "GET", apiPath: "/api/v1/files/homestay/{homestayId}/images", module: "UPLOAD_FILE" },
+        DELETE: { method: "DELETE", apiPath: "/api/v1/files/homestay/{id}", module: "UPLOAD_FILE" },
     },
     AVAILABILITY: {
         CREATE: { method: "POST", apiPath: "/api/v1/availabilities", module: "AVAILABILITY" },

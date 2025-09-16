@@ -1,0 +1,538 @@
+// Profile Completion Page Styles - Simple Clean Design
+.completionContainer {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: #ffffff;
+  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+.completionHeader {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e8e8e8;
+
+  .headerTitle {
+    font-size: 32px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 12px;
+
+    @media (max-width: 768px) {
+      font-size: 28px;
+    }
+  }
+
+  .headerSubtitle {
+    font-size: 16px;
+    color: #717171;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  .progressIndicator {
+    margin-top: 24px;
+    
+    .progressBar {
+      width: 100%;
+      height: 8px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 12px;
+
+      .progressFill {
+        height: 100%;
+        background: #2d3748;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+      }
+    }
+
+    .progressText {
+      font-size: 14px;
+      color: #717171;
+      font-weight: 500;
+    }
+  }
+}
+
+.stepContainer {
+  margin-bottom: 48px;
+
+  .stepCard {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+    padding: 32px;
+    border: 1px solid #e8e8e8;
+    margin-bottom: 24px;
+
+    @media (max-width: 768px) {
+      padding: 24px;
+    }
+
+    .stepTitle {
+      font-size: 24px;
+      font-weight: 600;
+      color: #222222;
+      margin-bottom: 8px;
+    }
+
+    .stepDescription {
+      font-size: 16px;
+      color: #717171;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+  }
+}
+
+// Personal Info List - 2 Column Layout with Modal
+.personalInfoList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .personalInfoItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f7fafc;
+      border-color: #cbd5e0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .itemContent {
+      flex: 1;
+
+      .itemTitle {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 4px;
+      }
+
+      .itemValue {
+        font-size: 14px;
+        color: #718096;
+        line-height: 1.4;
+      }
+    }
+
+    .editIcon {
+      font-size: 16px;
+      color: #a0aec0;
+      transition: color 0.2s ease;
+    }
+
+    &:hover .editIcon {
+      color: #4a5568;
+    }
+  }
+}
+
+// Personal Info Modal Styles - Minimalist Black Design
+.personalInfoModal {
+  :global(.ant-modal) {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    background: #ffffff;
+  }
+
+  :global(.ant-modal-header) {
+    background: #ffffff;
+    border-bottom: none;
+    padding: 32px 32px 16px;
+
+    :global(.ant-modal-title) {
+      color: #000000;
+      font-size: 24px;
+      font-weight: 700;
+      text-align: left;
+      margin: 0;
+    }
+  }
+
+  :global(.ant-modal-close) {
+    top: 24px;
+    right: 24px;
+    color: #666666;
+    font-size: 18px;
+    
+    &:hover {
+      color: #000000;
+    }
+  }
+
+  :global(.ant-modal-body) {
+    padding: 0 32px 24px;
+    background: #ffffff;
+  }
+
+  :global(.ant-modal-footer) {
+    border-top: none;
+    padding: 0 32px 32px;
+    background: #ffffff;
+    text-align: right;
+
+    :global(.ant-btn) {
+      height: 48px;
+      border-radius: 24px;
+      font-weight: 600;
+      font-size: 16px;
+      min-width: 120px;
+      margin-left: 12px;
+
+      &:global(.ant-btn-primary) {
+        background: #000000;
+        border: none;
+        color: #ffffff;
+
+        &:hover {
+          background: #333333;
+        }
+      }
+
+      &:global(.ant-btn-default) {
+        border: 1px solid #e0e0e0;
+        color: #666666;
+        background: #ffffff;
+
+        &:hover {
+          border-color: #000000;
+          color: #000000;
+        }
+      }
+    }
+  }
+
+  .modalContent {
+    .modalDescription {
+      font-size: 16px;
+      color: #666666;
+      margin-bottom: 32px;
+      line-height: 1.5;
+      text-align: left;
+      font-weight: 400;
+    }
+
+    .modalInput {
+      font-size: 16px;
+      padding: 20px 0;
+      border: none;
+      border-bottom: 2px solid #e0e0e0;
+      border-radius: 0;
+      background: transparent;
+      transition: all 0.3s ease;
+      width: 100%;
+
+      &::placeholder {
+        color: #999999;
+        font-size: 16px;
+      }
+
+      &:focus {
+        outline: none;
+        border-bottom-color: #000000;
+        background: transparent;
+      }
+
+      &:hover {
+        border-bottom-color: #666666;
+      }
+    }
+  }
+}
+
+// Budget Range
+.budgetSelector {
+  .budgetRange {
+    margin: 24px 0;
+
+    .rangeLabels {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #717171;
+    }
+
+    .selectedRange {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+  }
+}
+
+// Amenities Selection
+.amenitiesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+
+  .amenityTag {
+    padding: 12px 16px;
+    border: 2px solid #e8e8e8;
+    border-radius: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+
+    &:hover {
+      border-color: #4a5568;
+      background: #f7fafc;
+    }
+
+    &.selected {
+      border-color: #4a5568;
+      background: #4a5568;
+      color: white;
+    }
+  }
+}
+
+// Location Preferences
+.locationGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .locationCard {
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #ffffff;
+
+    &:hover {
+      border-color: #4a5568;
+      background: #f7fafc;
+    }
+
+    &.selected {
+      border-color: #4a5568;
+      background: #edf2f7;
+    }
+
+    .locationImage {
+      width: 100%;
+      height: 120px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .locationContent {
+      padding: 16px;
+
+      .locationName {
+        font-size: 16px;
+        font-weight: 600;
+        color: #222222;
+        margin-bottom: 4px;
+      }
+
+      .locationDescription {
+        font-size: 14px;
+        color: #717171;
+      }
+    }
+  }
+}
+
+// Trip Purpose Preferences
+.preferencesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .preferenceCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    text-align: center;
+
+    &:hover {
+      border-color: #4a5568;
+      background: #f7fafc;
+    }
+
+    &.selected {
+      border-color: #4a5568;
+      background: #edf2f7;
+    }
+
+    .preferenceIcon {
+      font-size: 32px;
+      color: #4a5568;
+      margin-bottom: 12px;
+    }
+
+    .preferenceTitle {
+      font-size: 16px;
+      font-weight: 600;
+      color: #222222;
+      margin-bottom: 8px;
+    }
+
+    .preferenceDescription {
+      font-size: 14px;
+      color: #717171;
+      line-height: 1.4;
+    }
+  }
+}
+
+// Action Buttons
+.actionButtons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 40px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+
+  .backButton {
+    padding: 12px 32px;
+    border: 2px solid #222222;
+    background: transparent;
+    color: #222222;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f7f7f7;
+    }
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+
+  .nextButton {
+    padding: 12px 32px;
+    background: #4a5568;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #2d3748;
+    }
+
+    &:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+}
+
+// Completion Success
+.completionSuccess {
+  text-align: center;
+  padding: 40px;
+
+  .successIcon {
+    font-size: 64px;
+    color: #00a699;
+    margin-bottom: 24px;
+  }
+
+  .successTitle {
+    font-size: 28px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 16px;
+  }
+
+  .successMessage {
+    font-size: 16px;
+    color: #717171;
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
+
+  .successButton {
+    padding: 16px 32px;
+    background: #4a5568;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #2d3748;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 480px) {
+  .completionContainer {
+    padding: 12px;
+  }
+
+  .preferencesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .locationGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .amenitiesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

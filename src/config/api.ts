@@ -182,12 +182,12 @@ export const callDeleteHomestay = async (id: string): Promise<IBackendRes<IPermi
 
 
 
-// HOMESTAY_IMAGE
+// UPLOAD_FILES
 export const callUploadHomestayImages = async (
     homestayId: string,
     files: File[],
     folder: string
-): Promise<IBackendRes<IPermission> | IBackendError> => {
+): Promise<IBackendRes<IHomestayImage> | IBackendError> => {
     const formData = new FormData();
     files.forEach(file => {
         formData.append("files", file);
@@ -200,7 +200,27 @@ export const callUploadHomestayImages = async (
         .catch((error) => error.response.data);
 };
 
-// TODO: upload single file
+// upload single file
+export interface IAvatar {
+    fileName: string;
+}
+export const callUploadSingleFile = async (file: any, folderType: string): Promise<IBackendRes<IAvatar> | IBackendError> => {
+    const bodyFormData = new FormData();
+    bodyFormData.append('file', file);
+    bodyFormData.append('folder', folderType);
+
+    return axios<IBackendRes<IAvatar>>({
+        method: 'post',
+        url: '/api/v1/files',
+        data: bodyFormData,
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    })
+    .then((res) => res)
+    .catch((error) => error.response.data);
+
+}
 
 export const callGetHomestayImages = (homestayId: number) => {
     return axios.get<IBackendRes<IBackendRes<IHomestayImage>>>(`/api/v1/files/homestay/${homestayId}/images`);
@@ -318,6 +338,7 @@ export const callUpdateUser = async (id: string, data: {
     phoneNumber?: string;
     verified?: boolean;
     roleId?: string;
+    avatar?: string;
 }): Promise<IBackendRes<IRole> | IBackendError> => {
     return axios.patch<IBackendRes<IUser>>(`/api/v1/users/${id}`, { id, ...data })
         .then((res) => res)

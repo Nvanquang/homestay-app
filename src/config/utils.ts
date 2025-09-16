@@ -256,3 +256,28 @@ export const getPhoneValidationErrorMessage = (type: 'vietnam' | 'international'
       return 'Số điện thoại không hợp lệ';
   }
 };
+
+// Calculate membership duration based on createdAt
+export const calculateMembershipDuration = (createdAt: Date | string | null | undefined): string => {
+  if (!createdAt) return 'Chưa xác định';
+  
+  const createdDate = new Date(createdAt);
+  const currentDate = new Date();
+  
+  const diffTime = Math.abs(currentDate.getTime() - createdDate.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffMonths = Math.floor(diffDays / 30);
+  const diffYears = Math.floor(diffMonths / 12);
+  
+  if (diffYears > 0) {
+    const remainingMonths = diffMonths % 12;
+    if (remainingMonths > 0) {
+      return `${diffYears} năm ${remainingMonths} tháng`;
+    }
+    return `${diffYears} năm`;
+  } else if (diffMonths > 0) {
+    return `${diffMonths} tháng`;
+  } else {
+    return `${diffDays} ngày`;
+  }
+};

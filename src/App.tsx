@@ -3,8 +3,8 @@ import {
   createBrowserRouter,
   Outlet,
   RouterProvider,
-  useLocation,
 } from "react-router-dom";
+import ScrollToTop from '@/components/ScrollToTop';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import NotFound from 'components/share/not.found';
 import LoginPage from 'pages/auth/login';
@@ -34,18 +34,13 @@ import ChatPage from './pages/chat';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { ChatWebSocketProvider } from './contexts/ChatWebSocketContext';
 import ProfilePage from './pages/user/profile';
+import EditProfile from './pages/user/edit';
+import CompleteProfile from './pages/user/complete.profile';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const location = useLocation();
   const rootRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (rootRef && rootRef.current) {
-      rootRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-
-  }, [location]);
 
   const handleSearch = (searchData: ISearchHomestayRequest) => {
 
@@ -53,6 +48,7 @@ const LayoutClient = () => {
 
   return (
     <div className='layout-app' ref={rootRef}>
+      <ScrollToTop />
       <Header onSearch={handleSearch} />
       <div className={styles['content-app']}>
         <Outlet context={[searchTerm, setSearchTerm]} />
@@ -88,6 +84,8 @@ export default function App() {
         { path: "/homestay-search", element: <HomestayListPage /> },
         { path: "/messages", element: <ChatPage /> },
         { path: "/users/profile", element: <ProfilePage /> },
+        { path: "/users/edit", element: <EditProfile /> },
+        { path: "/users/complete-profile", element: <CompleteProfile /> },
       ],
     },
 

@@ -20,8 +20,7 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   onConversationSelect
 }) => {
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-  const userId = useAppSelector(state => state.account.user.id);
-  const [conversationsData, setConversations] = useState<Conversation[]>([]);
+  const roleName = useAppSelector(state => state.account.user.role.name);
 
   const filteredConversations = showUnreadOnly
     ? conversations.filter(conv => {
@@ -67,7 +66,7 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
               <div className="conversation-panel__item-content">
                 <Avatar
                   size={48}
-                  src={conversation.participants.find(p => p.role === 'host')?.avatar || conversation.participants[0]?.avatar}
+                  src={roleName === 'USER' ? conversation.participants.find(p => p.role === 'host')?.avatar : conversation.participants.find(p => p.role === 'guest')?.avatar}
                   className="conversation-panel__avatar"
                 />
 

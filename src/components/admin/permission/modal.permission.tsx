@@ -140,7 +140,7 @@ const ModalPermission = (props: IProps) => {
                                 BOOKING: 'BOOKING',
                                 HOMESTAY: 'HOMESTAY',
                                 PERMISSION: 'PERMISSION',
-                                HOMESTAY_IMAGE: 'HOMESTAY_IMAGE',
+                                UPLOAD_FILE: 'UPLOAD_FILE',
                                 ROLE: 'ROLE',
                                 USER: 'USER',
                                 AVAILABILITY: 'AVAILABILITY',

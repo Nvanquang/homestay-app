@@ -582,7 +582,7 @@ const DateDropdown: React.FC<DateDropdownProps> = ({
             onPanelChange={onPanelChange}
             value={undefined}
             dateFullCellRender={renderCell}
-            disabledDate={date => (date as any).isBefore(dayjs().startOf('day'), 'day')}
+            disabledDate={date => dayjs(date).isBefore(dayjs().add(1, 'day').startOf('day'))}
           />
         </div>
         <div className={styles.calendarWrapper} style={calendarWrapperStyle}>

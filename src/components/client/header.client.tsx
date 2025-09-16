@@ -4,7 +4,7 @@ import styles from '@/styles/client.module.scss';
 import { ISearchHomestayRequest } from '@/types/backend';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { callLogout } from '@/config/api';
-import { Avatar, Dropdown, message, Space } from 'antd';
+import { Avatar, Dropdown, message, Modal, Space } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
 import { HomeOutlined, LoginOutlined, LogoutOutlined, MessageOutlined, QqOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
@@ -47,6 +47,13 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isExpanded]);
 
+  // Reset header state when navigating to new pages
+  useEffect(() => {
+    setIsScrolled(false);
+    setIsExpanded(false);
+  }, [location.pathname]);
+
+
   const handleSearch = (searchData: ISearchHomestayRequest) => {
     if (onSearch) {
       onSearch(searchData);
@@ -67,19 +74,28 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
   };
 
   // Khóa thanh header khi đang ở trang tin nhắn
-  const isMessageRoute = location.pathname.startsWith('/message') || location.pathname.startsWith('/book/checkout');
+  const isMessageRoute = location.pathname.startsWith('/message') || location.pathname.startsWith('/book/checkout') || location.pathname.startsWith('/user');
   const effectiveScrolled = isMessageRoute ? true : isScrolled;
   const effectiveExpanded = isMessageRoute ? false : isExpanded;
   const headerClass = `${styles.header} ${effectiveScrolled ? styles.scrolled : ''} ${effectiveExpanded ? styles.expanded : ''}`;
 
-  const handleLogout = async () => {
-    const res = await callLogout();
-    if (res && +res.status === 200) {
-      dispatch(setLogoutAction({}));
-      message.success('Đăng xuất thành công');
-      navigate('/')
-    }
-  }
+  const handleLogout = () => {
+    Modal.confirm({
+      title: 'Xác nhận đăng xuất',
+      content: 'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?',
+      okText: 'Đăng xuất',
+      cancelText: 'Hủy',
+      okType: 'danger',
+      onOk: async () => {
+        const res = await callLogout();
+        if (res && +res.status === 200) {
+          dispatch(setLogoutAction({}));
+          message.success('Đăng xuất thành công');
+          navigate('/')
+        }
+      },
+    });
+  };
 
   const itemsUserDropdown = [
     {

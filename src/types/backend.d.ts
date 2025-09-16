@@ -72,6 +72,7 @@ export interface IUser {
     createdBy?: string;
     updatedAt?: Date | null;
     updatedBy?: string;
+    isVerified?: boolean;
     role?: {
         id: string;
         name: string;
