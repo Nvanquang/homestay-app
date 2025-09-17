@@ -54,7 +54,7 @@ const EditProfile: React.FC = () => {
   const handleSubmit = async (values: any) => {
     try {
       setLoadingSave(true);
-      
+
       if (!userData.id) {
         notification.error({
           message: 'Có lỗi xảy ra',
@@ -82,7 +82,7 @@ const EditProfile: React.FC = () => {
           description: 'Hồ sơ đã được cập nhật thành công!',
           duration: 2
         });
-        
+
         // Redirect to profile page
         navigate('/users/profile');
       } else {
@@ -237,12 +237,10 @@ const EditProfile: React.FC = () => {
             {/* Avatar Upload */}
             <div style={{ textAlign: 'center', marginBottom: '32px' }}>
               <div style={{ position: 'relative', display: 'inline-block' }}>
-                <Avatar
-                  size={120}
-                  src={dataLogo.length > 0 ? dataLogo[0].fileName : userData.avatar}
-                  style={{ marginBottom: '16px' }}
-                />
                 <Upload
+                  name="avatar"
+                  listType="picture-circle"
+                  className="avatar-uploader"
                   maxCount={1}
                   multiple={false}
                   customRequest={handleUploadFileLogo}
@@ -250,21 +248,20 @@ const EditProfile: React.FC = () => {
                   onChange={handleChange}
                   onRemove={(file) => handleRemoveFile(file)}
                   onPreview={handlePreview}
+                  showUploadList={false}
                 >
-                  <Button
-                    type="primary"
-                    shape="circle"
-                    icon={<CameraOutlined style={{}} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
-                    size="large"
-                    style={{
-                      position: 'absolute',
-                      bottom: '16px',
-                      right: '-8px',
-                      background: '#ff385c',
-                      borderColor: '#ff385c'
-                    }}
+                  <img 
+                    src={dataLogo.length > 0 ? dataLogo[0].fileName : userData.avatar} 
+                    alt="avatar" 
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      borderRadius: '50%', 
+                      objectFit: 'cover' 
+                    }} 
                   />
                 </Upload>
+               
               </div>
               <div style={{ color: '#717171', fontSize: '14px' }}>
                 Nhấp để thay đổi ảnh đại diện

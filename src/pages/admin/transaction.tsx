@@ -11,6 +11,7 @@ import { sfLike } from "spring-filter-query-builder";
 import dayjs from "dayjs";
 import { fetchTransaction } from "@/redux/slice/transactionSlide";
 import { CheckCircleOutlined } from "@ant-design/icons";
+import { formatCurrency } from "@/config/utils";
 
 const TransactionPage = () => {
 
@@ -59,10 +60,7 @@ const TransactionPage = () => {
             dataIndex: 'amount',
             sorter: true,
             render: (dom: React.ReactNode, entity: IPaymentTransaction) => {
-                return new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND',
-                }).format(entity.amount);
+                return formatCurrency(entity.amount);
             },
             hideInSearch: true,
         },

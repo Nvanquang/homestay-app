@@ -7,7 +7,7 @@ import { callLogout } from '@/config/api';
 import { Avatar, Dropdown, message, Modal, Space } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
-import { HomeOutlined, LoginOutlined, LogoutOutlined, MessageOutlined, QqOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { HistoryOutlined, HomeOutlined, LoginOutlined, LogoutOutlined, MessageOutlined, QqOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 
 interface HeaderProps {
   onSearch?: (searchData: ISearchHomestayRequest) => void;
@@ -121,9 +121,9 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
       icon: <MessageOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
     },
     {
-      label: <Link to={'/'}>Chuyến đi</Link>,
+      label: <Link to={'/booking/history'}>Lịch sử đặt phòng</Link>,
       key: 'travels',
-      icon: <QqOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <HistoryOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
     },
     {
       label: <label
@@ -155,11 +155,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
         <div className={styles.headerTop}>
           {/* Logo */}
           <Link to="/" className={styles.logo}>
-            <svg viewBox="0 0 32 32" fill="currentColor">
-              <path d="M16 0C7.163 0 0 7.163 0 16s7.163 16 16 16 16-7.163 16-16S24.837 0 16 0zm0 30C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z" />
-              <path d="M16 4C9.373 4 4 9.373 4 16s5.373 12 12 12 12-5.373 12-12S22.627 4 16 4zm0 22C10.486 26 6 21.514 6 16S10.486 6 16 6s10 4.486 10 10-4.486 10-10 10z" />
-              <path d="M16 8c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zm0 14c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z" />
-            </svg>
+            <img src="https://cdn-icons-png.flaticon.com/512/5977/5977574.png" alt="" style={{ width: 35, height: 35 }} />
             Airbnb
           </Link>
 
@@ -210,8 +206,8 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
                 {
                   isAuthenticated ? (
                     <Space>
-                      Welcome {user?.name}
-                      <Avatar style={{ backgroundColor: '#000000ff' }} icon={<UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} />
+                      {user?.name}
+                      <Avatar src={user?.avatar !== null ? user.avatar : <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} />
                     </Space>
                   ) : (
                     <button className={styles.actionButton} title="Menu">

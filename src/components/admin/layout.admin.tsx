@@ -13,8 +13,9 @@ import {
     BarChartOutlined,
     BookOutlined,
     LogoutOutlined,
+    MessageOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Dropdown, Space, message, Avatar, Button } from 'antd';
+import { Layout, Menu, Dropdown, Space, message, Avatar, Button, Modal } from 'antd';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import { callLogout } from 'config/api';
@@ -113,14 +114,23 @@ const LayoutAdmin = () => {
         setActiveMenu(location.pathname)
     }, [location])
 
-    const handleLogout = async () => {
-        const res = await callLogout();
-        if (res && +res.status === 200) {
-            dispatch(setLogoutAction({}));
-            message.success('Đăng xuất thành công');
-            navigate('/')
-        }
-    }
+    const handleLogout = () => {
+        Modal.confirm({
+            title: 'Xác nhận đăng xuất',
+            content: 'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?',
+            okText: 'Đăng xuất',
+            cancelText: 'Hủy',
+            okType: 'danger',
+            onOk: async () => {
+                const res = await callLogout();
+                if (res && +res.status === 200) {
+                    dispatch(setLogoutAction({}));
+                    message.success('Đăng xuất thành công');
+                    navigate('/')
+                }
+            },
+        });
+    };
 
     // if (isMobile) {
     //     items.push({
@@ -138,6 +148,16 @@ const LayoutAdmin = () => {
             label: <Link to={'/'}>Trang chủ</Link>,
             key: 'home',
             icon: <HomeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+        },
+        {
+            label: <Link to={'/users/profile'}>Hồ sơ</Link>,
+            key: 'profile',
+            icon: <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+        },
+        {
+            label: <Link to={'/messages'}>Tin nhắn</Link>,
+            key: 'messages',
+            icon: <MessageOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
         },
         {
             label: <label
@@ -196,8 +216,8 @@ const LayoutAdmin = () => {
 
                             <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
                                 <Space style={{ cursor: "pointer" }}>
-                                    Welcome {user?.name}
-                                    <Avatar> {user?.name?.substring(0, 2)?.toUpperCase()} </Avatar>
+                                    {user?.name}
+                                    <Avatar src={user?.avatar !== null ? user.avatar : <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} />
 
                                 </Space>
                             </Dropdown>

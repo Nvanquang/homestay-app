@@ -58,7 +58,7 @@ const UserNavLinks: React.FC<UserNavLinksProps> = ({ userData }) => {
     },
     {
       key: 'bookings',
-      path: '/users/bookings',
+      path: '/booking/history',
       icon: <HistoryOutlined className={styles.navIcon} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
       text: 'Lịch sử đặt phòng'
     },

@@ -105,13 +105,13 @@ const ReviewSection = (props: IProps) => {
                       <div className={styles['review-header']} style={{padding: 10}}>
                         <div className={styles['reviewer-info']}>
                           <Avatar 
-                            src={item.user.avatarUrl} 
+                            src={item.user?.avatar} 
                             icon={<UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} 
                             size={56} 
                             className={styles['review-avatar']} 
                           />
                           <div className={styles['reviewer-details']}>
-                            <Text strong className={styles['reviewer-name']}>{item.user.name}</Text>
+                            <Text strong className={styles['reviewer-name']}>{item.user?.name}</Text>
                             <div className={styles['review-date']}>
                               {item.postingDate ? dayjs(item.postingDate).format('DD/MM/YYYY') : ''}
                             </div>
@@ -149,13 +149,13 @@ const ReviewSection = (props: IProps) => {
                       <div className={styles['review-header']} style={{padding: 10}}>
                         <div className={styles['reviewer-info']}>
                           <Avatar 
-                            src={item.user.avatarUrl} 
+                            src={item.user?.avatar} 
                             icon={<UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} 
                             size={56} 
                             className={styles['review-avatar']} 
                           />
                           <div className={styles['reviewer-details']}>
-                            <Text strong className={styles['reviewer-name']}>{item.user.name}</Text>
+                            <Text strong className={styles['reviewer-name']}>{item.user?.name}</Text>
                             <div className={styles['review-date']}>
                               {item.postingDate ? dayjs(item.postingDate).format('DD/MM/YYYY') : ''}
                             </div>

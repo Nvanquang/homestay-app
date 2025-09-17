@@ -1,0 +1,714 @@
+.breadcrumb-container {
+  margin-bottom: 30px;
+  padding: 16px 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+// Modern Booking History - White Background, Black Elements
+.modern-booking-history {
+  min-height: 100vh;
+  background: #ffffff;
+  padding-top: 40px;
+}
+
+// Hero Section
+.hero-section {
+  padding: 60px 24px 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .hero-content {
+    text-align: center;
+    margin-bottom: 40px;
+
+    .hero-text {
+      margin-bottom: 48px;
+
+      .hero-title {
+        color: #000000;
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        line-height: 1.2;
+
+        @media (max-width: 768px) {
+          font-size: 32px !important;
+        }
+      }
+
+      .hero-subtitle {
+        color: #333333;
+        font-size: 18px;
+        line-height: 1.6;
+        max-width: 500px;
+      }
+
+      .detail-value {
+        color: #000000;
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        line-height: 1.2;
+      }
+    }
+
+    .hero-stats {
+      .ant-statistic {
+        .ant-statistic-title {
+          color: #6b7280;
+          font-weight: 500;
+          font-size: 14px;
+          margin-bottom: 8px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 40px 16px 24px;
+  }
+}
+
+// Filters Section
+.filters-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px 24px;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+
+  .filters-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 2px solid #000000;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+
+    .ant-card-body {
+      padding: 32px;
+    }
+
+    .filters-header {
+      margin-bottom: 24px;
+
+      .homestay-name {
+        color: #000000;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .homestay-icon {
+          color: #000000;
+          font-size: 20px;
+        }
+      }
+    }
+
+    .filter-group {
+      .filter-label {
+        display: block;
+        color: #374151;
+        font-size: 14px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      .ant-select {
+        .ant-picker {
+          background: #ffffff;
+          border: 2px solid #000000;
+          border-radius: 12px;
+          height: 48px;
+          transition: all 0.3s ease;
+
+          &:hover {
+            border-color: #333333;
+            background: #f8f8f8;
+          }
+
+          .ant-picker-input > input {
+            color: #000000;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+
+    .filter-actions {
+      .filter-label {
+        display: block;
+        color: #374151;
+        font-size: 14px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      .results-info {
+        display: flex;
+        align-items: center;
+        height: 44px;
+        padding: 0 16px;
+        background: #f9fafb;
+        border-radius: 12px;
+        border: 2px solid #e5e7eb;
+
+        .ant-badge {
+          .ant-typography {
+            color: #6b7280;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 16px 24px;
+
+    .filters-card .ant-card-body {
+      padding: 24px 20px;
+    }
+  }
+}
+
+// Status dots for filter options
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+
+  &.all { background: #6b7280; }
+  &.completed { background: #10b981; }
+  &.booked { background: #3b82f6; }
+  &.payment_failed { background: #f59e0b; }
+  &.cancelled { background: #ef4444; }
+}
+
+// Content Section
+.content-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px 40px;
+  }
+}
+
+// Loading, Error, Empty States
+.loading-state,
+.error-state,
+.empty-state {
+  .loading-card,
+  .error-card,
+  .empty-card {
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+
+    .ant-card-body {
+      padding: 60px 40px;
+    }
+  }
+
+  .loading-content {
+    text-align: center;
+
+    .ant-spin {
+      margin-bottom: 24px;
+
+      .ant-spin-dot-item {
+        background-color: #160004;
+      }
+    }
+
+    .ant-typography {
+      &:first-of-type {
+        color: #1f2937;
+        margin-bottom: 8px !important;
+      }
+
+      &:last-of-type {
+        color: #6b7280;
+      }
+    }
+  }
+
+  .empty-description {
+    .ant-typography {
+      &:first-of-type {
+        color: #1f2937;
+        margin-bottom: 8px !important;
+      }
+
+      &:last-of-type {
+        color: #6b7280;
+      }
+    }
+  }
+
+  .explore-button {
+    background: linear-gradient(135deg, #000000 0%, #050002 100%);
+    border: none;
+    border-radius: 12px;
+    height: 48px;
+    font-weight: 600;
+    font-size: 16px;
+    box-shadow: 0 4px 20px rgba(255, 56, 92, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255, 56, 92, 0.4);
+    }
+  }
+}
+
+// Modern Booking Cards
+.modern-booking-card {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 2px solid #000000;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  animation: fadeInUp 0.6s ease-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #000000;
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.2);
+    border-color: #333333;
+
+    .card-header {
+      .homestay-avatar {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .card-header {
+    padding: 24px 24px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #f1f5f9;
+
+    .homestay-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex: 1;
+
+      .homestay-avatar {
+        .ant-avatar {
+          box-shadow: 0 4px 16px rgba(255, 56, 92, 0.2);
+        }
+      }
+
+      .homestay-details {
+        .homestay-name {
+          color: #1e293b;
+          font-weight: 700;
+          font-size: 18px !important;
+          margin-bottom: 4px !important;
+          line-height: 1.3;
+        }
+
+        .booking-id {
+          color: #64748b;
+          font-size: 13px;
+          font-weight: 500;
+        }
+
+        .detail-icon {
+          color: #000000;
+          font-size: 16px;
+          margin-top: 2px;
+        }
+      }
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 2px solid currentColor;
+
+      .anticon {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .card-body {
+    padding: 20px 24px;
+
+    .info-section {
+      .info-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+
+        .info-icon {
+          color: #ff385c;
+          font-size: 16px;
+        }
+
+        .ant-typography {
+          color: #475569;
+          font-weight: 600;
+          font-size: 14px;
+          margin-bottom: 0;
+        }
+      }
+
+      .info-content {
+        padding-left: 24px;
+
+        .date-range {
+          display: block;
+          color: #1e293b;
+          font-weight: 600;
+          font-size: 16px;
+          margin-bottom: 4px;
+        }
+
+        .nights-count {
+          color: #64748b;
+          font-size: 14px;
+        }
+
+        .guest-count {
+          color: #1e293b;
+          font-weight: 600;
+          font-size: 16px;
+        }
+      }
+    }
+
+    .section-divider {
+      margin: 20px 0;
+      border-color: #f1f5f9;
+    }
+
+    .pricing-section {
+      background: #f8f8f8;
+      padding: 20px;
+      border-radius: 16px;
+      margin-top: 20px;
+      border: 2px solid #000000;
+
+      .ant-statistic {
+        .ant-statistic-title {
+          color: #64748b;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 4px;
+        }
+
+        .ant-statistic-content {
+          .ant-statistic-content-value {
+            font-weight: 700;
+          }
+        }
+      }
+
+      .note-label {
+        color: #dc2626;
+        font-size: 13px;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .status-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 2px solid #000000;
+
+        &.confirmed {
+          background: #000000;
+          color: white;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        &.pending {
+          background: #000000;
+          color: white;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        &.cancelled {
+          background: #000000;
+          color: white;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        &.completed {
+          background: #000000;
+          color: white;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+      }
+    }
+
+    .note-section {
+      background: linear-gradient(135deg, #fef3f2 0%, #fef2f2 100%);
+      padding: 16px;
+      border-radius: 12px;
+      border-left: 4px solid #1b0005;
+      margin-top: 16px;
+
+      .note-label {
+        color: #1f0000;
+        font-size: 13px;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .note-content {
+        color: #7f1d1d;
+        font-size: 14px;
+        line-height: 1.5;
+        font-style: italic;
+      }
+    }
+  }
+
+  .card-footer {
+    padding: 16px 24px 24px;
+    border-top: 1px solid #f1f5f9;
+
+    .action-button {
+      border-radius: 12px;
+      font-weight: 600;
+      height: 40px;
+      transition: all 0.3s ease;
+
+      &.primary {
+        background: linear-gradient(135deg, #000000 0%, #300010 100%);
+        border: none;
+        box-shadow: 0 4px 16px rgba(255, 56, 92, 0.3);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(255, 56, 92, 0.4);
+        }
+      }
+
+      &.secondary {
+        color: #64748b;
+        border: 2px solid #e2e8f0;
+        background: white;
+
+        &:hover {
+          color: #383838;
+          border-color: #131313;
+          background: #fef2f2;
+        }
+      }
+
+      &.favorite {
+        color: #64748b;
+        border: none;
+
+        &:hover {
+          color: #170307;
+          background: #fef2f2;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .card-header {
+      padding: 20px 20px 12px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+
+      .homestay-info {
+        .homestay-details {
+          .homestay-name {
+            font-size: 16px !important;
+          }
+        }
+      }
+    }
+
+    .card-body {
+      padding: 16px 20px;
+
+      .pricing-section {
+        padding: 16px;
+      }
+    }
+
+    .card-footer {
+      padding: 12px 20px 20px;
+
+      .ant-space {
+        width: 100%;
+        justify-content: space-between;
+
+        .ant-space-item {
+          flex: 1;
+
+          .action-button {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Bookings Grid
+.bookings-grid {
+  .ant-row {
+    margin: 0 -12px;
+
+    .ant-col {
+      padding: 0 12px;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.modern-booking-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.hero-section {
+  animation: slideInRight 0.8s ease-out;
+}
+
+.filters-container {
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+// Custom Scrollbar
+.modern-booking-history {
+  scrollbar-width: thin;
+  scrollbar-color: #ff385c #f1f5f9;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #ff385c 0%, #e31c5f 100%);
+    border-radius: 4px;
+
+    &:hover {
+      background: linear-gradient(135deg, #e31c5f 0%, #dc2626 100%);
+    }
+  }
+}
+
+// Responsive Design Enhancements
+@media (max-width: 1200px) {
+  .hero-section,
+  .filters-container,
+  .content-section {
+    max-width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section {
+    .hero-content {
+      .hero-text {
+        .hero-title {
+          font-size: 28px !important;
+        }
+
+        .hero-subtitle {
+          font-size: 16px;
+        }
+      }
+
+      .hero-stats {
+        .ant-statistic {
+          .ant-statistic-content-value {
+            font-size: 18px !important;
+          }
+        }
+      }
+    }
+  }
+
+  .filters-container {
+    .filters-card {
+      .ant-card-body {
+        padding: 20px 16px;
+      }
+
+      .filter-group {
+        .filter-select,
+        .filter-date-picker {
+          height: 40px;
+        }
+      }
+    }
+  }
+}

@@ -281,3 +281,30 @@ export const calculateMembershipDuration = (createdAt: Date | string | null | un
     return `${diffDays} ngày`;
   }
 };
+
+// Table columns definition
+export const getStatusConfig = (status: string) => {
+  switch (status.toLowerCase()) {
+    case 'completed':
+    case 'hoàn thành':
+      return { color: 'green', text: 'Hoàn thành' };
+    case 'cancelled':
+    case 'đã hủy':
+      return { color: 'red', text: 'Đã hủy' };
+    case 'booked':
+    case 'đã đặt':
+      return { color: 'blue', text: 'Đã đặt' };
+    case 'payment_failed':
+    case 'thanh toán thất bại':
+      return { color: 'volcano', text: 'Thanh toán thất bại' };
+    default:
+      return { color: 'grey', text: status };
+  }
+};
+
+export const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+  }).format(amount);
+};

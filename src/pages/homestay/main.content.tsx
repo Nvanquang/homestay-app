@@ -17,7 +17,7 @@ import {
 import styles from '@/styles/homestaydetail.module.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { callGetAvailabilities } from '@/config/api';
-import { isSuccessResponse } from '@/config/utils';
+import { formatCurrency, isSuccessResponse } from '@/config/utils';
 import queryString from 'query-string';
 import Access from '@/components/share/access';
 import { ALL_PERMISSIONS } from '@/config/permissions';
@@ -195,7 +195,8 @@ const HomestayMainContent = (props: IProps) => {
                 <Avatar 
                   size={64}
                   className={styles.hostAvatar}
-                  icon={<UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} 
+                  src={homestayDetail?.host?.avatar || undefined}
+                  icon={!homestayDetail?.host?.avatar && <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} 
                 />
               }
               title={
@@ -257,7 +258,7 @@ const HomestayMainContent = (props: IProps) => {
                 {(startDate && endDate) && (
                   <div className={styles.totalInfo}>
                     <Title level={4} className={styles.totalAmount}>
-                      {costTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ
+                      {formatCurrency(costTotal)}
                     </Title>
                     <Text type="secondary" className={styles.totalNights}>
                       cho {datebetween} đêm

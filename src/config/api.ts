@@ -41,13 +41,13 @@ export const callLogout = async (): Promise<IBackendRes<string> | IBackendError>
 
 
 // AMENITY
-export const callCreateAmenity = async (name: string): Promise<IBackendRes<IBooking> | IBackendError> => {
+export const callCreateAmenity = async (name: string): Promise<IBackendRes<IAmenity> | IBackendError> => {
     return axios.post<IBackendRes<IAmenity>>('/api/v1/amenities', { name })
         .then((res) => res)
         .catch((error) => error.response.data);
 };
 
-export const callGetAmenityById = async (id: string): Promise<IBackendRes<IBooking> | IBackendError> => {
+export const callGetAmenityById = async (id: string): Promise<IBackendRes<IAmenity> | IBackendError> => {
     return axios.get<IBackendRes<IAmenity>>(`/api/v1/amenities/${id}`)
         .then((res) => res)
         .catch((error) => error.response.data);
@@ -57,7 +57,7 @@ export const callGetAmenities = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IAmenity>>>(`/api/v1/amenities?${query}`);
 };
 
-export const callDeleteAmenity = async (id: string): Promise<IBackendRes<IBooking> | IBackendError> => {
+export const callDeleteAmenity = async (id: string): Promise<IBackendRes<IAmenity> | IBackendError> => {
     return axios.delete<IBackendRes<IAmenity>>(`/api/v1/amenities/${id}`)
         .then((res) => res)
         .catch((error) => error.response.data);

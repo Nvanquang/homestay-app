@@ -36,6 +36,7 @@ import { ChatWebSocketProvider } from './contexts/ChatWebSocketContext';
 import ProfilePage from './pages/user/profile';
 import EditProfile from './pages/user/edit';
 import CompleteProfile from './pages/user/complete.profile';
+import BookingHistory from './pages/booking/booking.histories';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -86,6 +87,7 @@ export default function App() {
         { path: "/users/profile", element: <ProfilePage /> },
         { path: "/users/edit", element: <EditProfile /> },
         { path: "/users/complete-profile", element: <CompleteProfile /> },
+        { path: "/booking/history", element: <BookingHistory /> },
       ],
     },
 

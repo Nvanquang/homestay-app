@@ -9,7 +9,7 @@ import Access from "@/components/share/access";
 import { ALL_PERMISSIONS } from "@/config/permissions";
 import { sfLike } from "spring-filter-query-builder";
 import { fetchBooking } from "@/redux/slice/bookingSlide";
-import { colorBookingStatus, isSuccessResponse } from "@/config/utils";
+import { colorBookingStatus, formatCurrency, isSuccessResponse } from "@/config/utils";
 import dayjs from "dayjs";
 import { CheckCircleOutlined, CheckOutlined, CloseOutlined, EyeOutlined, StopOutlined, SyncOutlined } from "@ant-design/icons";
 import { callUpdateBooking } from "@/config/api";
@@ -163,10 +163,7 @@ const BookingPage = () => {
             dataIndex: 'totalAmount',
             sorter: true,
             render: (dom: React.ReactNode, entity: IBooking) => {
-                return new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND',
-                }).format(entity.totalAmount);
+                return formatCurrency(entity.totalAmount);
             },
             hideInSearch: true,
         },

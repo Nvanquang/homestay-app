@@ -37,6 +37,7 @@ export interface IAccount {
         id: string;
         name: string;
         email: string;
+        avatar: string;
         role: {
             id?: string;
             name?: string;
@@ -151,6 +152,7 @@ export interface ISearchHomestayResponse {
 export interface IHostInfo {
     id: string;
     name: string;
+    avatar?: string;
 }
 
 export interface ISearchHomestayRequest {
@@ -181,12 +183,13 @@ export interface IBooking {
     discount: number;
     totalAmount: number;
     note: string;
+    isReviewed: boolean;
     user: {
-        id: number;
+        id: string;
         fullName: string;
     };
     homestay: {
-        id: number;
+        id: string;
         name: string;
         address: string;
     };
@@ -216,13 +219,14 @@ export interface IAmenity {
 export interface IReview {
     rating: number;
     comment?: string;
-    postingDate: Date | null;
+    postingDate?: Date | null;
     hostReply?: string;
     homestayId?: string;
-    user: {
+    bookingId?: string;
+    user?: {
         id: string;
         name: string;
-        avatarUrl?: string;
+        avatar?: string;
     }
 }
 

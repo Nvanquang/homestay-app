@@ -19,11 +19,13 @@ import {
   ClockCircleOutlined,
   SafetyCertificateOutlined,
   HeartOutlined,
-  TrophyOutlined
+  TrophyOutlined,
+  UserOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import HostChatModal from './host.chat.modal';
 import styles from '@/styles/hostintroduction.module.scss';
+import { useAppSelector } from '@/redux/hooks';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -143,6 +145,8 @@ const HostInfoBox: React.FC<{ hostData: IHostData; onOpenChat: () => void }> = (
 
 // Premium Host Card Component
 const HostCard: React.FC<{ hostData: IHostData; onOpenChat: () => void }> = ({ hostData, onOpenChat }) => {
+  const user = useAppSelector(state => state.account.user);
+  
   return (
     <div className={styles['premium-host-card']}>
       <Card className={styles['host-main-card']} bordered={false}>
@@ -157,7 +161,7 @@ const HostCard: React.FC<{ hostData: IHostData; onOpenChat: () => void }> = ({ h
                   <div className={styles['avatar-wrapper']}>
                     <Avatar 
                       size={120} 
-                      src={hostData.avatar}
+                      src={user?.avatar !== null ? user.avatar : <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
                       className={styles['premium-avatar']}
                     />
                     {hostData.isVerified && (
