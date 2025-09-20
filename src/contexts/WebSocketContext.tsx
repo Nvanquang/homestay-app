@@ -48,7 +48,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
 
   // Handle different notification types
   const handlePaymentNotification = (paymentNotif: PaymentNotification) => {
-    console.log('Received payment notification:', paymentNotif);
     
     // Store in Redux
     dispatch(addPaymentNotification(paymentNotif));
@@ -87,12 +86,10 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
       connectionTimeout: 3000,
 
       onConnect: () => {
-        console.log('WebSocket connected successfully');
         setIsConnected(true);
         setConnectionState('CONNECTED');
         reconnectAttempts.current = 0;
 
-        console.log('WebSocket connected, ready to subscribe to payment notifications');
       },
 
       onWebSocketError: (error) => {
@@ -108,7 +105,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
       },
 
       onDisconnect: (frame) => {
-        console.log('WebSocket disconnected:', frame);
         setIsConnected(false);
         setConnectionState('DISCONNECTED');
         scheduleReconnect();
@@ -127,7 +123,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
     }
 
     const delay = getReconnectDelay(reconnectAttempts.current);
-    console.log(`Scheduling reconnect in ${delay}ms (attempt ${reconnectAttempts.current + 1})`);
     
     setTimeout(() => {
       reconnectAttempts.current++;
@@ -138,7 +133,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
   const disconnect = () => {
     unsubscribeFromPayment();
     if (client.current) {
-      console.log('Disconnecting WebSocket...');
       client.current.deactivate();
       client.current = null;
       setIsConnected(false);
@@ -157,7 +151,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
       subscription.current.unsubscribe();
     }
 
-    console.log(`Subscribing to payment notifications for booking ${bookingId}`);
     subscription.current = client.current.subscribe(`/topic/payments.${bookingId}`, (message) => {
       try {
         const parsedMessage = JSON.parse(message.body);

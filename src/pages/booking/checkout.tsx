@@ -42,7 +42,6 @@ const CheckoutSection = () => {
 
             if (isSuccessResponse(res) && res.status === 201 && res.data) {
                 const bookingId = res.data.booking.id;
-                console.log('Booking created successfully:', bookingId);
                 
                 // Subscribe to payment notifications for this booking
                 if (bookingId) {

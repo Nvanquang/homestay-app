@@ -39,7 +39,6 @@ const PaymentSuccessPage = () => {
     );
 
     if (existingNotification) {
-      console.log('Using existing payment notification from Redux:', existingNotification);
       displayPaymentResult(existingNotification);
       return;
     }
@@ -49,7 +48,6 @@ const PaymentSuccessPage = () => {
     if (storedNotification) {
       try {
         const notification: PaymentNotification = JSON.parse(storedNotification);
-        console.log('Using stored payment notification:', notification);
         displayPaymentResult(notification);
         // Clean up
         localStorage.removeItem(`payment_${bookingId}`);
@@ -63,7 +61,6 @@ const PaymentSuccessPage = () => {
     // Fallback to API call with timeout
     const fallbackTimeout = setTimeout(() => {
       if (loading) {
-        console.log('No WebSocket notification received, falling back to API...');
         checkPaymentStatusAPI();
       }
     }, 3000); // 30 second timeout
@@ -89,7 +86,6 @@ const PaymentSuccessPage = () => {
 
   const checkPaymentStatusAPI = async () => {
     try {
-      console.log('Checking payment status via API for booking:', bookingId);
       const res = await callGetBookingStatus(String(bookingId));
       
       if (isSuccessResponse(res) && res.status === 200 && res.data) {

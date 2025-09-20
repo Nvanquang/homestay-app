@@ -55,9 +55,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     || currentUser;
 
   // Callback để xử lý tin nhắn mới từ WebSocket
-  const handleNewMessage = useCallback((msg: ChatMessage) => {
-    console.log('Received new message:', msg);
-    
+  const handleNewMessage = useCallback((msg: ChatMessage) => {    
     // Convert ChatMessage to Message format
     const message: Message = {
       id: msg.id,
@@ -99,7 +97,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       return;
     }
 
-    console.log('Joining conversation:', conversationId);
     
     // Reset state khi chuyển conversation
     setLoadMessages([]);
@@ -110,7 +107,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
     // Cleanup function
     return () => {
-      console.log('Leaving conversation');
       leaveConversation();
     };
   }, [conversationId, joinConversation, leaveConversation]);
@@ -125,20 +121,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   }, [connectionState]);
 
   const handleSendMessage = useCallback(async () => {
-    console.log("Attempting to send message");
     
     if (!newMessage.trim()) {
-      console.warn("Empty message, not sending");
       return;
     }
-
-    // Remove this check since sendMessage will handle connection automatically
-
-    console.log("Sending message:", {
-      conversationId,
-      userId,
-      message: newMessage
-    });
 
     try {
       const chatMessage: ChatMessage = {
@@ -151,18 +137,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       };
       
       await sendChatMessage(chatMessage);
-      
-      // Optimistically add message to UI immediately
-      const message: Message = {
-        id: chatMessage.id,
-        content: chatMessage.content,
-        senderId: chatMessage.senderId,
-        conversationId: chatMessage.conversationId,
-        timestamp: chatMessage.timestamp,
-        type: chatMessage.type
-      };
-      
-      setLoadMessages((prev) => [...prev, message]);
       setNewMessage(''); // Clear input after sending
       setConnectionError(null);
     } catch (error) {

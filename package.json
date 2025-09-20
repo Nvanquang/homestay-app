@@ -21,6 +21,7 @@
     "axios": "1.6.5",
     "dayjs": "1.11.8",
     "dotenv": "16.0.3",
+    "firebase": "^12.3.0",
     "html-react-parser": "4.0.0",
     "leaflet": "^1.9.4",
     "lodash": "4.17.21",

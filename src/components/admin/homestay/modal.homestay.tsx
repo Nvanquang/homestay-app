@@ -114,7 +114,6 @@ const ModalHomestay = (props: IProps) => {
 
         if (openModal) {
             init().catch(error => {
-                console.error("Error initializing modal:", error);
                 notification.error({
                     message: "Lỗi khởi tạo",
                     description: "Không thể tải dữ liệu homestay.",
@@ -302,7 +301,6 @@ const ModalHomestay = (props: IProps) => {
                 });
             }
         } catch (error) {
-            console.error("Error submitting homestay:", error);
             notification.error({
                 message: "Có lỗi xảy ra",
                 description: "Không thể lưu homestay. Vui lòng thử lại.",

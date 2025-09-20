@@ -68,7 +68,6 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
       connectionTimeout: 3000,
 
       onConnect: () => {
-        console.log('Chat WebSocket connected successfully');
         setIsConnected(true);
         setConnectionState('CONNECTED');
         reconnectAttempts.current = 0;
@@ -92,7 +91,6 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
       },
 
       onDisconnect: (frame) => {
-        console.log('Chat WebSocket disconnected:', frame);
         setIsConnected(false);
         setConnectionState('DISCONNECTED');
         scheduleReconnect();
@@ -122,7 +120,6 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
   const disconnect = () => {
     leaveConversation();
     if (client.current) {
-      console.log('Disconnecting chat WebSocket...');
       client.current.deactivate();
       client.current = null;
       setIsConnected(false);
@@ -143,13 +140,11 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
       subscription.current.unsubscribe();
     }
 
-    console.log(`Joining conversation ${conversationId}`);
     currentConversationId.current = conversationId;
-    
-    subscription.current = client.current.subscribe(`/topic/conversations/${conversationId}`, (message) => {
+    const destination = `/topic/conversation.${conversationId}`;
+    subscription.current = client.current.subscribe(destination, (message) => {
       try {
         const parsedMessage = JSON.parse(message.body);
-        console.log('Received chat message:', parsedMessage);
         
         // Convert to our ChatMessage format
         const chatMessage: ChatMessage = {
@@ -172,7 +167,6 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
 
   const leaveConversation = () => {
     if (subscription.current) {
-      console.log('Leaving conversation');
       subscription.current.unsubscribe();
       subscription.current = null;
     }
@@ -182,7 +176,6 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
   const sendMessage = async (message: ChatMessage): Promise<void> => {
     // If not connected, try to connect first
     if (!client.current?.connected) {
-      console.log('WebSocket not connected, attempting to connect...');
       connect();
       
       // Wait for connection with timeout
@@ -209,7 +202,6 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
         })
       });
 
-      console.log('Message sent successfully via WebSocket');
     } catch (error) {
       console.error('Error sending message:', error);
       throw error;

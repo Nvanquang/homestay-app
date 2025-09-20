@@ -160,7 +160,6 @@ const EditProfile: React.FC = () => {
     if (res !== null) {
       // Tạo URL đầy đủ cho avatar từ fileName
       const avatarUrl = `${import.meta.env.VITE_BACKEND_URL}/storage/avatar/${res}`;
-      console.log(avatarUrl);
       setDataLogo([{
         fileName: avatarUrl,
       }])

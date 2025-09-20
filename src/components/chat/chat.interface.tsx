@@ -51,14 +51,17 @@ const ChatInterface: React.FC = () => {
       };
       
       // Only add message if it's for the current conversation
-      if (message.conversationId === selectedConversation) {
+      const msgConvId = String(message.conversationId);
+      const selConvId = selectedConversation ? String(selectedConversation) : null;
+
+      if (msgConvId === selConvId) {
         setMessages(prev => {
           // Avoid duplicates
           const exists = prev.some(msg => msg.id === message.id);
           if (exists) return prev;
           return [...prev, localMessage];
         });
-      }
+      } 
     });
   }, [userId, selectedConversation, onMessageReceived]);
 
@@ -97,18 +100,6 @@ const ChatInterface: React.FC = () => {
     try {
       // Send via WebSocket
       await sendChatMessage(messageData);
-      
-      // Add message to local state immediately for better UX
-      const localMessage: Message = {
-        id: messageData.id,
-        content: messageData.content,
-        senderId: messageData.senderId,
-        conversationId: messageData.conversationId,
-        timestamp: messageData.timestamp,
-        type: messageData.type
-      };
-      
-      setMessages(prev => [...prev, localMessage]);
       setNewMessage('');
     } catch (error) {
       console.error('Failed to send message:', error);

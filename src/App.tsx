@@ -37,6 +37,7 @@ import ProfilePage from './pages/user/profile';
 import EditProfile from './pages/user/edit';
 import CompleteProfile from './pages/user/complete.profile';
 import BookingHistory from './pages/booking/booking.histories';
+import notificationService from '@/config/notificationService';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,7 +63,12 @@ const LayoutClient = () => {
 export default function App() {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(state => state.account.isLoading);
+  const authUser = useAppSelector(state => state.account.user);
+  const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
+  const notifInitRef = useRef(false); // has initialized SW + permission + got token
+  const lastRegisteredRef = useRef<{ userId?: string; token?: string }>({});
 
+  // Ensure we have Notification permission so chat notifications can show
   useEffect(() => {
     if (
       window.location.pathname === '/login'
@@ -70,7 +76,55 @@ export default function App() {
     )
       return;
     dispatch(fetchAccount())
-  }, [])
+  }, []);
+
+  // 1) Initialize notifications ASAP on app start (register SW + ask permission + get token)
+  useEffect(() => {
+    const initNotif = async () => {
+      try {
+        if (notifInitRef.current) return;
+        const ok = await notificationService.initialize();
+        if (ok) {
+          notifInitRef.current = true;
+        }
+      } catch (e) {
+      }
+    };
+    initNotif();
+  }, []);
+
+  // 2) Once user is authenticated, send token to server (if available)
+  useEffect(() => {
+    const registerTokenForUser = async () => {
+      try {
+        if (!isAuthenticated || !authUser?.id) {
+          return;
+        }
+        const token = notificationService.getToken();
+        if (!token) {
+          return;
+        }
+        const uid = String(authUser.id);
+        if (lastRegisteredRef.current.userId === uid && lastRegisteredRef.current.token === token) {
+          return; // already registered for this user+token
+        }
+        const ok = await notificationService.sendTokenToServer(token, uid);
+        if (ok) {
+          lastRegisteredRef.current = { userId: uid, token };
+        } 
+      } catch (e) {
+      }
+    };
+    registerTokenForUser();
+  }, [isAuthenticated, authUser?.id]);
+
+  // 3) Reset trackers on logout to allow re-init/register for next login
+  useEffect(() => {
+    if (!isAuthenticated) {
+      lastRegisteredRef.current = {};
+      // Keep notifInitRef so SW/permission persists; token can be reused.
+    }
+  }, [isAuthenticated]);
 
   const router = createBrowserRouter([
     {

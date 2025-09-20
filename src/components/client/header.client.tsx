@@ -207,7 +207,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
                   isAuthenticated ? (
                     <Space>
                       {user?.name}
-                      <Avatar src={user?.avatar !== null ? user.avatar : <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} />
+                      <Avatar style={{backgroundColor: '#000000'}} src={user?.avatar !== null ? user.avatar : <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} />
                     </Space>
                   ) : (
                     <button className={styles.actionButton} title="Menu">

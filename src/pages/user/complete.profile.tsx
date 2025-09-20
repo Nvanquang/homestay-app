@@ -232,7 +232,6 @@ const CompleteProfile: React.FC = () => {
   };
 
   const handleComplete = () => {
-    console.log('Profile completion data:', formData);
     message.success('Hồ sơ đã được hoàn thiện thành công!');
     navigate('/users/profile');
   };

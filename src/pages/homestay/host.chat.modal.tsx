@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Modal, 
   Input, 
@@ -179,23 +179,32 @@ const HostChatModal: React.FC<IHostChatModalProps> = ({
   const [loading, setLoading] = useState(false);
   const userId = useAppSelector((state) => state.account.user?.id);  
 
+  // Log props/state changes
+  useEffect(() => {
+  }, [visible, hostInfo, userId]);
+
   const handleSendMessage = async (text: string) => {
     setLoading(true);
-
-    const res = await callCreateConversation({
+    const payload = {
       userId: userId,
       hostId: '1',
       homestayId: '3',
       firstMessage: text
-    });
-    
-    if (isSuccessResponse(res) && res.status === 200 && res.data) {
+    };
+
+    try {
+      const res = await callCreateConversation(payload);
+      if (isSuccessResponse(res) && res.status === 200 && res.data) {
+        antMessage.success('Tin nhắn đã được gửi thành công!');
+        onClose(); // Close modal after sending
+      } else {
+        antMessage.error('Tin nhắn không thể gửi!');
+      }
+    } catch (err) {
+      console.error('[HostChatModal] handleSendMessage -> error:', err);
+      antMessage.error('Có lỗi khi gửi tin nhắn!');
+    } finally {
       setLoading(false);
-      antMessage.success('Tin nhắn đã được gửi thành công!');
-      onClose(); // Close modal after sending
-    } else {
-      setLoading(false);
-      antMessage.error('Tin nhắn không thể gửi!');
     }
   };
 
@@ -210,7 +219,7 @@ const HostChatModal: React.FC<IHostChatModalProps> = ({
         </div>
       }
       open={visible}
-      onCancel={onClose}
+      onCancel={() => { console.log('[HostChatModal] onClose triggered'); onClose(); }}
       footer={null}
       width={600}
       className={styles['chat-modal']}
