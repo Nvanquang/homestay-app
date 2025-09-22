@@ -79,13 +79,11 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
       },
 
       onWebSocketError: (error) => {
-        console.error('Chat WebSocket error:', error);
         setConnectionState('ERROR');
         scheduleReconnect();
       },
 
       onStompError: (frame) => {
-        console.error('Chat STOMP error:', frame);
         setConnectionState('ERROR');
         scheduleReconnect();
       },
@@ -103,13 +101,11 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
 
   const scheduleReconnect = () => {
     if (reconnectAttempts.current >= maxReconnectAttempts) {
-      console.error('Max chat WebSocket reconnection attempts reached');
       setConnectionState('ERROR');
       return;
     }
 
     const delay = getReconnectDelay(reconnectAttempts.current);
-    console.log(`Scheduling chat WebSocket reconnect in ${delay}ms (attempt ${reconnectAttempts.current + 1})`);
     
     setTimeout(() => {
       reconnectAttempts.current++;
@@ -129,7 +125,6 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
 
   const joinConversation = (conversationId: string) => {
     if (!client.current?.connected) {
-      console.warn('Chat WebSocket not connected, cannot join conversation');
       // Store the conversation ID to rejoin when connected
       currentConversationId.current = conversationId;
       return;
@@ -160,7 +155,6 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
           messageCallback.current(chatMessage);
         }
       } catch (error) {
-        console.error('Error parsing chat message:', error);
       }
     });
   };
@@ -203,7 +197,6 @@ export const ChatWebSocketProvider: React.FC<ChatWebSocketProviderProps> = ({ ch
       });
 
     } catch (error) {
-      console.error('Error sending message:', error);
       throw error;
     }
   };

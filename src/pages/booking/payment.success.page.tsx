@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Row, Col, Card, Typography, Button, Spin } from 'antd';
 import { CheckCircleFilled, CloseCircleOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -6,7 +6,7 @@ import styles from '@/styles/paymentSuccess.module.scss';
 import { callGetBookingStatus } from '@/config/api';
 import { isSuccessResponse } from '@/config/utils';
 import { useAppSelector } from '@/redux/hooks';
-import { PaymentNotification } from '@/contexts/WebSocketContext';
+import { PaymentNotification, useWebSocket } from '@/contexts/WebSocketContext';
 
 const { Title, Paragraph } = Typography;
 
@@ -23,7 +23,25 @@ const PaymentSuccessPage = () => {
 
 
   const paymentNotifications = useAppSelector(state => state.notifications.paymentNotifications);
+  const { subscribeToPayment, unsubscribeFromPayment, connectionState } = useWebSocket();
 
+  // Track resolution state and fallback timer to prevent race conditions
+  const resolvedRef = useRef(false);
+  const fallbackTimerRef = useRef<number | null>(null);
+
+  // Subscribe to the payment topic for this booking to receive websocket updates
+  useEffect(() => {
+    if (!bookingId) return;
+    const bid = Number(bookingId);
+    if (connectionState === 'CONNECTED') {
+      subscribeToPayment(bid);
+    }
+    return () => {
+      unsubscribeFromPayment();
+    };
+  }, [bookingId, connectionState, subscribeToPayment, unsubscribeFromPayment]);
+
+  // Handle notifications from Redux/localStorage as they arrive
   useEffect(() => {
     if (!bookingId) {
       setCheck(false);
@@ -39,6 +57,11 @@ const PaymentSuccessPage = () => {
     );
 
     if (existingNotification) {
+      resolvedRef.current = true;
+      if (fallbackTimerRef.current) {
+        clearTimeout(fallbackTimerRef.current);
+        fallbackTimerRef.current = null;
+      }
       displayPaymentResult(existingNotification);
       return;
     }
@@ -48,28 +71,48 @@ const PaymentSuccessPage = () => {
     if (storedNotification) {
       try {
         const notification: PaymentNotification = JSON.parse(storedNotification);
+        resolvedRef.current = true;
+        if (fallbackTimerRef.current) {
+          clearTimeout(fallbackTimerRef.current);
+          fallbackTimerRef.current = null;
+        }
         displayPaymentResult(notification);
         // Clean up
         localStorage.removeItem(`payment_${bookingId}`);
         return;
       } catch (error) {
-        console.error('Error parsing stored notification:', error);
         localStorage.removeItem(`payment_${bookingId}`);
       }
     }
 
-    // Fallback to API call with timeout
-    const fallbackTimeout = setTimeout(() => {
-      if (loading) {
-        checkPaymentStatusAPI();
-      }
-    }, 3000); // 30 second timeout
-
-    // Cleanup timeout if component unmounts
-    return () => {
-      clearTimeout(fallbackTimeout);
-    };
+    // No immediate resolution yet; just wait for websocket up to 20s.
+    // The fallback timer is scheduled separately in another effect.
   }, [bookingId, paymentNotifications]);
+
+  // Schedule fallback API after 20s ONLY if websocket/local hasn't resolved
+  useEffect(() => {
+    if (!bookingId) return;
+    // Reset resolution for new booking
+    resolvedRef.current = false;
+    // Clear any previous timer
+    if (fallbackTimerRef.current) {
+      clearTimeout(fallbackTimerRef.current);
+      fallbackTimerRef.current = null;
+    }
+    fallbackTimerRef.current = window.setTimeout(() => {
+      if (!resolvedRef.current) {
+        checkPaymentStatusAPI();
+        resolvedRef.current = true;
+      }
+    }, 20000); // 20 seconds
+
+    return () => {
+      if (fallbackTimerRef.current) {
+        clearTimeout(fallbackTimerRef.current);
+        fallbackTimerRef.current = null;
+      }
+    };
+  }, [bookingId]);
 
   const displayPaymentResult = (notification: PaymentNotification) => {
     if (notification.status === 'success') {
@@ -104,7 +147,6 @@ const PaymentSuccessPage = () => {
         setMessage('Không thể xác minh trạng thái thanh toán. Vui lòng liên hệ hỗ trợ.');
       }
     } catch (error) {
-      console.error('Payment status check failed:', error);
       setCheck(false);
       setTitle('Lỗi hệ thống!');
       setMessage('Không thể xác minh trạng thái thanh toán. Vui lòng liên hệ hỗ trợ.');

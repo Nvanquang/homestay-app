@@ -53,14 +53,6 @@ messaging.onBackgroundMessage((payload) => {
     ]
   };
 
-  // Show notification with error handling
-  // self.registration.showNotification(notificationTitle, notificationOptions)
-  //   .then(() => {
-  //     console.log('Background notification shown:', notificationTitle);
-  //   })
-  //   .catch((err) => {
-  //     console.error('Failed to show background notification:', err);
-  //   });
 });
 
 // Handle notification click
@@ -91,7 +83,3 @@ self.addEventListener('notificationclick', (event) => {
   }
 });
 
-// Handle notification close
-// self.addEventListener('notificationclose', (event) => {
-//   console.log('Notification closed:', event);
-// });

@@ -36,7 +36,6 @@ export const useNotification = (): UseNotificationReturn => {
       
       return success;
     } catch (error) {
-      console.error('Failed to initialize notifications:', error);
       return false;
     }
   }, []);
@@ -49,7 +48,6 @@ export const useNotification = (): UseNotificationReturn => {
       setPermission(notificationService.getPermissionStatus());
       return newToken;
     } catch (error) {
-      console.error('Failed to request permission:', error);
       return null;
     }
   }, []);
@@ -68,7 +66,6 @@ export const useNotification = (): UseNotificationReturn => {
     try {
       return await notificationService.sendTokenToServer(token, userId);
     } catch (error) {
-      console.error('Failed to send token to server:', error);
       return false;
     }
   }, [token]);

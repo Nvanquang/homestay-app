@@ -47,7 +47,6 @@ class NotificationService {
 
       return false;
     } catch (error) {
-      console.error('Failed to initialize notification service:', error);
       return false;
     }
   }
@@ -90,7 +89,6 @@ class NotificationService {
         }
       });
     } catch (error) {
-      console.error('Error setting up foreground message listener:', error);
     }
   }
 
@@ -114,7 +112,6 @@ class NotificationService {
     try {
       showNotification(data.title, options);
     } catch (e) {
-      console.error('[FCM] Failed to show foreground notification:', e);
     }
   }
 
@@ -137,7 +134,6 @@ class NotificationService {
 
       return response.ok;
     } catch (error) {
-      console.error('Failed to send token to server:', error);
       return false;
     }
   }
@@ -158,7 +154,6 @@ class NotificationService {
 
       return response.ok;
     } catch (error) {
-      console.error('Failed to unregister token:', error);
       return false;
     }
   }

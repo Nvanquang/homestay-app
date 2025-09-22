@@ -102,8 +102,6 @@ const ChatInterface: React.FC = () => {
       await sendChatMessage(messageData);
       setNewMessage('');
     } catch (error) {
-      console.error('Failed to send message:', error);
-      // Could show error notification here
     }
   };
 

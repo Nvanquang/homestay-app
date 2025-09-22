@@ -93,7 +93,6 @@ const EditProfile: React.FC = () => {
         });
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
       notification.error({
         message: 'Có lỗi xảy ra',
         description: 'Không thể cập nhật hồ sơ. Vui lòng thử lại.',

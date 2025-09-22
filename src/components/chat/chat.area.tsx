@@ -140,7 +140,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       setNewMessage(''); // Clear input after sending
       setConnectionError(null);
     } catch (error) {
-      console.error('Error sending message:', error);
       setConnectionError('Không thể gửi tin nhắn');
     }
   }, [newMessage, wsConnected, conversationId, userId, setNewMessage, sendChatMessage]);

@@ -50,7 +50,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ open, onClose, bookingId, hom
         });
       }
     } catch (error) {
-      console.error('Error creating review:', error);
       notification.error({
         message: 'Có lỗi xảy ra',
         description: 'Không thể gửi đánh giá. Vui lòng thử lại.',

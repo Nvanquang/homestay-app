@@ -55,7 +55,6 @@ export const requestNotificationPermission = async (): Promise<string | null> =>
 export const onMessageListener = (): Promise<MessagePayload> => {
   return new Promise((resolve) => {
     onMessage(messaging, (payload) => {
-      console.log('Message received in foreground:', payload);
       resolve(payload);
     });
   });
@@ -69,7 +68,6 @@ export const addForegroundMessageListener = (
   callback: (payload: MessagePayload) => void
 ) => {
   return onMessage(messaging, (payload) => {
-    console.log('Message received in foreground:', payload);
     callback(payload);
   });
 };

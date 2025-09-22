@@ -37,6 +37,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
   const [connectionState, setConnectionState] = useState<'CONNECTING' | 'CONNECTED' | 'DISCONNECTED' | 'ERROR'>('DISCONNECTED');
   const client = useRef<Client | null>(null);
   const subscription = useRef<any>(null);
+  const pendingBookingId = useRef<number | null>(null);
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
   const baseReconnectDelay = 1000; // 1 second
@@ -48,12 +49,14 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
 
   // Handle different notification types
   const handlePaymentNotification = (paymentNotif: PaymentNotification) => {
-    
     // Store in Redux
     dispatch(addPaymentNotification(paymentNotif));
     
     // Store in localStorage as backup
-    localStorage.setItem(`payment_${paymentNotif.bookingId}`, JSON.stringify(paymentNotif));
+    try {
+      localStorage.setItem(`payment_${paymentNotif.bookingId}`, JSON.stringify(paymentNotif));
+    } catch (e) {
+    }
     
     // Show popup notification
     if (paymentNotif.status === 'success') {
@@ -72,12 +75,14 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
   };
 
   const connect = () => {
-    if (!isAuthenticated || !user?.id || client.current?.connected) {
+    if (!isAuthenticated || !user?.id) {
+      return;
+    }
+    if (client.current?.connected) {
       return;
     }
 
     setConnectionState('CONNECTING');
-    
     const newClient = new Client({
       brokerURL: 'ws://localhost:8080/chat',
       reconnectDelay: 0, // We handle reconnection manually
@@ -89,17 +94,19 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
         setIsConnected(true);
         setConnectionState('CONNECTED');
         reconnectAttempts.current = 0;
-
+        // If there is a pending bookingId to subscribe, do it immediately
+        if (pendingBookingId.current != null) {
+          const bid = pendingBookingId.current;
+          subscribeToPayment(bid);
+        }
       },
 
       onWebSocketError: (error) => {
-        console.error('WebSocket error:', error);
         setConnectionState('ERROR');
         scheduleReconnect();
       },
 
       onStompError: (frame) => {
-        console.error('STOMP error:', frame);
         setConnectionState('ERROR');
         scheduleReconnect();
       },
@@ -117,13 +124,11 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
 
   const scheduleReconnect = () => {
     if (reconnectAttempts.current >= maxReconnectAttempts) {
-      console.error('Max reconnection attempts reached');
       setConnectionState('ERROR');
       return;
     }
 
     const delay = getReconnectDelay(reconnectAttempts.current);
-    
     setTimeout(() => {
       reconnectAttempts.current++;
       connect();
@@ -142,7 +147,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
 
   const subscribeToPayment = (bookingId: number) => {
     if (!client.current?.connected) {
-      console.warn('WebSocket not connected, cannot subscribe');
+      pendingBookingId.current = bookingId;
       return;
     }
 
@@ -151,14 +156,16 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
       subscription.current.unsubscribe();
     }
 
-    subscription.current = client.current.subscribe(`/topic/payments.${bookingId}`, (message) => {
+    const destination = `/topic/payments.${bookingId}`;
+    subscription.current = client.current.subscribe(destination, (message) => {
       try {
         const parsedMessage = JSON.parse(message.body);
         handlePaymentNotification(parsedMessage);
       } catch (error) {
-        console.error('Error parsing message:', error);
       }
     });
+    // Mark current bookingId as subscribed
+    pendingBookingId.current = bookingId;
   };
 
   const unsubscribeFromPayment = () => {
@@ -166,6 +173,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
       subscription.current.unsubscribe();
       subscription.current = null;
     }
+    pendingBookingId.current = null;
   };
 
   // Connect when user is authenticated

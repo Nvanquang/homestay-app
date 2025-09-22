@@ -40,7 +40,6 @@ const AvailabilityPage = (props: IProps) => {
         try {
           const result = await dispatch(fetchAvailability({ query })).unwrap();
         } catch (error) {
-          console.error('Error fetching availability:', error);
         }
       }
     };

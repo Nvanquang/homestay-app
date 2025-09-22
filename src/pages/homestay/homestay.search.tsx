@@ -62,7 +62,6 @@ const HomestayListPage = () => {
           setHomestays(Array.isArray(res.data) ? res.data : [res.data]);
         }
       } catch (error) {
-        console.error('Error fetching homestays:', error);
         setHomestays([]);
       } finally {
         setLoading(false);
