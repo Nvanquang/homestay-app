@@ -111,7 +111,7 @@ export default function App() {
         const ok = await notificationService.sendTokenToServer(token, uid);
         if (ok) {
           lastRegisteredRef.current = { userId: uid, token };
-        } 
+        }
       } catch (e) {
       }
     };
@@ -130,18 +130,60 @@ export default function App() {
     {
       path: "/",
       element: <LayoutApp><LayoutClient /></LayoutApp>,
-      // errorElement: <NotFound />,
+      errorElement: <NotFound />,
       children: [
         { index: true, element: <HomePage /> },
         { path: "homestay/:id", element: <ClientHomestayDetailPage /> },
-        { path: "book/checkout/:homestayId", element: <CheckoutSection /> },
-        { path: "/payments/payment-callback", element: <PaymentSuccessPage /> },
         { path: "/homestay-search", element: <HomestayListPage /> },
-        { path: "/messages", element: <ChatPage /> },
-        { path: "/users/profile", element: <ProfilePage /> },
-        { path: "/users/edit", element: <EditProfile /> },
-        { path: "/users/complete-profile", element: <CompleteProfile /> },
-        { path: "/booking/history", element: <BookingHistory /> },
+        {
+          path: "book/checkout/:homestayId",
+          element:
+            <ProtectedRoute>
+              <CheckoutSection />
+            </ProtectedRoute>
+        },
+        {
+          path: "/payments/payment-callback",
+          element:
+            <ProtectedRoute>
+              <PaymentSuccessPage />
+            </ProtectedRoute>
+        },
+        {
+          path: "/messages",
+          element:
+            <ProtectedRoute>
+              <ChatPage />
+            </ProtectedRoute>
+        },
+        {
+          path: "/users/profile",
+          element:
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+        },
+        {
+          path: "/users/edit",
+          element:
+            <ProtectedRoute>
+              <EditProfile />
+            </ProtectedRoute>
+        },
+        {
+          path: "/users/complete-profile",
+          element:
+            <ProtectedRoute>
+              <CompleteProfile />
+            </ProtectedRoute>
+        },
+        {
+          path: "/booking/history",
+          element:
+            <ProtectedRoute>
+              <BookingHistory />
+            </ProtectedRoute>
+        },
       ],
     },
 
@@ -213,7 +255,10 @@ export default function App() {
 
     {
       path: "/verify-otp",
-      element: <VerifyOtpPage />,
+      element: 
+        <ProtectedRoute>
+          <VerifyOtpPage />
+        </ProtectedRoute>,
     },
   ]);
 

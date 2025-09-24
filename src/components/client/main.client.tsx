@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from '@/styles/client.module.scss';
 import { IHomestay } from '@/types/backend';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +24,18 @@ const MainContent = (props: IProps) => {
     const [sortQuery, setSortQuery] = useState("sort=updatedAt,desc");
     const navigate = useNavigate();
 
+    // Guard against React StrictMode double-invoking effects in development
+    const lastFetchSignatureRef = useRef<string>("");
+    const lastFetchTimeRef = useRef<number>(0);
+
     useEffect(() => {
+        const signature = JSON.stringify({ current, pageSize, filter: filter || "", sortQuery: sortQuery || "" });
+        const now = Date.now();
+        if (signature === lastFetchSignatureRef.current && (now - lastFetchTimeRef.current) < 1500) {
+            return;
+        }
+        lastFetchSignatureRef.current = signature;
+        lastFetchTimeRef.current = now;
         fetchHomestay();
     }, [current, pageSize, filter, sortQuery]);
 

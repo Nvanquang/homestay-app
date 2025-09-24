@@ -11,14 +11,15 @@ import {
   Input,
   Rate
 } from 'antd';
-import { HeartOutlined, HeartFilled, HomeOutlined, SearchOutlined } from '@ant-design/icons';
+import { HeartOutlined, HeartFilled, SearchOutlined } from '@ant-design/icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import styles from '@/styles/homestaylist.module.scss';
 import { callSearchHomestays } from '@/config/api';
 import { ISearchHomestayResponse } from '@/types/backend';
+import { calculateDateBetween, formatCurrency } from '@/config/utils';
 
 const { Title, Text } = Typography;
 
@@ -31,15 +32,110 @@ const customIcon = new L.Icon({
 });
 
 // Helper: fit map bounds to points
-function FitBoundsOnData({ points }: { points: Array<[number, number]> }) {
+function FitBoundsOnData({ points, enabled = true }: { points: Array<[number, number]>; enabled?: boolean }) {
   const map = useMap();
   useEffect(() => {
+    if (!enabled) return;
     if (!points || points.length === 0) return;
     const bounds = L.latLngBounds(points);
     map.fitBounds(bounds, { padding: [40, 40] });
-  }, [points, map]);
+  }, [points, enabled, map]);
   return null;
 }
+
+// Utility: Haversine distance in meters
+function haversineDistance(a: L.LatLng, b: L.LatLng) {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const R = 6375000; // meters
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const lat1 = toRad(a.lat);
+  const lat2 = toRad(b.lat);
+  const x = dLng * Math.cos((lat1 + lat2) / 2);
+  const d = Math.sqrt(dLat * dLat + x * x) * R;
+  return d;
+}
+
+// Utility: overlap ratio of two bounds (intersection area / union area)
+function boundsOverlapRatio(a?: L.LatLngBounds, b?: L.LatLngBounds): number {
+  if (!a || !b) return 0;
+  const ax1 = a.getWest();
+  const ay1 = a.getSouth();
+  const ax2 = a.getEast();
+  const ay2 = a.getNorth();
+  const bx1 = b.getWest();
+  const by1 = b.getSouth();
+  const bx2 = b.getEast();
+  const by2 = b.getNorth();
+  const ix1 = Math.max(ax1, bx1);
+  const iy1 = Math.max(ay1, by1);
+  const ix2 = Math.min(ax2, bx2);
+  const iy2 = Math.min(ay2, by2);
+  const iArea = Math.max(0, ix2 - ix1) * Math.max(0, iy2 - iy1);
+  const aArea = (ax2 - ax1) * (ay2 - ay1);
+  const bArea = (bx2 - bx1) * (by2 - by1);
+  const uArea = aArea + bArea - iArea || 1;
+  return iArea / uArea;
+}
+
+// Utility: adaptive movement threshold based on zoom
+function getDistanceThresholdByZoom(zoom: number): number {
+  if (zoom >= 17) return 300; // 200-500m
+  if (zoom >= 14) return 800; // 500m-1km
+  if (zoom >= 10) return 3500; // 2-5km
+  return 15000; // 10-20km
+}
+
+// Simple LRU cache keyed by zoom-rounded tile key
+class LRUCache<K, V> {
+  private map = new Map<K, V>();
+  constructor(private limit = 50) {}
+  get(key: K): V | undefined {
+    const v = this.map.get(key);
+    if (v !== undefined) {
+      this.map.delete(key);
+      this.map.set(key, v);
+    }
+    return v;
+  }
+  set(key: K, val: V) {
+    if (this.map.has(key)) this.map.delete(key);
+    this.map.set(key, val);
+    if (this.map.size > this.limit) {
+      const iter = this.map.keys().next();
+      if (!iter.done) {
+        const first = iter.value as K;
+        this.map.delete(first);
+      }
+    }
+  }
+}
+
+function tileKey(lat: number, lng: number, zoom: number): string {
+  // Granularity changes with zoom: larger zoom => finer grid
+  const factor = zoom >= 17 ? 5000 : zoom >= 14 ? 5000 : zoom >= 10 ? 200 : 50; // meters per grid approx
+  // Convert degrees roughly to meters scaling (approx): 1 deg lat ~ 111km, 1 deg lng ~ 111km * cos(lat)
+  const latMeters = lat * 115000;
+  const lngMeters = lng * 115000 * Math.cos((lat * Math.PI) / 180);
+  const glat = Math.round(latMeters / factor) * factor;
+  const glng = Math.round(lngMeters / factor) * factor;
+  return `${zoom}:${glat}:${glng}`;
+}
+
+// Map event handler to notify parent on move/zoom end and user interaction start
+const MapEventHandler: React.FC<{ onChange: (map: L.Map) => void; onUserInteract?: () => void }> = ({ onChange, onUserInteract }) => {
+  const map = useMapEvents({
+    dragstart: () => {
+      if (onUserInteract) onUserInteract();
+    },
+    zoomstart: () => {
+      if (onUserInteract) onUserInteract();
+    },
+    moveend: () => onChange(map),
+    zoomend: () => onChange(map),
+  });
+  return null;
+};
 
 const HomestayListPage = () => {
   const navigate = useNavigate();
@@ -49,9 +145,28 @@ const HomestayListPage = () => {
   const [isMapSticky, setIsMapSticky] = useState(true);
   const [homestays, setHomestays] = useState<ISearchHomestayResponse[]>([]);
   const [loading, setLoading] = useState(false);
+  // Auto-fit map to markers only before user starts moving the map
+  const [autoFitEnabled, setAutoFitEnabled] = useState(true);
+  // Track current map bounds to filter which markers are visible
+  const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
 
   const location = useLocation();
-  const { longitude, latitude, radius, checkin, checkout, guests, available } = location.state || {};
+  // Read filters from URL first (priority), then fallback to location.state
+  const searchParams = new URLSearchParams(location.search);
+  const urlCheckin = searchParams.get('checkin') || searchParams.get('checkinDate');
+  const urlCheckout = searchParams.get('checkout') || searchParams.get('checkoutDate');
+  const urlGuests = searchParams.get('guests');
+  const urlStatus = searchParams.get('status') || searchParams.get('available');
+  const stateParams = location.state || {} as any;
+  const { longitude, latitude, radius, checkin, checkout, guests, available } = {
+    longitude: stateParams.longitude,
+    latitude: stateParams.latitude,
+    radius: stateParams.radius,
+    checkin: urlCheckin ?? stateParams.checkin,
+    checkout: urlCheckout ?? stateParams.checkout,
+    guests: urlGuests ?? stateParams.guests,
+    available: urlStatus ?? stateParams.available,
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -66,21 +181,158 @@ const HomestayListPage = () => {
       } finally {
         setLoading(false);
       }
+    };
+
+    // Normalize and de-duplicate by signature so StrictMode or re-render won't double call
+    const signature = JSON.stringify({
+      longitude: Number(longitude) || 0,
+      latitude: Number(latitude) || 0,
+      radius: Number(radius) || 0,
+      checkin: checkin || '',
+      checkout: checkout || '',
+      guests: guests ?? '',
+      available: available || '',
+    });
+    if (seenInitSignaturesRef.current.has(signature)) {
+      return;
     }
+    seenInitSignaturesRef.current.add(signature);
+
     init();
   }, [longitude, latitude, radius, checkin, checkout, guests, available]);
+
+  // --- Incremental loading on map movements ---
+  const lastCenterRef = useRef<L.LatLng | null>(null);
+  const lastBoundsRef = useRef<L.LatLngBounds | null>(null);
+  const lastZoomRef = useRef<number>(13);
+  const lastRequestTimeRef = useRef<number>(0);
+  const debounceTimerRef = useRef<number | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const cacheRef = useRef(new LRUCache<string, ISearchHomestayResponse[]>(50));
+  const userInteractedRef = useRef(false);
+  // De-duplicate initial fetch per unique parameter signature
+  const seenInitSignaturesRef = useRef<Set<string>>(new Set());
+
+  const mergeHomestays = (incoming: ISearchHomestayResponse[]) => {
+    setHomestays(prev => {
+      const mapById = new Map<string | number, ISearchHomestayResponse>();
+      for (const h of prev || []) {
+        if (h && h.id !== undefined && h.id !== null) mapById.set(h.id, h);
+      }
+      for (const h of incoming || []) {
+        if (h && h.id !== undefined && h.id !== null) mapById.set(h.id, h);
+      }
+      return Array.from(mapById.values());
+    });
+  };
+
+  const handleMapChanged = (map: L.Map) => {
+    // Ignore initial programmatic map movements until the user interacts
+    if (!userInteractedRef.current) return;
+    // Debounce moves 400ms
+    if (debounceTimerRef.current) window.clearTimeout(debounceTimerRef.current);
+    debounceTimerRef.current = window.setTimeout(async () => {
+      const now = Date.now();
+      const center = map.getCenter();
+      const zoom = map.getZoom();
+      const bounds = map.getBounds();
+      // Update current bounds for viewport-based visibility
+      setMapBounds(bounds);
+
+      // Throttle: max 1 req/5s (as implemented below)
+      if (now - lastRequestTimeRef.current < 5000) return;
+
+      // Decide whether to fetch
+      let shouldFetch = false;
+      if (!lastCenterRef.current || !lastBoundsRef.current) {
+        // First interaction: fetch
+        shouldFetch = true;
+      } else {
+        // If zoom level changed, force fetch
+        if (lastZoomRef.current !== zoom) {
+          shouldFetch = true;
+        }
+
+        // Distance threshold by zoom
+        if (!shouldFetch) {
+          const movedMeters = haversineDistance(lastCenterRef.current, center);
+          const threshold = getDistanceThresholdByZoom(zoom);
+          if (movedMeters >= threshold) {
+            shouldFetch = true;
+          } else {
+            // Check overlap ratio: if low overlap, fetch
+            const overlap = boundsOverlapRatio(lastBoundsRef.current, bounds);
+            if (overlap < 0.6) {
+              shouldFetch = true;
+            }
+          }
+        }
+      }
+
+      if (!shouldFetch) return;
+
+      // Prepare request
+      const lat = center.lat;
+      const lng = center.lng;
+      const rad = 5000; // meters
+
+      // Caching by tile key
+      const key = tileKey(lat, lng, zoom);
+      const cached = cacheRef.current.get(key);
+      if (cached) {
+        mergeHomestays(cached);
+        lastCenterRef.current = center;
+        lastBoundsRef.current = bounds;
+        lastZoomRef.current = zoom;
+        lastRequestTimeRef.current = now;
+        return;
+      }
+
+      // Cancel previous
+      if (abortControllerRef.current) abortControllerRef.current.abort();
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      try {
+        setLoading(true);
+        const res = await callSearchHomestays(
+          lng,
+          lat,
+          rad,
+          checkin,
+          checkout,
+          guests,
+          available,
+          { signal: controller.signal }
+        );
+        if (res?.status === 200 && res.data) {
+          const data = Array.isArray(res.data) ? res.data : [res.data];
+          cacheRef.current.set(key, data);
+          mergeHomestays(data);
+          lastCenterRef.current = center;
+          lastBoundsRef.current = bounds;
+          lastZoomRef.current = zoom;
+          lastRequestTimeRef.current = now;
+        }
+      } catch (e) {
+        // Ignore abort errors
+      } finally {
+        setLoading(false);
+      }
+    }, 400);
+  };
 
   // Tọa độ mặc định fallback nếu không có điểm
   const defaultCenter: [number, number] = [latitude, longitude];
 
-  // Format giá tiền
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-      minimumFractionDigits: 0
-    }).format(price);
-  };
+  // Compute homestays visible on the current map viewport (markers)
+  const mapVisibleHomestays = (homestays || []).filter(h => {
+    if (!mapBounds) return true; // before first interaction, show all
+    const lat = Number(h.latitude);
+    const lng = Number(h.longitude);
+    if (Number.isNaN(lat) || Number.isNaN(lng)) return false;
+    return mapBounds.contains(L.latLng(lat, lng));
+  });
 
   // Xử lý yêu thích
   const toggleFavorite = (id: number) => {
@@ -130,6 +382,15 @@ const HomestayListPage = () => {
     homestay.address?.toLowerCase().includes(mapSearchValue.toLowerCase())
   );
 
+  // Further filter list by current map viewport (if available)
+  const listVisibleHomestays = (filteredHomestays || []).filter(h => {
+    if (!mapBounds) return true; // before first interaction, show all
+    const lat = Number(h.latitude);
+    const lng = Number(h.longitude);
+    if (Number.isNaN(lat) || Number.isNaN(lng)) return false;
+    return mapBounds.contains(L.latLng(lat, lng));
+  });
+
   // Points cho fitBounds
   const points: Array<[number, number]> = (filteredHomestays || [])
     .filter(h => h.latitude != null && h.longitude != null)
@@ -165,9 +426,9 @@ const HomestayListPage = () => {
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
               />
             </div>
-          ) : filteredHomestays?.length > 0 ? (
+          ) : listVisibleHomestays?.length > 0 ? (
             <Row gutter={[16, 16]}>
-              {filteredHomestays?.map((homestay) => (
+              {listVisibleHomestays?.map((homestay) => (
                 <Col xs={24} sm={8} key={homestay.id}>
                   <Card
                     hoverable
@@ -218,6 +479,10 @@ const HomestayListPage = () => {
                         {homestay.address}
                       </Text>
 
+                      <Text className={styles['homestay-price']}>
+                        {formatCurrency(Number(homestay.totalAmount))} <Text style={{ fontSize: 14, fontWeight: 400 }}>/ {calculateDateBetween(String(urlCheckin), String(urlCheckout))} đêm</Text>
+                      </Text>
+
                       <div className={styles['homestay-rating']}>
                         <Rate
                           disabled
@@ -259,15 +524,22 @@ const HomestayListPage = () => {
               zoom={13}
               style={{ height: '100%', width: '100%' }}
             >
+              <MapEventHandler
+                onChange={handleMapChanged}
+                onUserInteract={() => {
+                  userInteractedRef.current = true;
+                  if (autoFitEnabled) setAutoFitEnabled(false);
+                }}
+              />
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
 
-              {/* Auto fit to markers when data changes */}
-              <FitBoundsOnData points={points} />
+              {/* Auto fit to markers when data changes (only before user interaction) */}
+              <FitBoundsOnData points={points} enabled={autoFitEnabled} />
 
-              {filteredHomestays?.map((homestay) => (
+              {mapVisibleHomestays?.map((homestay) => (
                 <Marker
                   key={homestay.id}
                   position={[Number(homestay.latitude), Number(homestay.longitude)]}
@@ -286,20 +558,7 @@ const HomestayListPage = () => {
                           preview={false}
                         />
                       </div>
-                      {/* <div style={{ color: '#1890ff', fontWeight: 600, marginBottom: 8 }}>
-                        {formatPrice(homestay.price)}/đêm
-                      </div> */}
-                      {/* <div style={{ marginBottom: 8 }}>
-                        <Rate
-                          disabled
-                          defaultValue={homestay.rating}
-                          allowHalf
-                          style={{ fontSize: 12 }}
-                        />
-                        <span style={{ fontSize: 12, marginLeft: 4 }}>
-                          {homestay.rating}
-                        </span>
-                      </div> */}
+                      
                       <Button
                         type="primary"
                         size="small"

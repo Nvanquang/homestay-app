@@ -1,7 +1,9 @@
 .homestay-list-container {
   background: #f0f2f5;
-  padding: 20px;
   min-height: 100vh;
+  max-width: 1760px;
+  margin: 0 auto;
+  padding: 20px 50px;
 }
 
 .destinationCard {
@@ -42,6 +44,7 @@
   overflow: hidden !important;
   position: relative;
   background: #f0f0f0; /* Fallback background */
+  
 
   .homestay-card-image {
     width: 100% !important;

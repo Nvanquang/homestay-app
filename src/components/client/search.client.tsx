@@ -21,7 +21,7 @@ interface SearchProps {
 const Search: React.FC<SearchProps> = ({ 
   isScrolled = false, 
   searchData = {
-    radius: 1000000,
+    radius: 10000,
     status: 'AVAILABLE'
   },
   onSearch, 
@@ -55,9 +55,14 @@ const Search: React.FC<SearchProps> = ({
   };
 
   const handleSearchClick = () => {
+    // Trigger optional callback for parent components
     if (onSearch) {
       onSearch(searchData);
-      navigate(`/homestay-search?${new URLSearchParams({
+    }
+
+    // Always navigate to the search results page with both query and state
+    navigate(
+      `/homestay-search?${new URLSearchParams({
         latitude: searchData.latitude?.toString() || '',
         longitude: searchData.longitude?.toString() || '',
         radius: searchData.radius?.toString() || '',
@@ -65,16 +70,19 @@ const Search: React.FC<SearchProps> = ({
         checkout: searchData.checkoutDate || '',
         guests: searchData.guests?.toString() || '',
         available: searchData.status || ''
-      })}`, {state: {
-        latitude: searchData.latitude,
-        longitude: searchData.longitude,
-        radius: searchData.radius,
-        checkin: searchData.checkinDate,
-        checkout: searchData.checkoutDate,
-        guests: searchData.guests,
-        available: searchData.status
-      }});
-    }
+      })}`,
+      {
+        state: {
+          latitude: searchData.latitude,
+          longitude: searchData.longitude,
+          radius: searchData.radius,
+          checkin: searchData.checkinDate,
+          checkout: searchData.checkoutDate,
+          guests: searchData.guests,
+          available: searchData.status,
+        },
+      }
+    );
   };
 
   const handleSectionClick = (type: string) => {

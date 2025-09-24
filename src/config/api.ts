@@ -1,5 +1,6 @@
 import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal, IVnpayBookingResponse, IBookingStatus, ISearchHomestayRequest, ISearchHomestayResponse, IConversation, IMessage, IChatConversationResponse, IChatMessageResponse, ICreateConversationResponse, ISendMessageResponse, ICursorPageResponse, Message } from '@/types/backend';
 import axios from './axios-customize';
+import type { AxiosRequestConfig } from 'axios';
 import { Conversation } from '@/components/chat/types';
 
 /**
@@ -133,9 +134,19 @@ export const callGetHomestayById = async (id: string): Promise<IBackendRes<IHome
         .catch((error) => error.response.data);
 };
 
-export const callSearchHomestays =  (longitude: string | number, latitude: string | number, radius: string | number, checkinDate?: string, checkoutDate?: string, guests?: string | number, status?: string) => {
+export const callSearchHomestays =  (
+    longitude: string | number,
+    latitude: string | number,
+    radius: string | number,
+    checkinDate?: string,
+    checkoutDate?: string,
+    guests?: string | number,
+    status?: string,
+    config?: AxiosRequestConfig
+) => {
     return axios.get<IBackendRes<ISearchHomestayResponse>>('/api/v1/homestays/search', {
-        params: { longitude, latitude, radius, checkinDate, checkoutDate, guests, status }
+        params: { longitude, latitude, radius, checkinDate, checkoutDate, guests, status },
+        ...(config || {})
     });
 };
 

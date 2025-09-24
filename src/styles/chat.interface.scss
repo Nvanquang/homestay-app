@@ -605,6 +605,13 @@
   }
 }
 
+/* Hide empty chat state on very small screens */
+@media (max-width: 600px) {
+  .airbnb-chat__empty-state {
+    display: none;
+  }
+}
+
 @keyframes typing-bounce {
   0%, 60%, 100% {
     transform: translateY(0);
@@ -702,25 +709,27 @@
     }
 
     &__conversations {
-      width: 85%;
-      max-width: 360px;
-      position: fixed;
-      left: -100%;
-      top: 64px;
-      height: calc(100vh - 64px);
-      z-index: 1000;
-      transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 2px 0 16px rgba(0, 0, 0, 0.2);
+      /* Always visible on mobile: normal sidebar instead of off-canvas */
+      width: 300px;
+      max-width: 85vw;
+      position: relative;
+      left: 0;
+      top: 0;
+      height: auto;
+      z-index: auto;
+      transition: none;
+      box-shadow: none;
       border-right: 1px solid #ebebeb;
       background: white;
+    }
 
-      &--open {
-        left: 0;
-      }
+    /* Allow collapsing the conversations panel after selecting a conversation */
+    &__conversations--collapsed {
+      display: none;
     }
 
     &__overlay {
-      display: block;
+      display: none;
     }
 
     &__main {

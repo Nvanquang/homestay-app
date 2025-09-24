@@ -22,6 +22,12 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ open, onClose, bookingId, hom
   const handleSubmit = async (values: { rating: number; comment?: string }) => {
     if (!bookingId || !homestayId) return;
 
+    // Defensive check: ensure comment is provided and not only whitespace
+    if (!values.comment || !values.comment.trim()) {
+      message.error('Vui lòng nhập nhận xét trước khi gửi.');
+      return;
+    }
+
     setLoading(true);
     try {
       const reviewData: IReview = {
@@ -96,8 +102,12 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ open, onClose, bookingId, hom
         </Form.Item>
 
         <Form.Item
-          label="Nhận xét (tùy chọn)"
+          label="Nhận xét"
           name="comment"
+          rules={[
+            { required: true, message: 'Vui lòng nhập nhận xét!' },
+            { whitespace: true, message: 'Nội dung nhận xét không được chỉ có khoảng trắng!' }
+          ]}
         >
           <TextArea
             rows={4}

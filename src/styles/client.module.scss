@@ -51,10 +51,27 @@
 
 .headerTop {
   height: 100px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* left: logo, center: nav/search, right: actions */
   align-items: center;
-  justify-content: space-between;
   padding: 0 8px;
+
+  /* Place specific children into grid columns to keep center fixed regardless of side widths */
+  > .logo {
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  > .navigation,
+  > .scrolledSearchContainer {
+    grid-column: 2;
+    justify-self: center;
+  }
+
+  > .headerActions {
+    grid-column: 3;
+    justify-self: end;
+  }
 
   .scrolled & {
     height: 80px;

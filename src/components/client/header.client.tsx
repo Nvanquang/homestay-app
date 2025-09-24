@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
   const [searchData, setSearchData] = useState<ISearchHomestayRequest & { address?: string }>({
     longitude: 105.8342,
     latitude: 21.0278,
-    radius: 100000,
+    radius: 10000,
     status: 'AVAILABLE'
   });
 

@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Avatar } from 'antd';
+import { Avatar } from 'antd';
 import ConversationListPanel from './conversation.list.panel';
 import ChatArea from './chat.area';
 import BookingInfo from './booking.info';
 import { Conversation, Message, User } from './types';
-import '../../styles/chat.interface.scss';
+import '@/styles/chat.interface.scss';
 import { callGetConversationsByUser, callGetMessages } from '@/config/api';
 import { isSuccessResponse } from '@/config/utils';
 import { useAppSelector } from '@/redux/hooks';
 import { useChatWebSocket, ChatMessage } from '@/contexts/ChatWebSocketContext';
-
-const { Title } = Typography;
 
 const ChatInterface: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -20,7 +18,8 @@ const ChatInterface: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [currentConversation, setCurrentConversation] = useState<any>(null);
   const [conversationsData, setConversationsData] = useState<Conversation[]>([]);
-  const [showConversationList, setShowConversationList] = useState(false);
+  // Always show list initially (until a conversation is selected)
+  const [showConversationList, setShowConversationList] = useState(true);
   const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1200);
   const userStore = useAppSelector(state => state.account.user);
   const userId = userStore.id;
@@ -68,9 +67,9 @@ const ChatInterface: React.FC = () => {
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-      // Auto close conversation list on desktop
+      // Always show conversation list on desktop widths
       if (window.innerWidth >= 768) {
-        setShowConversationList(false);
+        setShowConversationList(true);
       }
     };
 
@@ -202,7 +201,7 @@ const ChatInterface: React.FC = () => {
       <div className="airbnb-chat__body">
         {/* Conversation List */}
         <div className={`airbnb-chat__conversations ${
-          windowWidth < 768 && showConversationList ? 'airbnb-chat__conversations--open' : ''
+          windowWidth < 768 && !showConversationList ? 'airbnb-chat__conversations--collapsed' : ''
         }`}>
           <ConversationListPanel
             conversations={conversationsData.length > 0 ? conversationsData : []}
@@ -210,14 +209,6 @@ const ChatInterface: React.FC = () => {
             onConversationSelect={handleConversationSelect}
           />
         </div>
-
-        {/* Mobile Overlay */}
-        {windowWidth < 768 && showConversationList && (
-          <div 
-            className="airbnb-chat__overlay"
-            onClick={() => setShowConversationList(false)}
-          />
-        )}
 
         {/* Main Chat Area */}
         <div className="airbnb-chat__main">
