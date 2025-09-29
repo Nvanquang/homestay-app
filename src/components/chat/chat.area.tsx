@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Typography, Input, Button, Avatar } from 'antd';
-import { SendOutlined, MoreOutlined, MenuOutlined, CloseOutlined } from '@ant-design/icons';
+import { Typography, Input, Button, Avatar, Modal, Space, Badge } from 'antd';
+import { SendOutlined, MenuOutlined, CloseOutlined, PhoneOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import MessageBubble from './message.bubble';
 import { Message, User } from './types';
 import { useAppSelector } from '@/redux/hooks';
 import { useChatWebSocket, ChatMessage } from '@/contexts/ChatWebSocketContext';
+import { useWebRTC } from '@/config/useWebRTC';
 
 const { Title, Text } = Typography;
 
@@ -36,10 +37,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   windowWidth
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const hasLoggedRef = useRef<boolean>(false);
   const userId = useAppSelector(state => state.account.user.id);
   const conversationId = currentConversation?.id;
   const [loadMessages, setLoadMessages] = useState<Message[]>([]);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [callModalOpen, setCallModalOpen] = useState(false);
+  const [callTypeVideo, setCallTypeVideo] = useState(true);
   
   const { 
     isConnected: wsConnected, 
@@ -53,6 +57,36 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   const host = currentConversation?.participants?.find((user: User) => user.role === 'host') 
     || currentConversation?.participants?.[0] 
     || currentUser;
+
+  // Determine remote user for 1-1 (fallback to first non-current user)
+  const remoteUserId = React.useMemo(() => {
+    const list: User[] = currentConversation?.participants || [];
+    const selfId = currentUser?.id?.toString?.() ?? currentUser?.id;
+    const other = list.find(u => (u?.id?.toString?.() ?? u.id) !== selfId);
+    const id = other?.id ? other.id.toString() : undefined;
+    try { console.log('[CHAT] conversationId=', currentConversation?.id, 'remoteUserId=', id); } catch {}
+    return id as string | undefined;
+  }, [currentConversation, currentUser.id]);
+
+  // WebRTC hook
+  const {
+    callState,
+    isVideo,
+    isCaller,
+    hasConnected,
+    localStream,
+    remoteStream,
+    muted,
+    cameraOff,
+    incomingCall,
+    startCall,
+    acceptCall,
+    rejectCall,
+    endCall,
+    toggleMute,
+    toggleCamera,
+    getLastCallDurationSeconds,
+  } = useWebRTC({ conversationId: conversationId?.toString(), localUserId: userId, remoteUserId });
 
   // Callback để xử lý tin nhắn mới từ WebSocket
   const handleNewMessage = useCallback((msg: ChatMessage) => {    
@@ -78,7 +112,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       if (exists) {
         return prev;
       }
-      
+
       return [...prev, message];
     });
   }, []);
@@ -120,6 +154,20 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     }
   }, [connectionState]);
 
+  // Auto handle when call ends (local or remote): when state -> IDLE, close panel and log once for caller
+  useEffect(() => {
+    const handleEnd = async () => {
+      if (callState === 'IDLE' && callModalOpen) {
+        if (isCaller && !hasLoggedRef.current) {
+          try { await logCallMessage(); } catch {}
+          hasLoggedRef.current = true;
+        }
+        setCallModalOpen(false);
+      }
+    };
+    handleEnd();
+  }, [callState, callModalOpen, isCaller]);
+
   const handleSendMessage = useCallback(async () => {
     
     if (!newMessage.trim()) {
@@ -143,6 +191,58 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       setConnectionError('Không thể gửi tin nhắn');
     }
   }, [newMessage, wsConnected, conversationId, userId, setNewMessage, sendChatMessage]);
+
+  const handleStartCall = useCallback(async (video: boolean) => {
+    if (!conversationId) return;
+    setCallTypeVideo(video);
+    setCallModalOpen(true);
+    hasLoggedRef.current = false;
+    await startCall(video);
+  }, [conversationId, startCall]);
+
+  const handleAcceptIncoming = useCallback(async () => {
+    setCallTypeVideo(incomingCall?.isVideo ?? true);
+    setCallModalOpen(true);
+    hasLoggedRef.current = false;
+    await acceptCall();
+  }, [incomingCall, acceptCall]);
+
+  const handleRejectIncoming = useCallback(async () => {
+    await rejectCall();
+    // Receiver shouldn't log call summary
+  }, [rejectCall]);
+
+  const formatDuration = (sec: number) => {
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    if (h > 0) return `${h} giờ ${m} phút ${s} giây`;
+    if (m > 0) return `${m} phút ${s} giây`;
+    return `${s} giây`;
+  };
+
+  async function logCallMessage() {
+    if (!conversationId) return;
+    // Only caller logs summary; guard via hook flag
+    if (!isCaller) return;
+    let secs = getLastCallDurationSeconds();
+    if ((!secs || secs <= 0) && hasConnected) {
+      // Nếu đã từng CONNECTED nhưng duration chưa kịp cập nhật, để tối thiểu 1 giây
+      secs = 1;
+    }
+    const content = hasConnected && secs && secs > 0
+      ? `${isVideo ? 'Cuộc gọi video' : 'Cuộc gọi thoại'} đã kết thúc • Thời lượng: ${formatDuration(secs)}`
+      : `${isVideo ? 'Cuộc gọi video' : 'Cuộc gọi thoại'} chưa kết nối hoặc bị bỏ lỡ`;
+    const chatMessage: ChatMessage = {
+      id: Date.now().toString(),
+      content,
+      senderId: userId,
+      conversationId: conversationId.toString(),
+      timestamp: new Date(),
+      type: 'text'
+    };
+    try { await sendChatMessage(chatMessage); } catch {}
+  }
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -244,6 +344,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Incoming call inline indicator */}
+          {incomingCall && (
+            <Badge color="green" text={incomingCall.isVideo ? 'Cuộc gọi video đến' : 'Cuộc gọi thoại đến'} />
+          )}
           {/* Hamburger Menu Button - Only show on mobile */}
           {windowWidth && windowWidth < 768 && onToggleConversationList && (
             <Button
@@ -256,7 +360,22 @@ const ChatArea: React.FC<ChatAreaProps> = ({
               className="airbnb-chat__hamburger-btn"
             />
           )}
-          <Button type="text" icon={<MoreOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} />
+          {/* Call buttons */}
+          <Button
+            type="text"
+            icon={<PhoneOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+            title="Gọi thoại"
+            onClick={() => handleStartCall(false)}
+            disabled={!wsConnected}
+          />
+          <Button
+            type="text"
+            icon={<VideoCameraOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+            title="Gọi video"
+            onClick={() => handleStartCall(true)}
+            disabled={!wsConnected}
+          />
+          
         </div>
       </div>
 
@@ -308,6 +427,79 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           title={!wsConnected ? "Chưa kết nối WebSocket" : "Gửi tin nhắn"}
         />
       </div>
+
+      {/* Incoming call modal */}
+      <Modal
+        open={!!incomingCall && !callModalOpen}
+        title={incomingCall?.isVideo ? 'Cuộc gọi video đến' : 'Cuộc gọi thoại đến'}
+        onCancel={handleRejectIncoming}
+        footer={
+          <Space>
+            <Button onClick={handleRejectIncoming}>Từ chối</Button>
+            <Button type="primary" onClick={handleAcceptIncoming}>Chấp nhận</Button>
+          </Space>
+        }
+      >
+        {host && (
+          <div style={{display:'flex', alignItems:'center', gap:12}}>
+            <Avatar src={host.avatar} size={40} />
+            <div>
+              <div style={{fontWeight:600}}>{host.fullName}</div>
+              <div style={{color:'#888'}}>đang gọi cho bạn...</div>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Call panel modal */}
+      <Modal
+        open={callModalOpen}
+        width={1100}
+        bodyStyle={{ padding: 16 }}
+        style={{ top: 40 }}
+        title={callTypeVideo ? 'Đang gọi video' : 'Đang gọi thoại'}
+        onCancel={async () => { await endCall(); setCallModalOpen(false); }}
+        footer={
+          <Space>
+            <Button onClick={toggleMute}>{muted ? 'Bật mic' : 'Tắt mic'}</Button>
+            {callTypeVideo && <Button onClick={toggleCamera}>{cameraOff ? 'Bật camera' : 'Tắt camera'}</Button>}
+            <Button danger onClick={async () => { await endCall(); setCallModalOpen(false); }}>Kết thúc</Button>
+          </Space>
+        }
+      >
+        <div style={{display:'grid', gridTemplateColumns: callTypeVideo ? '1fr 1fr' : '1fr', gap:12, alignItems:'stretch'}}>
+          {/* Local preview */}
+          <video
+            style={{width:'100%', height: callTypeVideo ? 520 : 220, objectFit:'cover', background:'#000', borderRadius:8}}
+            playsInline
+            muted
+            autoPlay
+            ref={(el) => {
+              if (el && localStream) {
+                if (el.srcObject !== localStream) el.srcObject = localStream;
+                // local preview stays muted
+                try { el.play && el.play(); } catch {}
+              }
+            }}
+          />
+          {/* Remote view (only show when stream exists) */}
+          {callTypeVideo && (
+            <video
+              style={{width:'100%', height: 520, objectFit:'cover', background:'#000', borderRadius:8}}
+              playsInline
+              autoPlay
+              ref={(el) => {
+                if (el && remoteStream) {
+                  if (el.srcObject !== remoteStream) el.srcObject = remoteStream;
+                  el.muted = false;
+                  el.volume = 1.0;
+                  try { el.play && el.play(); } catch {}
+                }
+              }}
+            />
+          )}
+        </div>
+      </Modal>
     </>
   );
 };

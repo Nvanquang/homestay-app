@@ -12,6 +12,7 @@ import bookingReducer from './slice/bookingSlide';
 import transactionReducer from './slice/transactionSlide';
 import availabilityReducer from './slice/availabilitySlide';
 import notificationReducer from './slice/notificationSlice';
+import conversationReducer from './slice/conversationSlide';
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     transaction: transactionReducer,
     availability: availabilityReducer,
     notifications: notificationReducer,
+    conversation: conversationReducer,
   },
 });
 

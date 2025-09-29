@@ -201,7 +201,6 @@ const HostChatModal: React.FC<IHostChatModalProps> = ({
         antMessage.error('Tin nhắn không thể gửi!');
       }
     } catch (err) {
-      console.error('[HostChatModal] handleSendMessage -> error:', err);
       antMessage.error('Có lỗi khi gửi tin nhắn!');
     } finally {
       setLoading(false);

@@ -38,6 +38,7 @@ import EditProfile from './pages/user/edit';
 import CompleteProfile from './pages/user/complete.profile';
 import BookingHistory from './pages/booking/booking.histories';
 import notificationService from '@/config/notificationService';
+import { fetchConversation } from './redux/slice/conversationSlide';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,7 +63,6 @@ const LayoutClient = () => {
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const isLoading = useAppSelector(state => state.account.isLoading);
   const authUser = useAppSelector(state => state.account.user);
   const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
   const notifInitRef = useRef(false); // has initialized SW + permission + got token
@@ -76,6 +76,7 @@ export default function App() {
     )
       return;
     dispatch(fetchAccount())
+    
   }, []);
 
   // 1) Initialize notifications ASAP on app start (register SW + ask permission + get token)
@@ -115,6 +116,7 @@ export default function App() {
       } catch (e) {
       }
     };
+    dispatch(fetchConversation(authUser.id));
     registerTokenForUser();
   }, [isAuthenticated, authUser?.id]);
 

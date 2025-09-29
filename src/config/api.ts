@@ -164,7 +164,7 @@ export const callUpdateHomestay = async (
     files: File[],
     folder: string = "homestay"
 
-): Promise<IBackendRes<IPermission> | IBackendError> => {
+): Promise<IBackendRes<IHomestay> | IBackendError> => {
 
     const formData = new FormData();
     formData.append(
@@ -185,7 +185,7 @@ export const callUpdateHomestay = async (
         .catch((error) => error.response.data);
 };
 
-export const callDeleteHomestay = async (id: string): Promise<IBackendRes<IPermission> | IBackendError> => {
+export const callDeleteHomestay = async (id: string): Promise<IBackendRes<IHomestay> | IBackendError> => {
     return axios.delete<IBackendRes<IHomestay>>(`/api/v1/homestays/${id}`)
         .then((res) => res)
         .catch((error) => error.response.data);
@@ -419,7 +419,10 @@ export const callCreateConversation = async (data: {
 export const callGetConversationsByUser = async (userId: string): Promise<IBackendRes<Conversation[]> | IBackendError> => {
     return axios.get<IBackendRes<Conversation[]>>(`/api/v1/conversations/user/${userId}`)
         .then((res) => res)
-        .catch((error) => error.response.data);
+        .catch((error) => {
+            const err: IBackendError = error?.response?.data;
+            throw new Error(err?.message || 'Failed to fetch conversations');
+        });
 };
 
 export const callGetConversationById = async (id: string): Promise<IBackendRes<IChatConversationResponse> | IBackendError> => {
