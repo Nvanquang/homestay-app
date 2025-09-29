@@ -353,8 +353,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             <Button
               type="text"
               icon={showConversationList ? 
-                <CloseOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> : 
-                <MenuOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                <CloseOutlined /> : 
+                <MenuOutlined />
               }
               onClick={onToggleConversationList}
               className="airbnb-chat__hamburger-btn"
@@ -363,14 +363,14 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           {/* Call buttons */}
           <Button
             type="text"
-            icon={<PhoneOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+            icon={<PhoneOutlined />}
             title="Gọi thoại"
             onClick={() => handleStartCall(false)}
             disabled={!wsConnected}
           />
           <Button
             type="text"
-            icon={<VideoCameraOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+            icon={<VideoCameraOutlined />}
             title="Gọi video"
             onClick={() => handleStartCall(true)}
             disabled={!wsConnected}
@@ -420,7 +420,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
         />
         <Button
           type="primary"
-          icon={<SendOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+          icon={<SendOutlined />}
           onClick={handleSendMessage}
           disabled={!newMessage.trim()}
           className="airbnb-chat__send-btn"

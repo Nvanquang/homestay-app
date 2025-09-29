@@ -4,11 +4,10 @@ import { EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import UserInfoCard from '@/components/user/userinfo.card';
 import UserNavLinks from '@/components/user/user.navlinks';
-import { mockUserData } from '@/data/mockUserData';
 import styles from '@/styles/userProfile.module.scss';
 import { useAppSelector } from '@/redux/hooks';
 import { callGetUserById } from '@/config/api';
-import { calculateMembershipDuration, isSuccessResponse } from '@/config/utils';
+import { calculateMembershipDuration, isSuccessResponse, mockUserData } from '@/config/utils';
 import { useState } from 'react';
 import { IUser } from '@/types/backend';
 
@@ -37,7 +36,7 @@ const UserProfile: React.FC = () => {
         >
           <Button 
             type="primary" 
-            icon={<EditOutlined style={{}} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+            icon={<EditOutlined style={{}} />}
             size="large"
             style={{
               background: '#ff385c',

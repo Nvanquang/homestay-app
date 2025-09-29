@@ -43,7 +43,7 @@ const BookingInfo: React.FC<BookingInfoProps> = ({
           <div className="airbnb-chat__property-image">
             <Button
               type="text"
-              icon={<EyeInvisibleOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+              icon={<EyeInvisibleOutlined />}
               onClick={() => setShowSidebar(false)}
               className="airbnb-chat__sidebar-toggle"
               title="Ẩn thông tin homestay"
@@ -54,7 +54,7 @@ const BookingInfo: React.FC<BookingInfoProps> = ({
               preview={false}
             />
             <div className="airbnb-chat__property-rating">
-              <StarFilled style={{ color: '#ff5a5f' }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+              <StarFilled style={{ color: '#ff5a5f' }} />
               <span>4.8</span>
             </div>
           </div>
@@ -65,7 +65,7 @@ const BookingInfo: React.FC<BookingInfoProps> = ({
             </Title>
 
             <div className="airbnb-chat__property-location">
-              <EnvironmentOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+              <EnvironmentOutlined />
               <Text type="secondary">{currentConversation.homestayInfo.address}</Text>
             </div>
 
@@ -77,7 +77,7 @@ const BookingInfo: React.FC<BookingInfoProps> = ({
               </Title>
 
               <div className="airbnb-chat__detail-row">
-                <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                <UserOutlined />
                 <div>
                   <Text strong>Sức chứa</Text>
                   <br />
@@ -111,7 +111,7 @@ const BookingInfo: React.FC<BookingInfoProps> = ({
               </div>
 
               <div className="airbnb-chat__rating-row">
-                <StarFilled style={{ color: '#ff5a5f', marginRight: 4 }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                <StarFilled style={{ color: '#ff5a5f', marginRight: 4 }} />
                 <Text strong>{currentConversation.homestayInfo.averageRating?.toFixed(1) || 'N/A'}</Text>
                 <Text type="secondary" style={{ marginLeft: 8 }}>({currentConversation.homestayInfo.totalReviews || 0} đánh giá)</Text>
               </div>
@@ -134,7 +134,7 @@ const BookingInfo: React.FC<BookingInfoProps> = ({
       ) : (
         <Button
           type="text"
-          icon={<EyeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+          icon={<EyeOutlined />}
           onClick={() => setShowSidebar(true)}
           className="airbnb-chat__sidebar-show"
           title="Hiện thông tin homestay"

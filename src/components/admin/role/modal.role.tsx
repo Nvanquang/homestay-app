@@ -104,7 +104,7 @@ const ModalRole = (props: IProps) => {
                 submitter={{
                     render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
                     submitButtonProps: {
-                        icon: <CheckSquareOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                        icon: <CheckSquareOutlined />
                     },
                     searchConfig: {
                         resetText: "Hủy",

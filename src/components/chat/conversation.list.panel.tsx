@@ -36,13 +36,13 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
         <div className="conversation-panel__search">
           <Input
             placeholder="Tìm kiếm cuộc trò chuyện"
-            prefix={<SearchOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+            prefix={<SearchOutlined />}
             className="conversation-panel__search-input"
           />
         </div>
         <Button
           type={showUnreadOnly ? "primary" : "text"}
-          icon={<FilterOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+          icon={<FilterOutlined />}
           className="conversation-panel__filter-btn"
           onClick={() => setShowUnreadOnly(!showUnreadOnly)}
           title="Lọc tin nhắn chưa đọc"

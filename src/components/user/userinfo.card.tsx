@@ -28,12 +28,12 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({
           <Avatar
             size={120}
             src={user.avatar}
-            icon={<UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+            icon={<UserOutlined />}
             className={styles.userAvatar}
           />
           {isVerified && (
             <div className={styles.verifiedBadge}>
-              <CheckCircleFilled style={{}} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+              <CheckCircleFilled style={{}} />
             </div>
           )}
         </div>
@@ -45,7 +45,7 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({
             {isVerified && <Tag color="green">Đã xác minh</Tag>}
           </div>
           <div className={styles.joinDate}>
-            <CalendarOutlined style={{}} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+            <CalendarOutlined style={{}} />
             <span>{formatJoinDate(user.createdAt)}</span>
             {membershipDuration && membershipDuration !== '' && (
               <span>• {membershipDuration} thành viên</span>

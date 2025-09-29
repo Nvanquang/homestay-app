@@ -1,101 +1,46 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React from 'react';
 import {
-  Card,
-  Table,
-  Button,
-  Typography,
-  Tag,
-  Spin,
-  Alert,
-  Empty,
-  Row,
-  Col,
-  Select,
-  DatePicker,
-  Space,
-  Badge,
-  Tooltip,
-  Breadcrumb,
-  notification,
+  Card, Table, Button, Typography, Alert, Empty, Row, Col, Select, DatePicker, Space, Badge, Breadcrumb, Tag, Tooltip, Spin,
 } from 'antd';
-import {
-  StarOutlined,
-  FilterOutlined,
-  SortAscendingOutlined,
-  EyeOutlined
-} from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAppSelector } from '@/redux/hooks';
-import { callGetBookingHistory } from '@/config/api';
-import { IBackendError, IBooking } from '@/types/backend';
-import { convertSlug, formatCurrency, getStatusConfig, isSuccessResponse } from '@/config/utils';
-import dayjs from 'dayjs';
-import _ from 'lodash';
-import '@/styles/bookingHistory.scss';
+import { FilterOutlined, SortAscendingOutlined, EyeOutlined, StarOutlined } from '@ant-design/icons';
+import { useBookingHistories } from '../hooks/useBookingHistories';
+import { IBooking } from '@/types/backend';
+import { convertSlug, formatCurrency, getStatusConfig } from '@/config/utils';
 import ViewDetailBooking from '@/components/booking/view.booking.histories';
 import ReviewModal from '@/components/booking/review.modal';
+import { ColumnsType } from 'antd/es/table';
+import { Link } from 'react-router-dom';
+import dayjs from 'dayjs';
+import '@/styles/bookingHistory.scss';
 
-const { Title, Text } = Typography;
+const { Title, Text: AntText } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-import type { RangePickerProps } from 'antd/es/date-picker';
-
-type RangeValue = RangePickerProps['value'];
-
-
-const BookingHistory: React.FC = () => {
-  const navigate = useNavigate();
-  const userId = useAppSelector(state => state.account.user.id);
-
-  const [bookings, setBookings] = useState<IBooking[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [dateRange, setDateRange] = useState<RangeValue>(null);
-  const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
-  const [dataInit, setDataInit] = useState<IBooking | null>(null);
-  const [openReviewModal, setOpenReviewModal] = useState<boolean>(false);
-  const [reviewBookingId, setReviewBookingId] = useState<string | null>(null);
-  const [reviewHomestayId, setReviewHomestayId] = useState<string | null>(null);
-
-  const fetchBookingHistory = async () => {
-    if (!userId) {
-      setError('Vui lòng đăng nhập để xem lịch sử đặt chỗ');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-
-    const response = await callGetBookingHistory(parseInt(userId));
-
-    if (isSuccessResponse(response)) {
-      // Handle both single booking and paginated response
-      let bookingData: IBooking[] = [];
-      if (response.data) {
-        if (Array.isArray(response.data)) {
-          bookingData = response.data;
-        }
-      }
-      setLoading(false);
-      setBookings(bookingData);
-    } else {
-      const errMes = response as IBackendError;
-      notification.error({
-        message: 'Có lỗi xảy ra',
-        description: errMes.detail,
-        duration: 2
-      });
-    }
-
-  };
-
-  useEffect(() => {
-    fetchBookingHistory();
-  }, [userId]);
+const BookingHistoryPage: React.FC = () => {
+  const {
+    userId,
+    loading,
+    error,
+    filteredAndSortedBookings,
+    statusFilter,
+    dateRange,
+    openViewDetail,
+    dataInit,
+    openReviewModal,
+    reviewBookingId,
+    reviewHomestayId,
+    setDataInit,
+    setOpenViewDetail,
+    fetchBookingHistory,
+    handleStatusFilterChange,
+    handleDateRangeChange,
+    handleViewDetailClose,
+    handleReviewModalClose,
+    handleReviewSuccess,
+    navigate,
+    handleCreateReview,
+  } = useBookingHistories();
 
   const columns: ColumnsType<IBooking> = [
     {
@@ -162,9 +107,9 @@ const BookingHistory: React.FC = () => {
       align: 'right',
       sorter: (a, b) => a.totalAmount - b.totalAmount,
       render: (amount: number) => (
-        <Text strong style={{ color: 'red' }}>
+        <AntText strong style={{ color: 'red' }}>
           {formatCurrency(amount)}
-        </Text>
+        </AntText>
       ),
     },
     {
@@ -178,10 +123,13 @@ const BookingHistory: React.FC = () => {
             <Button
               type="text"
               style={{ color: 'blue' }}
-              icon={<EyeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+              icon={<EyeOutlined />}
               onClick={() => {
-                setDataInit(record);
-                setOpenViewDetail(true);
+                handleViewDetailClose(); // Đóng trước để reset
+                setTimeout(() => {
+                  setDataInit(record);
+                  setOpenViewDetail(true);
+                }, 0);
               }}
             />
           </Tooltip>
@@ -190,7 +138,7 @@ const BookingHistory: React.FC = () => {
               <Button
                 type="text"
                 style={{ color: 'orange' }}
-                icon={<StarOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+                icon={<StarOutlined />}
                 onClick={() => handleCreateReview(record.id!, record.homestay.id!)}
               />
             </Tooltip>
@@ -201,65 +149,6 @@ const BookingHistory: React.FC = () => {
       ),
     },
   ];
-
-  const filteredAndSortedBookings = useMemo(() => {
-    let filtered = [...bookings];
-
-    // Filter by status
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(booking =>
-        booking.status.toLowerCase() === statusFilter.toLowerCase()
-      );
-    }
-
-    // Filter by date range
-    if (dateRange && dateRange[0] && dateRange[1]) {
-      const [startDate, endDate] = dateRange;
-      filtered = filtered.filter(booking => {
-        const checkinDate = dayjs(booking.checkinDate);
-        return checkinDate.isAfter(dayjs(startDate).startOf('day')) &&
-          checkinDate.isBefore(dayjs(endDate).endOf('day'));
-      });
-    }
-
-    // Sort by checkin date (most recent first)
-    return _.orderBy(filtered, ['checkinDate'], ['desc']);
-  }, [bookings, statusFilter, dateRange]);
-
-  
-
-  const handleCreateReview = (bookingId: string, homestayId: string) => {
-    setReviewHomestayId(homestayId);
-    setReviewBookingId(bookingId);
-    setOpenReviewModal(true);
-  };
-
-  const handleViewDetailClose = () => {
-    setReviewHomestayId(null);
-    setOpenViewDetail(false);
-    setDataInit(null);
-  };
-
-  const handleReviewModalClose = (open: boolean) => {
-    setOpenReviewModal(open);
-    if (!open) {
-      setReviewBookingId(null);
-      setReviewHomestayId(null);
-    }
-  };
-
-  const handleReviewSuccess = () => {
-    // Optionally refresh booking data or show success message
-    fetchBookingHistory();
-  };
-
-  const handleStatusFilterChange = (value: string) => {
-    setStatusFilter(value);
-  };
-
-  const handleDateRangeChange = (dates: RangeValue) => {
-    setDateRange(dates);
-  };
 
   if (!userId) {
     return (
@@ -276,17 +165,15 @@ const BookingHistory: React.FC = () => {
 
   return (
     <div className="modern-booking-history" style={{ marginTop: 200 }}>
-      {/* Filters Section */}
       <div className="filters-container">
-        {/* Breadcrumb */}
         <div className={'breadcrumb-container'}>
           <Breadcrumb
             items={[
               {
                 title: (
-                  <Link to="/">
+                  <a onClick={() => navigate('/')}>
                     Home
-                  </Link>
+                  </a>
                 ),
               },
               {
@@ -298,7 +185,7 @@ const BookingHistory: React.FC = () => {
         <Card className="filters-card">
           <div className="filters-header">
             <Title level={4} className="filters-title">
-              <FilterOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+              <FilterOutlined />
               Bộ lọc & Sắp xếp
             </Title>
           </div>
@@ -306,13 +193,13 @@ const BookingHistory: React.FC = () => {
           <Row gutter={[24, 16]}>
             <Col xs={24} sm={12} md={8}>
               <div className="filter-group">
-                <Text strong className="filter-label">Trạng thái</Text>
+                <Title level={5} className="filter-label">Trạng thái</Title>
                 <Select
                   value={statusFilter}
                   onChange={handleStatusFilterChange}
                   className="filter-select"
                   placeholder="Chọn trạng thái"
-                  suffixIcon={<SortAscendingOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+                  suffixIcon={<SortAscendingOutlined />}
                   style={{ width: 180 }}
                 >
                   <Option value="all">
@@ -351,7 +238,7 @@ const BookingHistory: React.FC = () => {
 
             <Col xs={24} sm={12} md={10}>
               <div className="filter-group">
-                <Text strong className="filter-label">Khoảng thời gian</Text>
+                <Title level={5} className="filter-label">Khoảng thời gian</Title>
                 <RangePicker
                   value={dateRange}
                   onChange={handleDateRangeChange}
@@ -364,7 +251,7 @@ const BookingHistory: React.FC = () => {
 
             <Col xs={24} md={6}>
               <div className="filter-actions">
-                <Text strong className="filter-label">Kết quả</Text>
+                <Title level={5} className="filter-label">Kết quả</Title>
                 <div className="results-info">
                   <Badge
                     count={filteredAndSortedBookings.length}
@@ -377,7 +264,6 @@ const BookingHistory: React.FC = () => {
         </Card>
       </div>
 
-      {/* Content Section */}
       <div className="content-section">
         {loading ? (
           <div className="loading-state">
@@ -385,7 +271,7 @@ const BookingHistory: React.FC = () => {
               <div className="loading-content">
                 <Spin size="large" />
                 <Title level={3}>Đang tải chuyến đi của bạn...</Title>
-                <Text>Vui lòng chờ trong giây lát</Text>
+                <Title level={5}>Đang tải chuyến đi của bạn...</Title>
               </div>
             </Card>
           </div>
@@ -414,21 +300,21 @@ const BookingHistory: React.FC = () => {
                 description={
                   <div className="empty-description">
                     <Title level={3}>
-                      {bookings.length === 0
+                      {filteredAndSortedBookings.length === 0
                         ? "Chưa có chuyến đi nào"
                         : "Không tìm thấy kết quả"
                       }
                     </Title>
-                    <Text>
-                      {bookings.length === 0
+                    <Title level={5}>
+                      {filteredAndSortedBookings.length === 0
                         ? "Hãy bắt đầu khám phá và đặt chỗ homestay đầu tiên của bạn!"
                         : "Thử điều chỉnh bộ lọc để xem thêm kết quả"
                       }
-                    </Text>
+                    </Title>
                   </div>
                 }
               >
-                {bookings.length === 0 && (
+                {filteredAndSortedBookings.length === 0 && (
                   <Button
                     type="primary"
                     size="large"
@@ -444,7 +330,7 @@ const BookingHistory: React.FC = () => {
         ) : (
           <div className="bookings-table">
             <Card>
-              <Table<IBooking>
+              <Table
                 columns={columns}
                 dataSource={filteredAndSortedBookings}
                 rowKey="id"
@@ -464,14 +350,12 @@ const BookingHistory: React.FC = () => {
         )}
       </div>
 
-      {/* View Detail Modal */}
       <ViewDetailBooking
         open={openViewDetail}
         onClose={handleViewDetailClose}
         dataInit={dataInit}
       />
 
-      {/* Review Modal */}
       <ReviewModal
         open={openReviewModal}
         onClose={handleReviewModalClose}
@@ -483,4 +367,4 @@ const BookingHistory: React.FC = () => {
   );
 };
 
-export default BookingHistory;
+export default BookingHistoryPage;

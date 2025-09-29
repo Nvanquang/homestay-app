@@ -47,31 +47,31 @@ const UserNavLinks: React.FC<UserNavLinksProps> = ({ userData }) => {
     {
       key: 'profile',
       path: '/users/profile',
-      icon: <EditOutlined className={styles.navIcon} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <EditOutlined className={styles.navIcon} />,
       text: 'Hồ sơ cá nhân'
     },
     {
       key: 'edit',
       path: '/users/edit',
-      icon: <SettingOutlined className={styles.navIcon} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <SettingOutlined className={styles.navIcon} />,
       text: 'Chỉnh sửa hồ sơ'
     },
     {
       key: 'bookings',
       path: '/booking/history',
-      icon: <HistoryOutlined className={styles.navIcon} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <HistoryOutlined className={styles.navIcon} />,
       text: 'Lịch sử đặt phòng'
     },
     {
       key: 'favorites',
       path: '/users/favorites',
-      icon: <HeartOutlined className={styles.navIcon} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <HeartOutlined className={styles.navIcon} />,
       text: 'Yêu thích'
     },
     {
       key: 'messages',
       path: '/messages',
-      icon: <MessageOutlined className={styles.navIcon} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <MessageOutlined className={styles.navIcon} />,
       text: 'Tin nhắn'
     }
   ];
@@ -95,7 +95,7 @@ const UserNavLinks: React.FC<UserNavLinksProps> = ({ userData }) => {
         onClick={handleLogout}
         style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left' }}
       >
-        <LogoutOutlined className={styles.navIcon} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+        <LogoutOutlined className={styles.navIcon} />
         <span className={styles.navText}>Đăng xuất</span>
       </button>
     </div>

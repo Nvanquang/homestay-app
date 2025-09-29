@@ -7,8 +7,8 @@ import {
 import ScrollToTop from '@/components/ScrollToTop';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import NotFound from 'components/share/not.found';
-import LoginPage from 'pages/auth/login';
-import RegisterPage from 'pages/auth/register';
+import LoginPage from '@/pages/auth/components/login';
+import RegisterPage from '@/pages/auth/components/register';
 import LayoutAdmin from 'components/admin/layout.admin';
 import ProtectedRoute from 'components/share/protected-route.ts';
 import styles from 'styles/app.module.scss';
@@ -22,23 +22,23 @@ import BookingPage from './pages/admin/booking';
 import TransactionPage from './pages/admin/transaction';
 import HomestayTabs from './pages/admin/homestay/homestay.tabs';
 import HomePage from './pages/home';
-import VerifyOtpPage from './pages/auth/verify.otp';
-import ClientHomestayDetailPage from './pages/homestay/detail';
+import VerifyOtpPage from './pages/auth/components/verify.otp';
+import ClientHomestayDetailPage from './pages/homestay/components/detail';
 import Header from './components/client/header.client';
 import Footer from './components/client/footer.client';
 import { ISearchHomestayRequest } from './types/backend';
-import CheckoutSection from './pages/booking/checkout';
-import PaymentSuccessPage from './pages/booking/payment.success.page';
-import HomestayListPage from './pages/homestay/homestay.search';
+import CheckoutSection from './pages/booking/components/checkout';
+import PaymentSuccessPage from './pages/booking/components/payment.success.page';
+import HomestayListPage from './pages/homestay/components/homestay.search';
 import ChatPage from './pages/chat';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { ChatWebSocketProvider } from './contexts/ChatWebSocketContext';
-import ProfilePage from './pages/user/profile';
-import EditProfile from './pages/user/edit';
-import CompleteProfile from './pages/user/complete.profile';
-import BookingHistory from './pages/booking/booking.histories';
+import ProfilePage from './pages/user/components/profile';
+import EditProfile from './pages/user/components/edit';
+import CompleteProfile from './pages/user/components/complete.profile';
 import notificationService from '@/config/notificationService';
 import { fetchConversation } from './redux/slice/conversationSlide';
+import BookingHistoryPage from './pages/booking/components/booking.histories';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -183,7 +183,7 @@ export default function App() {
           path: "/booking/history",
           element:
             <ProtectedRoute>
-              <BookingHistory />
+              <BookingHistoryPage />
             </ProtectedRoute>
         },
       ],
@@ -191,7 +191,7 @@ export default function App() {
 
     {
       path: "/admin",
-      element: (<LayoutApp><LayoutAdmin /> </LayoutApp>),
+      element: (<ProtectedRoute><LayoutApp><LayoutAdmin /> </LayoutApp></ProtectedRoute>),
       errorElement: <NotFound />,
       children: [
         {

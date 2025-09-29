@@ -142,7 +142,7 @@ const RolePage = () => {
                             onClick={() => {
                                 setSingleRole(entity);
                                 setOpenModal(true);
-                            } } onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                        />
+                            } }                        />
                     </Access>
                     <Access
                         permission={ALL_PERMISSIONS.ROLE.DELETE}
@@ -161,7 +161,7 @@ const RolePage = () => {
                                     style={{
                                         fontSize: 20,
                                         color: '#ff4d4f',
-                                    }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                                />
+                                    }}                                />
                             </span>
                         </Popconfirm>
                     </Access>
@@ -236,7 +236,7 @@ const RolePage = () => {
                     toolBarRender={(_action, _rows): any => {
                         return (
                             <Button
-                                icon={<PlusOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+                                icon={<PlusOutlined />}
                                 type="primary"
                                 onClick={() => setOpenModal(true)}
                             >

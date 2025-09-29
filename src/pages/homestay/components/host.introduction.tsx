@@ -79,7 +79,7 @@ const HostStats: React.FC<{ hostData: IHostData }> = ({ hostData }) => {
             <div className={styles['stat-item']}>
               <Space align="center">
                 <div className={styles['stat-number']}>{hostData.rating}</div>
-                <StarOutlined className={styles['star-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                <StarOutlined className={styles['star-icon']} />
               </Space>
               <Text type="secondary" className={styles['stat-label']}>Xếp hạng</Text>
             </div>
@@ -108,7 +108,7 @@ const HostInfoBox: React.FC<{ hostData: IHostData; onOpenChat: () => void }> = (
             <Row gutter={[16, 16]}>
               <Col span={12}>
                 <div className={styles['info-stat-item']}>
-                  <ClockCircleOutlined className={styles['info-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                  <ClockCircleOutlined className={styles['info-icon']} />
                   <div>
                     <div className={styles['info-value']}>{hostData.responseTime}</div>
                     <Text type="secondary" className={styles['info-label']}>Thời gian phản hồi</Text>
@@ -117,7 +117,7 @@ const HostInfoBox: React.FC<{ hostData: IHostData; onOpenChat: () => void }> = (
               </Col>
               <Col span={12}>
                 <div className={styles['info-stat-item']}>
-                  <SafetyCertificateOutlined className={styles['info-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                  <SafetyCertificateOutlined className={styles['info-icon']} />
                   <div>
                     <div className={styles['info-value']}>{hostData.responseRate}%</div>
                     <Text type="secondary" className={styles['info-label']}>Tỉ lệ phản hồi</Text>
@@ -130,7 +130,7 @@ const HostInfoBox: React.FC<{ hostData: IHostData; onOpenChat: () => void }> = (
           <Button 
             type="primary" 
             size="large"
-            icon={<MessageOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+            icon={<MessageOutlined />}
             onClick={handleMessageHost}
             className={styles['premium-message-button']}
             block
@@ -161,12 +161,12 @@ const HostCard: React.FC<{ hostData: IHostData; onOpenChat: () => void }> = ({ h
                   <div className={styles['avatar-wrapper']}>
                     <Avatar 
                       size={120} 
-                      src={user?.avatar !== null ? user.avatar : <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+                      src={user?.avatar !== null ? user.avatar : <UserOutlined />}
                       className={styles['premium-avatar']}
                     />
                     {hostData.isVerified && (
                       <div className={styles['verified-badge-premium']}>
-                        <CheckCircleOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                        <CheckCircleOutlined />
                       </div>
                     )}
                   </div>
@@ -181,10 +181,10 @@ const HostCard: React.FC<{ hostData: IHostData; onOpenChat: () => void }> = ({ h
                 <div className={styles['host-badges']}>
                   <Space wrap>
                     <span className={styles['badge-item']}>
-                      <TrophyOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> Kinh nghiệm {hostData.hostingYears}+ năm
+                      <TrophyOutlined /> Kinh nghiệm {hostData.hostingYears}+ năm
                     </span>
                     <span className={styles['badge-item']}>
-                      <HeartOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> {hostData.reviewCount} khách hài lòng
+                      <HeartOutlined /> {hostData.reviewCount} khách hài lòng
                     </span>
                   </Space>
                 </div>
@@ -217,7 +217,7 @@ const HostBio: React.FC<{ hostData: IHostData }> = ({ hostData }) => {
           <Row gutter={[24, 16]}>
             <Col xs={24} sm={8}>
               <div className={styles['bio-info-item']}>
-                <EnvironmentOutlined className={styles['bio-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                <EnvironmentOutlined className={styles['bio-icon']} />
                 <div>
                   <Text strong>Địa điểm</Text>
                   <br />
@@ -227,7 +227,7 @@ const HostBio: React.FC<{ hostData: IHostData }> = ({ hostData }) => {
             </Col>
             <Col xs={24} sm={8}>
               <div className={styles['bio-info-item']}>
-                <SafetyCertificateOutlined className={styles['bio-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                <SafetyCertificateOutlined className={styles['bio-icon']} />
                 <div>
                   <Text strong>Ngôn ngữ</Text>
                   <br />
@@ -237,7 +237,7 @@ const HostBio: React.FC<{ hostData: IHostData }> = ({ hostData }) => {
             </Col>
             <Col xs={24} sm={8}>
               <div className={styles['bio-info-item']}>
-                <ClockCircleOutlined className={styles['bio-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                <ClockCircleOutlined className={styles['bio-icon']} />
                 <div>
                   <Text strong>Tham gia</Text>
                   <br />

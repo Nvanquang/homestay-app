@@ -7,11 +7,9 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import styles from '@/styles/homestaydetail.module.scss';
-import { useEffect, useState } from 'react';
-import { callGetReviewsByHomestay } from '@/config/api';
-import { isSuccessResponse } from '@/config/utils';
 import { IHomestay, IReview } from '@/types/backend';
 import dayjs from 'dayjs';
+import { useHomestayDetail } from '../hooks/useHomestayDetail';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -22,41 +20,8 @@ interface IProps {
 
 const ReviewSection = (props: IProps) => {
   const { homestayDetail, showPagination } = props;
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [reviews, setReviews] = useState<IReview[]>([]);
-
-  const [current, setCurrent] = useState(1);
-  const [pageSize, setPageSize] = useState(6);
-
-  useEffect(() => {
-    fetchReviews();
-  }, [current, pageSize, homestayDetail]);
-
-  const fetchReviews = async () => {
-    // if (!homestayDetail?.id) {
-    //   setReviews([]);
-    //   return;
-    // }
-    setIsLoading(true)
-    let query = `page=${current}&size=${pageSize}`;
-
-    const res = await callGetReviewsByHomestay(String(homestayDetail?.id), query);
-    if (isSuccessResponse(res) && res?.data) {
-      setReviews(res.data.result);
-    }
-    setIsLoading(false)
-  }
-
-  const handleOnchangePage = (pagination: { current: number, pageSize: number }) => {
-    if (pagination && pagination.current !== current) {
-      setCurrent(pagination.current)
-    }
-    if (pagination && pagination.pageSize !== pageSize) {
-      setPageSize(pagination.pageSize)
-      setCurrent(1);
-    }
-  }
-
+  const { reviews, handleOnchangePage, current, pageSize } = useHomestayDetail({ homestayDetail });
+  
   return (
     <div className={styles['review-section']}>
       <Card bordered={false} className={styles['review-card']}>
@@ -65,7 +30,7 @@ const ReviewSection = (props: IProps) => {
           <div className={styles['overview-header']}>
             <div className={styles['overview-score']}>
               <div className={styles['score-icon']}>
-                <TrophyOutlined className={styles['trophy-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                <TrophyOutlined className={styles['trophy-icon']} />
               </div>
               <div className={styles['score-content']}>
                 <Title level={1} className={styles['score-number']}>{(homestayDetail?.averageRating || 0).toFixed(1)}</Title>
@@ -106,7 +71,7 @@ const ReviewSection = (props: IProps) => {
                         <div className={styles['reviewer-info']}>
                           <Avatar 
                             src={item.user?.avatar} 
-                            icon={<UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} 
+                            icon={<UserOutlined />} 
                             size={56} 
                             className={styles['review-avatar']} 
                           />
@@ -150,7 +115,7 @@ const ReviewSection = (props: IProps) => {
                         <div className={styles['reviewer-info']}>
                           <Avatar 
                             src={item.user?.avatar} 
-                            icon={<UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} 
+                            icon={<UserOutlined />} 
                             size={56} 
                             className={styles['review-avatar']} 
                           />
@@ -188,7 +153,7 @@ const ReviewSection = (props: IProps) => {
           ) : (
             <div className={styles['no-reviews']}>
               <div className={styles['no-reviews-icon']}>
-                <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                <UserOutlined />
               </div>
               <Text className={styles['no-reviews-text']}>Chưa có đánh giá nào</Text>
               <Text className={styles['no-reviews-subtext']}>Hãy là người đầu tiên đánh giá homestay này</Text>

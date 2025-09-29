@@ -101,29 +101,29 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
     {
       label: <Link to={'/'}>Trang chủ</Link>,
       key: 'home',
-      icon: <HomeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <HomeOutlined />,
     },
     ...(roleName === 'SUPER_ADMIN' || roleName === 'HOST'
       ? [{
         label: <Link to={'/admin'}>Quản trị hệ thống</Link>,
         key: 'admin',
-        icon: <SettingOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+        icon: <SettingOutlined />,
       }]
       : []),
     {
       label: <Link to={'/users/profile'}>Hồ sơ</Link>,
       key: 'profile',
-      icon: <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <UserOutlined />,
     },
     {
       label: <Link to={'/messages'}>Tin nhắn</Link>,
       key: 'messages',
-      icon: <MessageOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <MessageOutlined />,
     },
     {
       label: <Link to={'/booking/history'}>Lịch sử đặt phòng</Link>,
       key: 'travels',
-      icon: <HistoryOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <HistoryOutlined />,
     },
     {
       label: <label
@@ -131,7 +131,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
         onClick={() => handleLogout()}
       >Đăng xuất</label>,
       key: 'logout',
-      icon: <LogoutOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+      icon: <LogoutOutlined />
     },
   ];
 
@@ -139,12 +139,12 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
     {
       label: <Link to={'/'}>Trang chủ</Link>,
       key: 'home',
-      icon: <HomeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <HomeOutlined />,
     },
     {
       label: <Link to={'/login'}>Đăng nhập or Đăng ký</Link>,
       key: 'login',
-      icon: <LoginOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+      icon: <LoginOutlined />,
     },
 
   ];
@@ -207,7 +207,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
                   isAuthenticated ? (
                     <Space>
                       {user?.name}
-                      <Avatar style={{backgroundColor: '#000000'}} src={user?.avatar !== null ? user.avatar : <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} />
+                      <Avatar style={{backgroundColor: '#000000'}} src={user?.avatar !== null ? user.avatar : <UserOutlined />} />
                     </Space>
                   ) : (
                     <button className={styles.actionButton} title="Menu">

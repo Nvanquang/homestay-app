@@ -1,5 +1,5 @@
 import { Button, Divider, Form, Input, message, notification } from 'antd';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { callLogin } from 'config/api';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -10,7 +10,6 @@ import { isSuccessResponse } from '@/config/utils';
 import { IBackendError } from '@/types/backend';
 
 const LoginPage = () => {
-    const navigate = useNavigate();
     const [isSubmit, setIsSubmit] = useState(false);
     const dispatch = useDispatch();
     const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
@@ -22,7 +21,6 @@ const LoginPage = () => {
     useEffect(() => {
         //đã login => redirect to '/'
         if (isAuthenticated) {
-            // navigate('/');
             window.location.href = '/';
         }
     }, [])

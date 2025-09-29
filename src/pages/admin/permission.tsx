@@ -133,7 +133,7 @@ const PermissionPage = () => {
                             onClick={() => {
                                 setOpenModal(true);
                                 setDataInit(entity);
-                            } } onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                        />
+                            } }                        />
                     </Access>
                     <Access
                         permission={ALL_PERMISSIONS.PERMISSION.DELETE}
@@ -152,7 +152,7 @@ const PermissionPage = () => {
                                     style={{
                                         fontSize: 20,
                                         color: '#ff4d4f',
-                                    }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                                />
+                                    }}                                />
                             </span>
                         </Popconfirm>
                     </Access>
@@ -238,7 +238,7 @@ const PermissionPage = () => {
                     toolBarRender={(_action, _rows): any => {
                         return (
                             <Button
-                                icon={<PlusOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+                                icon={<PlusOutlined />}
                                 type="primary"
                                 onClick={() => setOpenModal(true)}
                             >

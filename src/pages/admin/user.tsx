@@ -8,8 +8,8 @@ import { Button, Popconfirm, Space, message, notification } from "antd";
 import { useState, useRef } from 'react';
 import { callDeleteUser } from "@/config/api";
 import queryString from 'query-string';
-import ModalUser from "@/components/admin/user/modal.user";
-import ViewDetailUser from "@/components/admin/user/view.user";
+import ModalUser from "@/components/admin/user/components/modal.user";
+import ViewDetailUser from "@/components/admin/user/components/view.user";
 import Access from "@/components/share/access";
 import { ALL_PERMISSIONS } from "@/config/permissions";
 import { sfLike } from "spring-filter-query-builder";
@@ -112,7 +112,7 @@ const UserPage = () => {
                                 setOpenViewDetail(true); 
                                 dispatch(fetchUserById((entity.id) as string));
                                 setDataInit(entity); 
-                            }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                        />
+                            }}                        />
                     </Access >
 
                     < Access
@@ -129,7 +129,7 @@ const UserPage = () => {
                                 setOpenModal(true);
                                 dispatch(fetchUserById((entity.id) as string));
                                 setDataInit(entity);
-                            }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                            }} />
                     </Access >
 
                     <Access
@@ -149,7 +149,7 @@ const UserPage = () => {
                                     style={{
                                         fontSize: 20,
                                         color: '#ff4d4f',
-                                    }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                                    }} />
                             </span>
                         </Popconfirm>
                     </Access>
@@ -241,7 +241,7 @@ const UserPage = () => {
                     toolBarRender={(_action, _rows): any => {
                         return (
                             <Button
-                                icon={<PlusOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+                                icon={<PlusOutlined />}
                                 type="primary"
                                 onClick={() => setOpenModal(true)}
                             >

@@ -67,7 +67,7 @@ const BookingInfoSection: React.FC<{ bookingInfo: IBookingInfo }> = ({ bookingIn
         <Col span={24}>
           <Space size="large" wrap>
             <div className={styles['info-item']}>
-              <CalendarOutlined className={styles['info-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+              <CalendarOutlined className={styles['info-icon']} />
               <div>
                 <Text strong>Nhận phòng - Trả phòng</Text>
                 <br />
@@ -77,7 +77,7 @@ const BookingInfoSection: React.FC<{ bookingInfo: IBookingInfo }> = ({ bookingIn
               </div>
             </div>
             <div className={styles['info-item']}>
-              <ClockCircleOutlined className={styles['info-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+              <ClockCircleOutlined className={styles['info-icon']} />
               <div>
                 <Text strong>Thời gian</Text>
                 <br />
@@ -87,7 +87,7 @@ const BookingInfoSection: React.FC<{ bookingInfo: IBookingInfo }> = ({ bookingIn
               </div>
             </div>
             <div className={styles['info-item']}>
-              <HomeOutlined className={styles['info-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+              <HomeOutlined className={styles['info-icon']} />
               <div>
                 <Text strong>Số khách</Text>
                 <br />
@@ -156,7 +156,7 @@ const MessageInput: React.FC<{
         />
         <Button
           type="primary"
-          icon={<SendOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+          icon={<SendOutlined />}
           onClick={handleSend}
           loading={loading}
           className={styles['send-button']}
@@ -222,7 +222,7 @@ const HostChatModal: React.FC<IHostChatModalProps> = ({
       footer={null}
       width={600}
       className={styles['chat-modal']}
-      closeIcon={<CloseOutlined className={styles['close-icon']} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+      closeIcon={<CloseOutlined className={styles['close-icon']} />}
     >
       <div className={styles['modal-content']}>
         {/* Booking Info Section */}

@@ -12,7 +12,7 @@ import Access from "@/components/share/access";
 import { ALL_PERMISSIONS } from "@/config/permissions";
 import { sfLike } from "spring-filter-query-builder";
 import { isSuccessResponse } from "@/config/utils";
-import ModalHomestay from "@/components/admin/homestay/modal.homestay";
+import ModalHomestay from "@/components/admin/homestay/components/modal.homestay";
 
 interface HomestayPageProps {
   setActiveKey: (key: string) => void;
@@ -94,7 +94,7 @@ const HomestayPage = ({ setActiveKey, setOpenViewAvailabity, setInitHomestayId, 
                         }
                     >
                         {entity.status === 'ACTIVE' 
-                        ? <CheckCircleOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> 
+                        ? <CheckCircleOutlined /> 
                         : null}
                         {" " + entity.status}
                     </Tag>
@@ -122,8 +122,6 @@ const HomestayPage = ({ setActiveKey, setOpenViewAvailabity, setInitHomestayId, 
                                 setHomestayName(entity.name);
                                 message.success(`Mở lịch sẵn có cho homestay ${entity.name}`);
                             }}
-                            onPointerEnterCapture={undefined}
-                            onPointerLeaveCapture={undefined}
                         />
                     </Access>
                     <Access
@@ -139,8 +137,6 @@ const HomestayPage = ({ setActiveKey, setOpenViewAvailabity, setInitHomestayId, 
                                 setOpenModal(true);
                                 setDataInit(entity);
                             }}
-                            onPointerEnterCapture={undefined}
-                            onPointerLeaveCapture={undefined}
                         />
                     </Access>
                     <Access
@@ -161,8 +157,6 @@ const HomestayPage = ({ setActiveKey, setOpenViewAvailabity, setInitHomestayId, 
                                         fontSize: 20,
                                         color: '#ff4d4f',
                                     }}
-                                    onPointerEnterCapture={undefined}
-                                    onPointerLeaveCapture={undefined}
                                 />
                             </span>
                         </Popconfirm>
@@ -243,7 +237,7 @@ const HomestayPage = ({ setActiveKey, setOpenViewAvailabity, setInitHomestayId, 
                         return (
                             <Access permission={ALL_PERMISSIONS.HOMESTAY.CREATE} hideChildren>
                                 <Button
-                                    icon={<PlusOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+                                    icon={<PlusOutlined />}
                                     type="primary"
                                     onClick={() => setOpenModal(true)}
                                 >

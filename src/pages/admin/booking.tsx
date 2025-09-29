@@ -134,19 +134,19 @@ const BookingPage = () => {
                             {
                                 (() => {
                                     if (entity.status === 'PAYMENT_PROCESSING') {
-                                        return <SyncOutlined spin onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                                        return <SyncOutlined spin />
                                     } 
                                     else if (entity.status === 'PAYMENT_FAILED') {
-                                        return <StopOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                                        return <StopOutlined />
                                     }
                                     else if (entity.status === 'CANCELLED') {
-                                        return <CloseOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                                        return <CloseOutlined />
                                     }
                                     else if (entity.status === 'BOOKED') {
-                                        return <CheckOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                                        return <CheckOutlined />
                                     }
                                     else if (entity.status === 'COMPLETED') {
-                                        return <CheckCircleOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                                        return <CheckCircleOutlined />
                                     }
                                 })()
                             }
@@ -197,7 +197,7 @@ const BookingPage = () => {
                             onClick={() => {
                                 setOpenViewDetail(true);
                                 setDataInit(entity); 
-                            }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                        />
+                            }}                        />
                     </Access >
                 </Space >
             ),

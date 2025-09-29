@@ -30,8 +30,6 @@ const ClientHomestayDetailPage = () => {
     let params = new URLSearchParams(location.search);
     const id = params?.get("id"); // homestay id
     const [position, setPosition] = useState<[number, number]>([0, 0]);
-    const [averageRating, setAverageRating] = useState<number>(0);
-    const [totalReviews, setTotalReviews] = useState<number>(0);
 
     useEffect(() => {
         const init = async () => {
@@ -41,8 +39,6 @@ const ClientHomestayDetailPage = () => {
                 if (isSuccessResponse(res) && res?.data) {
                     setHomestayDetail(res.data)
                     setPosition([Number(res.data.latitude), Number(res.data.longitude)]);
-                    setTotalReviews(res.data.totalReviews || 0);
-                    setAverageRating(res.data.averageRating || 0);
                 }
                 setIsLoading(false)
             }
@@ -148,7 +144,7 @@ const ClientHomestayDetailPage = () => {
                             }}>
                                 <Button 
                                     type="primary" 
-                                    icon={<PictureOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+                                    icon={<PictureOutlined />}
                                     onClick={handleViewAllImages}
                                     style={{
                                         background: 'rgba(0, 0, 0, 0.7)',
@@ -174,7 +170,7 @@ const ClientHomestayDetailPage = () => {
                 footer={null}
                 width="90%"
                 style={{ maxWidth: '800px', top: 20 }}
-                closeIcon={<CloseOutlined style={{ fontSize: '18px', color: '#666' }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+                closeIcon={<CloseOutlined style={{ fontSize: '18px', color: '#666' }} />}
             >
                 <div style={{ padding: 0 }}>
                     <div style={{

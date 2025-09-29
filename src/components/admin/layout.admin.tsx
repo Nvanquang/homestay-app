@@ -69,38 +69,38 @@ const LayoutAdmin = () => {
                 {
                     label: <Link to='/admin'>Dashboard</Link>,
                     key: '/admin',
-                    icon: <AppstoreOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                    icon: <AppstoreOutlined />
                 },
 
                 ...(viewUser || ACL_ENABLE === 'false' ? [{
                     label: <Link to='/admin/user'>User</Link>,
                     key: '/admin/user',
-                    icon: <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                    icon: <UserOutlined />
                 }] : []),
                 ...(viewHomestay || ACL_ENABLE === 'false' ? [{
                     label: <Link to='/admin/homestay'>Homestay</Link>,
                     key: '/admin/homestay',
-                    icon: <HomeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                    icon: <HomeOutlined />
                 }] : []),
                 ...(viewHomestay || ACL_ENABLE === 'false' ? [{
                     label: <Link to='/admin/booking'>Booking</Link>,
                     key: '/admin/booking',
-                    icon: <BookOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                    icon: <BookOutlined />
                 }] : []),
                 ...(viewHomestay || ACL_ENABLE === 'false' ? [{
                     label: <Link to='/admin/transaction'>Transaction</Link>,
                     key: '/admin/transaction',
-                    icon: <BarChartOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                    icon: <BarChartOutlined />
                 }] : []),
                 ...(viewPermission || ACL_ENABLE === 'false' ? [{
                     label: <Link to='/admin/permission'>Permission</Link>,
                     key: '/admin/permission',
-                    icon: <ApiOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                    icon: <ApiOutlined />
                 }] : []),
                 ...(viewRole || ACL_ENABLE === 'false' ? [{
                     label: <Link to='/admin/role'>Role</Link>,
                     key: '/admin/role',
-                    icon: <ExceptionOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                    icon: <ExceptionOutlined />
                 }] : []),
 
 
@@ -147,17 +147,17 @@ const LayoutAdmin = () => {
         {
             label: <Link to={'/'}>Trang chủ</Link>,
             key: 'home',
-            icon: <HomeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+            icon: <HomeOutlined />,
         },
         {
             label: <Link to={'/users/profile'}>Hồ sơ</Link>,
             key: 'profile',
-            icon: <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+            icon: <UserOutlined />,
         },
         {
             label: <Link to={'/messages'}>Tin nhắn</Link>,
             key: 'messages',
-            icon: <MessageOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />,
+            icon: <MessageOutlined />,
         },
         {
             label: <label
@@ -165,7 +165,7 @@ const LayoutAdmin = () => {
                 onClick={() => handleLogout()}
             >Đăng xuất</label>,
             key: 'logout',
-            icon: <LogoutOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+            icon: <LogoutOutlined />
         },
     ];
 
@@ -182,7 +182,7 @@ const LayoutAdmin = () => {
                         collapsed={collapsed}
                         onCollapse={(value) => setCollapsed(value)}>
                         <div style={{ height: 32, margin: 16, textAlign: 'center' }}>
-                            <AntDesignOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />  ADMIN
+                            <AntDesignOutlined />  ADMIN
                         </div>
                         <Menu
                             selectedKeys={[activeMenu]}
@@ -217,7 +217,7 @@ const LayoutAdmin = () => {
                             <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
                                 <Space style={{ cursor: "pointer" }}>
                                     {user?.name}
-                                    <Avatar src={user?.avatar !== null ? user.avatar : <UserOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />} />
+                                    <Avatar src={user?.avatar !== null ? user.avatar : <UserOutlined />} />
 
                                 </Space>
                             </Dropdown>
@@ -227,7 +227,7 @@ const LayoutAdmin = () => {
                         <Outlet />
                     </Content>
                     <Footer style={{ padding: 10, textAlign: 'center' }}>
-                        Dashboad ADMIN with quang - Made with <HeartTwoTone onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+                        Dashboad ADMIN with quang - Made with <HeartTwoTone />
                     </Footer>
                 </Layout>
             </Layout>

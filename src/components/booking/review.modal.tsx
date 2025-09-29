@@ -97,7 +97,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ open, onClose, bookingId, hom
         >
           <Rate 
             style={{ fontSize: '24px' }}
-            character={<StarOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+            character={<StarOutlined />}
           />
         </Form.Item>
 

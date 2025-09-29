@@ -47,7 +47,7 @@ const TransactionPage = () => {
                 return <>
                     <Tag color={entity.status === "00" ? 'blue' : 'red'} >
                         {entity.status === '00' 
-                        ? <CheckCircleOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> 
+                        ? <CheckCircleOutlined /> 
                         : null}
                         {entity.status === "00" ? ' SUCCESS' : ' FAILD'}
                     </Tag>

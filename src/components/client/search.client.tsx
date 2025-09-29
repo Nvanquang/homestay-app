@@ -489,7 +489,7 @@ const LocationDropdown: React.FC<LocationDropdownProps> = ({ onSelect, currentLo
           placeholder="Tìm kiếm địa điểm..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          prefix={<SearchOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />}
+          prefix={<SearchOutlined />}
           size="large"
           className={styles.locationSearchInput}
         />
@@ -498,7 +498,7 @@ const LocationDropdown: React.FC<LocationDropdownProps> = ({ onSelect, currentLo
       <div className={styles.locationList}>
         <div className={styles.locationSection}>
                      <h4 className={styles.locationSectionTitle}>
-             <StarOutlined style={{ marginRight: 8, color: '#faad14' }} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />
+             <StarOutlined style={{ marginRight: 8, color: '#faad14' }} />
              Địa điểm phổ biến
            </h4>
           

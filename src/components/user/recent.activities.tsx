@@ -19,11 +19,11 @@ const RecentActivities: React.FC<RecentActivitiesProps> = ({ activities }) => {
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'booking':
-        return <HomeOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />;
+        return <HomeOutlined />;
       case 'review':
-        return <StarOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />;
+        return <StarOutlined />;
       default:
-        return <CalendarOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} />;
+        return <CalendarOutlined />;
     }
   };
 
