@@ -1,0 +1,166 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { callFetchAccount } from '@/config/api';
+import { isSuccessResponse } from '@/config/utils';
+import { IGetAccount } from '@/types/backend';
+
+// First, create the thunk
+export const fetchAccount = createAsyncThunk(
+    'account/fetchAccount',
+    async (_, { rejectWithValue }) => {
+        const response = await callFetchAccount();
+        if (isSuccessResponse<IGetAccount>(response)) {
+            return response.data; // Trả về dữ liệu nếu thành công
+        } else {
+            return rejectWithValue(response); // Trả về lỗi nếu thất bại
+        }
+        // debugger;
+    }
+
+)
+
+interface IState {
+    isAuthenticated: boolean;
+    isLoading: boolean;
+    isRefreshToken: boolean;
+    errorRefreshToken: string;
+    user: {
+        id: string;
+        name: string;
+        email: string;
+        avatar: string;
+        role: {
+            id?: string;
+            name?: string;
+            description?: string;
+            active?: boolean;
+            createdAt?: Date | null;
+            createdBy?: string;
+            updatedAt?: Date | null;
+            updatedBy?: string;
+            permissions?: {
+                id: string;
+                name: string;
+                apiPath?: string;
+                method?: string;
+                module?: string;
+            }[]
+        }
+    };
+    activeMenu: string;
+}
+
+const initialState: IState = {
+    isAuthenticated: false,
+    isLoading: true,
+    isRefreshToken: false,
+    errorRefreshToken: "",
+    user: {
+        id: "",
+        name: "",
+        email: "",
+        avatar: "",
+        role: {
+            id: "",
+            name: "",
+            description: "",
+            active: true,
+            createdAt: null,
+            createdBy: "",
+            updatedAt: null,
+            updatedBy: "",
+            permissions: [],
+        },
+    },
+
+    activeMenu: 'home'
+};
+
+
+export const accountSlide = createSlice({
+    name: 'account',
+    initialState,
+    // The `reducers` field lets us define reducers and generate associated actions
+    reducers: {
+        // Use the PayloadAction type to declare the contents of `action.payload`
+        setActiveMenu: (state, action) => {
+            state.activeMenu = action.payload;
+        },
+        setUserLoginInfo: (state, action) => {
+            state.isAuthenticated = true;
+            state.isLoading = false;
+            state.user.id = action?.payload?.id;
+            state.user.email = action.payload.email;
+            state.user.name = action.payload.name;
+            state.user.avatar = action.payload.avatar;
+            state.user.role = action?.payload?.role;
+
+            if (!action?.payload?.user?.role) state.user.role = {};
+            state.user.role.permissions = action?.payload?.role?.permissions ?? [];
+            // debugger;
+        },
+        setLogoutAction: (state, action) => {
+            localStorage.removeItem('access_token');
+            state.isAuthenticated = false;
+            state.user = {
+                id: "",
+                name: "",
+                email: "",
+                avatar: "",
+                role: {
+                    id: "",
+                    name: "",
+                    description: "",
+                    active: true,
+                    createdAt: null,
+                    createdBy: "",
+                    updatedAt: null,
+                    updatedBy: "",
+                    permissions: [],
+                },
+            }
+        },
+        setRefreshTokenAction: (state, action) => {
+            state.isRefreshToken = action.payload?.status ?? false;
+            state.errorRefreshToken = action.payload?.message ?? "";
+        }
+
+    },
+    extraReducers: (builder) => {
+        // Add reducers for additional action types here, and handle loading state as needed
+        builder.addCase(fetchAccount.pending, (state, action) => {
+            if (action.payload) {
+                state.isAuthenticated = false;
+                state.isLoading = true;
+            }
+        })
+
+        builder.addCase(fetchAccount.fulfilled, (state, action) => {
+            if (action.payload) {
+                state.isAuthenticated = true;
+                state.isLoading = false;
+                state.user.id = action?.payload?.user?.id;
+                state.user.email = action.payload.user?.email;
+                state.user.name = action.payload.user?.name;
+                state.user.avatar = action.payload.user?.avatar;
+                state.user.role = action?.payload?.user?.role;
+                if (!action?.payload?.user?.role) state.user.role = {};
+                state.user.role.permissions = action?.payload?.user?.role?.permissions ?? [];
+            }
+        })
+
+        builder.addCase(fetchAccount.rejected, (state, action) => {
+            if (action.payload) {
+                state.isAuthenticated = false;
+                state.isLoading = false;
+            }
+        })
+
+    },
+
+});
+
+export const {
+    setActiveMenu, setUserLoginInfo, setLogoutAction, setRefreshTokenAction
+} = accountSlide.actions;
+
+export default accountSlide.reducer;

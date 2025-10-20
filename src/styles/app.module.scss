@@ -1,0 +1,16 @@
+// @import 'variables.scss';
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.content-app {
+    height: 100%;
+    width: 100%;
+}
+
+.container-max {
+    max-width: 1760px;
+    margin: 0 auto;
+    padding: 0 80px;
+}

@@ -1,0 +1,134 @@
+.sidebar-info {
+  width: 100%;
+  height: fit-content;
+
+  &__card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e8e8e8;
+    overflow: hidden;
+  }
+
+  &__image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__rating {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    backdrop-filter: blur(4px);
+  }
+
+  &__content {
+    padding: 16px;
+  }
+
+  &__title {
+    margin: 0 0 12px 0 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    color: #222222 !important;
+  }
+
+  &__location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  &__booking-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    
+    .anticon {
+      margin-top: 2px;
+      font-size: 14px;
+    }
+
+    div {
+      flex: 1;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+  }
+
+  &__status {
+    .ant-tag {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+  }
+
+  &__price {
+    text-align: center;
+    padding: 8px 0;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin: 8px 0;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__book-btn {
+    background: linear-gradient(135deg, #ff5a5f 0%, #ff385c 100%);
+    border: none;
+    border-radius: 8px;
+    height: 40px;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(255, 90, 95, 0.3);
+
+    &:hover {
+      background: linear-gradient(135deg, #ff385c 0%, #e31c5f 100%);
+      box-shadow: 0 4px 8px rgba(255, 90, 95, 0.4);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-info {
+    &__image-container {
+      height: 150px;
+    }
+
+    &__content {
+      padding: 12px;
+    }
+
+    &__title {
+      font-size: 14px !important;
+    }
+  }
+}
