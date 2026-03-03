@@ -1,7 +1,6 @@
-import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal, IVnpayBookingResponse, IBookingStatus, ISearchHomestayRequest, ISearchHomestayResponse, IConversation, IMessage, IChatConversationResponse, IChatMessageResponse, ICreateConversationResponse, ISendMessageResponse, ICursorPageResponse, Message } from '@/types/backend';
+import { IBackendRes, IBackendError, IModelPaginate, IAccount, IGetAccount, IUser, IRole, IPermission, IHomestay, IHomestayImage, IBooking, IAmenity, IReview, IPaymentTransaction, IAvailabilityRequest, IHomestayAvailability, IReviewTotal, IVnpayBookingResponse, IBookingStatus, ISearchHomestayRequest, ISearchHomestayResponse, IConversation, IMessage, IChatConversationResponse, IChatMessageResponse, ICreateConversationResponse, ISendMessageResponse, ICursorPageResponse, Message, Conversation } from '@/types/backend';
 import axios from './axios-customize';
 import type { AxiosRequestConfig } from 'axios';
-import { Conversation } from '@/components/chat/types';
 
 /**
  * 

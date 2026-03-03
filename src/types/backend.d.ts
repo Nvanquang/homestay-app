@@ -344,3 +344,14 @@ export interface ISendMessageResponse {
     message: string;
     createdAt: string;
 }
+
+export interface Conversation {
+  id: string;
+  title: string;
+  participants: User[];
+  lastMessage?: Message;
+  homestayInfo: HomestayInfo;
+  lastActivity: Date;
+  unreadCount?: number;
+  createAt?: Date;
+}
