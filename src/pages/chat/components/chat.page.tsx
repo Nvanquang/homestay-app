@@ -23,20 +23,20 @@ const ChatPage: React.FC = () => {
   const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1200);
   const userStore = useAppSelector(state => state.account.user);
   const userId = userStore.id;
-  
+
   // Use the chat WebSocket context
   const { isConnected, joinConversation, leaveConversation, sendMessage: sendChatMessage, onMessageReceived } = useChatWebSocket();
-  
+
   const currentUser = {
     id: userStore.id,
-    fullName: userStore.name,
+    name: userStore.name,
     avatar: "",
     role: userStore.role.name === "USER" ? "guest" : "host"
   }
   // Initialize conversations and set up message listener
   useEffect(() => {
     init();
-    
+
     // Set up message listener for real-time updates
     onMessageReceived((message: ChatMessage) => {
       // Convert ChatMessage to local Message format
@@ -48,7 +48,7 @@ const ChatPage: React.FC = () => {
         timestamp: message.timestamp,
         type: message.type
       };
-      
+
       // Only add message if it's for the current conversation
       const msgConvId = String(message.conversationId);
       const selConvId = selectedConversation ? String(selectedConversation) : null;
@@ -60,7 +60,7 @@ const ChatPage: React.FC = () => {
           if (exists) return prev;
           return [...prev, localMessage];
         });
-      } 
+      }
     });
   }, [userId, selectedConversation, onMessageReceived]);
 
@@ -116,7 +116,7 @@ const ChatPage: React.FC = () => {
     if (id === currentUser.id) {
       return {
         id: currentUser.id,
-        fullName: currentUser.fullName,
+        name: currentUser.name,
         avatar: currentUser.avatar,
         role: currentUser.role
       };
@@ -128,7 +128,7 @@ const ChatPage: React.FC = () => {
       if (participant) {
         return {
           id: participant.id || id,
-          fullName: participant.fullName || participant.name || 'Unknown User',
+          name: participant.fullName || participant.name || 'Unknown User',
           avatar: participant.avatar || '',
           role: participant.role || 'guest'
         };
@@ -138,7 +138,7 @@ const ChatPage: React.FC = () => {
     // Fallback for unknown users
     return {
       id: id,
-      fullName: 'Unknown User',
+      name: 'Unknown User',
       avatar: '',
       role: 'guest'
     };
@@ -150,19 +150,19 @@ const ChatPage: React.FC = () => {
       if (selectedConversation) {
         leaveConversation();
       }
-      
+
       const selectedConv = conversationsData.find(conv => conv.id === conversationId);
-      
+
       if (selectedConv) {
         setCurrentConversation(selectedConv);
         initMessages(conversationId);
-        
+
         // Join the new conversation via WebSocket
         joinConversation(conversationId);
       }
-      
+
       setSelectedConversation(conversationId);
-      
+
       // Close conversation list on mobile after selection
       if (windowWidth < 768) {
         setShowConversationList(false);
@@ -200,9 +200,8 @@ const ChatPage: React.FC = () => {
 
       <div className="airbnb-chat__body">
         {/* Conversation List */}
-        <div className={`airbnb-chat__conversations ${
-          windowWidth < 768 && !showConversationList ? 'airbnb-chat__conversations--collapsed' : ''
-        }`}>
+        <div className={`airbnb-chat__conversations ${windowWidth < 768 && !showConversationList ? 'airbnb-chat__conversations--collapsed' : ''
+          }`}>
           <ConversationListPanel
             conversations={conversationsData.length > 0 ? conversationsData : []}
             activeConversationId={selectedConversation || undefined}

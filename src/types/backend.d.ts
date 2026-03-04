@@ -281,7 +281,7 @@ export interface IConversation {
     unreadCount?: number;
     lastMessage?: Message;
     lastActivity?: Date;
-    
+
 }
 
 export interface User {
@@ -289,16 +289,18 @@ export interface User {
     name: string;
     avatar: string;
     role: string;
-  }
-  
-  export interface Message {
+}
+
+export interface Message {
     id: string;
     content: string;
     senderId: string;
+    conversationId: string;
     role: string;
     timestamp: Date;
     type: string;
-  }
+    readAt?: Date;
+}
 
 // Chat Response Interfaces for Backend API
 export interface IChatUserInfo {
@@ -346,12 +348,12 @@ export interface ISendMessageResponse {
 }
 
 export interface Conversation {
-  id: string;
-  title: string;
-  participants: User[];
-  lastMessage?: Message;
-  homestayInfo: HomestayInfo;
-  lastActivity: Date;
-  unreadCount?: number;
-  createAt?: Date;
+    id: string;
+    title: string;
+    participants: User[];
+    lastMessage?: Message;
+    homestayInfo: HomestayInfo;
+    lastActivity: Date;
+    unreadCount?: number;
+    createAt?: Date;
 }

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { callGetConversationsByUser } from '@/config/api';
-import type { Conversation } from '@/components/chat/types';
+import type { Conversation } from '@/pages/chat/types';
 import { isSuccessResponse } from '@/config/utils';
 
 interface IState {

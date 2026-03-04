@@ -3,7 +3,7 @@ import type { TabsProps } from 'antd';
 import Access from '@/components/share/access';
 import { ALL_PERMISSIONS } from '@/config/permissions';
 import HomestayPage from './homestay';
-import AvailabilityPage from './availability';
+import AvailabilityPage from './Availability';
 import { useState } from 'react';
 import { message } from 'antd';
 
@@ -14,12 +14,12 @@ const HomestayTabs = () => {
   const [activeKey, setActiveKey] = useState('1'); // Quản lý tab hiện tại
 
   const onChange = (key: string) => {
-    
+
     if (key === '2' && (!openViewAvailabity || !initHomestayId)) {
       message.warning('Vui lòng chọn homestay từ danh sách để xem lịch sẵn có');
       return;
     }
-    
+
     if (key === '1') {
       setOpenViewAvailabity(false);
       setInitHomestayId(null);
